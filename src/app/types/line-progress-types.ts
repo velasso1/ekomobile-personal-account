@@ -1,9 +1,9 @@
 export interface Ivalue {
-    sum: number
+  sum: number;
 }
 
 export interface ILineProgressBarProps {
-    color: string;
-    value: Ivalue | number;
-    name: string;
+  color: string;
+  value: Ivalue | number;
+  name: string;
 }

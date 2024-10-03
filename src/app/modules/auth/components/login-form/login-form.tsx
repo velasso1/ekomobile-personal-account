@@ -1,9 +1,13 @@
-import { FC, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FC, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-import NumberField from '../../../ui/fields/number-field';
-import { ModalHelp } from '../../../ui/index';
-import EyeIcon from '../../../../utils/icons/eye-icon';
+import NumberField from "../../../ui/fields/number-field";
+import { ModalHelp } from "../../../ui/index";
+import EyeIcon from "../../../../utils/icons/eye-icon";
+
+import { defaultStyles } from "../../../../utils/default-styles";
+import { mainRoutes, authRoutes } from "../../../../utils/routes-name/main-routes";
+import { Button } from "../../../ui/button";
 
 type UserState = {
   login: string;
@@ -15,20 +19,23 @@ const LoginForm: FC = () => {
 
   const [hidePass, setHidePass] = useState<boolean>(true);
   const [userState, setUserState] = useState<UserState>({
-    login: '',
-    password: '',
+    login: "",
+    password: "",
   });
+
+  const { textSize, textColor } = defaultStyles;
 
   return (
     <>
       <div className="flex w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-5 text-center">
-        <p className="text-lg font-semibold text-[#071437]">Авторизация</p>
+        <p className={`text-lg font-semibold ${textColor.darkBlue}`}>Авторизация</p>
         <div className="mb-[15px]">
-          <p className="text-[13px] font-medium text-[#78829D]">
-            Еще нет аккаунта?{' '}
+          <p className={`${textSize.default} font-medium ${textColor.grey}`}>
+            <span className="mr-[5px]">Еще нет аккаунта?</span>
+
             <span
-              className="text-[#005DA6] hover:cursor-pointer"
-              onClick={() => navigate('/auth/registration')}
+              className={`${textColor.primary} hover:cursor-pointer`}
+              onClick={() => navigate(authRoutes.registration)}
             >
               Зарегистрироваться
             </span>
@@ -51,15 +58,12 @@ const LoginForm: FC = () => {
                   }
                 />
 
-                <label
-                  htmlFor="pass-field-reg"
-                  className="block text-left text-sm font-medium dark:text-white"
-                >
+                <label htmlFor="pass-field-reg" className="block text-left text-sm font-medium dark:text-white">
                   <div className="mb-[5px] flex justify-between">
                     <div className="">Пароль</div>
                     <div
-                      className="text-[13px] text-[#005DA6] hover:cursor-pointer"
-                      onClick={() => navigate('/auth/recovery-pass')}
+                      className={`${textSize.default} ${textColor.primary} hover:cursor-pointer`}
+                      onClick={() => navigate(authRoutes.recovery)}
                     >
                       Забыли пароль?
                     </div>
@@ -68,7 +72,7 @@ const LoginForm: FC = () => {
                 <div className="input w-[290px]">
                   <input
                     className=""
-                    type={hidePass ? 'password' : 'text'}
+                    type={hidePass ? "password" : "text"}
                     id="pass-field-reg"
                     placeholder="пароль"
                     value={userState.password}
@@ -86,18 +90,17 @@ const LoginForm: FC = () => {
                 </div>
               </div>
             </div>
-            <div className="flex w-[290px] flex-col justify-center">
-              <button
-                className="btn mt-[20px] justify-center bg-[#005DA6] text-center font-sans font-medium text-[#F6F8F8]"
-                onClick={(e) => {
+            <div className="mt-[20px] flex w-[290px] flex-col justify-center">
+              <Button
+                buttonType="default"
+                title="Продолжить"
+                onClickCb={(e) => {
                   e.preventDefault();
-                  navigate('/main/main');
+                  navigate(mainRoutes.main);
                 }}
-              >
-                Продолжить
-              </button>
+              />
               <button
-                className="btn mt-[10px] justify-center text-[13px] text-[#005DA6]"
+                className={`btn mt-[10px] justify-center ${textSize.default} ${textColor.darkBlue}`}
                 data-modal-toggle="#modal_4"
                 onClick={(e) => {
                   e.preventDefault();

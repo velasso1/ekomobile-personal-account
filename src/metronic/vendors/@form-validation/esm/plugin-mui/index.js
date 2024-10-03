@@ -1,5 +1,5 @@
-import { utils } from '../core/index.js';
-import { Framework } from '../plugin-framework/index.js';
+import { utils } from "../core/index.js";
+import { Framework } from "../plugin-framework/index.js";
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -17,19 +17,31 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
+var extendStatics = function (d, b) {
+  extendStatics =
+    Object.setPrototypeOf ||
+    ({ __proto__: [] } instanceof Array &&
+      function (d, b) {
+        d.__proto__ = b;
+      }) ||
+    function (d, b) {
+      for (var p in b)
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    };
+  return extendStatics(d, b);
 };
 
 function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError(
+      "Class extends value " + String(b) + " is not a constructor or null"
+    );
+  extendStatics(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  d.prototype =
+    b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
 }
 
 /**
@@ -40,29 +52,38 @@ function __extends(d, b) {
 var classSet = utils.classSet;
 // Support Mui CSS framework (https://muicss.com/)
 var Mui = /** @class */ (function (_super) {
-    __extends(Mui, _super);
-    function Mui(opts) {
-        return _super.call(this, Object.assign({}, {
-            formClass: 'fv-plugins-mui',
-            messageClass: 'fv-help-block',
-            rowInvalidClass: 'fv-invalid-row',
+  __extends(Mui, _super);
+  function Mui(opts) {
+    return (
+      _super.call(
+        this,
+        Object.assign(
+          {},
+          {
+            formClass: "fv-plugins-mui",
+            messageClass: "fv-help-block",
+            rowInvalidClass: "fv-invalid-row",
             rowPattern: /^(.*)mui-col-(xs|md|lg|xl)(-offset)*-[0-9]+(.*)$/,
-            rowSelector: '.mui-row',
-            rowValidClass: 'fv-valid-row',
-        }, opts)) || this;
+            rowSelector: ".mui-row",
+            rowValidClass: "fv-valid-row",
+          },
+          opts
+        )
+      ) || this
+    );
+  }
+  Mui.prototype.onIconPlaced = function (e) {
+    var type = e.element.getAttribute("type");
+    var parent = e.element.parentElement;
+    if ("checkbox" === type || "radio" === type) {
+      // Place it after the container of checkbox/radio
+      parent.parentElement.insertBefore(e.iconElement, parent.nextSibling);
+      classSet(e.iconElement, {
+        "fv-plugins-icon-check": true,
+      });
     }
-    Mui.prototype.onIconPlaced = function (e) {
-        var type = e.element.getAttribute('type');
-        var parent = e.element.parentElement;
-        if ('checkbox' === type || 'radio' === type) {
-            // Place it after the container of checkbox/radio
-            parent.parentElement.insertBefore(e.iconElement, parent.nextSibling);
-            classSet(e.iconElement, {
-                'fv-plugins-icon-check': true,
-            });
-        }
-    };
-    return Mui;
-}(Framework));
+  };
+  return Mui;
+})(Framework);
 
 export { Mui };

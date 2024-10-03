@@ -1,16 +1,15 @@
 /* eslint-disable max-len */
-/* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTComponent from '../component';
-import { KTStepperInterface, KTStepperConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTComponent from "../component";
+import { KTStepperInterface, KTStepperConfigInterface } from "./types";
 
 export class KTStepper extends KTComponent implements KTStepperInterface {
-  protected override _name: string = 'stepper';
+  protected override _name: string = "stepper";
   protected override _defaultConfig: KTStepperConfigInterface = {
-    hiddenClass: 'hidden',
-    activeStep: 1
+    hiddenClass: "hidden",
+    activeStep: 1,
   };
   protected override _config: KTStepperConfigInterface = this._defaultConfig;
   protected _activeStep: number = 0;
@@ -26,12 +25,12 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
     this._buildConfig(config);
 
     if (!this._element) return;
-    this._nextElement = this._element.querySelector('[data-stepper-next]');
-    this._backElement = this._element.querySelector('[data-stepper-back]');
+    this._nextElement = this._element.querySelector("[data-stepper-next]");
+    this._backElement = this._element.querySelector("[data-stepper-back]");
 
     this._activeStep = 1;
-    if (this._getOption('activeStep') !== this._activeStep) {
-      this._go(this._getOption('activeStep') as number);
+    if (this._getOption("activeStep") !== this._activeStep) {
+      this._go(this._getOption("activeStep") as number);
     }
 
     this._update();
@@ -40,62 +39,62 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
 
   protected _handlers(): void {
     if (!this._nextElement) {
-      console.error('data-stepper-next not found');
+      console.error("data-stepper-next not found");
       return;
     }
 
     if (this._nextElement) {
-      this._nextElement.addEventListener('click', (event: Event) => {
+      this._nextElement.addEventListener("click", (event: Event) => {
         event.preventDefault();
-        this._goNext()
+        this._goNext();
       });
     }
 
     if (this._backElement) {
-      this._backElement.addEventListener('click', (event: Event) => {
+      this._backElement.addEventListener("click", (event: Event) => {
         event.preventDefault();
-        this._goBack()
+        this._goBack();
       });
     }
   }
 
   protected _update(): void {
     if (!this._element) return;
-    let state = '';
+    let state = "";
 
     if (this._activeStep === this._getTotalSteps()) {
-      state = 'last';
+      state = "last";
     } else if (this._activeStep === 1) {
-      state = 'first';
+      state = "first";
     } else {
-      state = 'between';
+      state = "between";
     }
 
-    this._element.classList.remove('first');
-    this._element.classList.remove('last');
-    this._element.classList.remove('between');
+    this._element.classList.remove("first");
+    this._element.classList.remove("last");
+    this._element.classList.remove("between");
     this._element.classList.add(state);
 
     this._getItemElements().forEach((element, index) => {
-      const contentElement = KTDom.getElement(element.getAttribute('data-stepper-item'));
+      const contentElement = KTDom.getElement(element.getAttribute("data-stepper-item"));
       if (!contentElement) return;
 
-      element.classList.remove('active');
-      element.classList.remove('completed');
-      element.classList.remove('pending');
+      element.classList.remove("active");
+      element.classList.remove("completed");
+      element.classList.remove("pending");
 
-      const numberElement = element.querySelector('[data-stepper-number]');
+      const numberElement = element.querySelector("[data-stepper-number]");
       if (numberElement) numberElement.innerHTML = String(index + 1);
 
       if (index + 1 == this._activeStep) {
-        element.classList.add('active');
-        contentElement.classList.remove(this._getOption('hiddenClass') as string);
+        element.classList.add("active");
+        contentElement.classList.remove(this._getOption("hiddenClass") as string);
       } else {
-        contentElement.classList.add(this._getOption('hiddenClass') as string);
+        contentElement.classList.add(this._getOption("hiddenClass") as string);
         if (index + 1 < this._activeStep) {
-          element.classList.add('completed');
+          element.classList.add("completed");
         } else {
-          element.classList.add('pending');
+          element.classList.add("pending");
         }
       }
     });
@@ -104,7 +103,7 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
   protected _getItemElements(): Array<HTMLElement> {
     const elements: Array<HTMLElement> = [];
 
-    this._element.querySelectorAll('[data-stepper-item]').forEach((element) => {
+    this._element.querySelectorAll("[data-stepper-item]").forEach((element) => {
       if (KTDom.isVisible(element as HTMLElement)) {
         elements.push(element as HTMLElement);
       }
@@ -117,8 +116,8 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
     if (step === this._activeStep || step > this._getTotalSteps() || step < 0) return;
 
     const payload = { step: step, cancel: false };
-    this._fireEvent('change', payload);
-    this._dispatchEvent('change', payload);
+    this._fireEvent("change", payload);
+    this._dispatchEvent("change", payload);
     if (payload.cancel === true) {
       return;
     }
@@ -126,8 +125,8 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
     this._activeStep = step;
     this._update();
 
-    this._fireEvent('changed');
-    this._dispatchEvent('changed');
+    this._fireEvent("changed");
+    this._dispatchEvent("changed");
   }
 
   protected _goTo(itemElement: HTMLElement): void {
@@ -159,7 +158,7 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
   protected _goNext(): void {
     let step;
 
-    if (this._getTotalSteps() >= (this._activeStep + 1)) {
+    if (this._getTotalSteps() >= this._activeStep + 1) {
       step = this._activeStep + 1;
     } else {
       step = this._getTotalSteps();
@@ -171,7 +170,7 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
   protected _goBack(): void {
     let step;
 
-    if ((this._activeStep - 1) > 1) {
+    if (this._activeStep - 1 > 1) {
       step = this._activeStep - 1;
     } else {
       step = 1;
@@ -251,7 +250,7 @@ export class KTStepper extends KTComponent implements KTStepperInterface {
   }
 
   public static getInstance(element: HTMLElement): KTStepper {
-    return KTData.get(element, 'stepper') as KTStepper;
+    return KTData.get(element, "stepper") as KTStepper;
   }
 
   public static getOrCreateInstance(element: HTMLElement, config?: KTStepperConfigInterface): KTStepper | null {

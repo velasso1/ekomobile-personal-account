@@ -1,24 +1,27 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTEventHandler from '../../helpers/event-handler';
-import KTComponent from '../component';
-import {KTImageInputInterface, KTImageInputConfigInterface} from './types';
+import KTData from "../../helpers/data";
+import KTEventHandler from "../../helpers/event-handler";
+import KTComponent from "../component";
+import { KTImageInputInterface, KTImageInputConfigInterface } from "./types";
 
 export class KTImageInput extends KTComponent implements KTImageInputInterface {
-  protected override _name: string = 'image-input';
+  protected override _name: string = "image-input";
   protected override _defaultConfig: KTImageInputConfigInterface = {
-		hiddenClass: 'hidden'
-	};
+    hiddenClass: "hidden",
+  };
   protected _inputElement: HTMLInputElement;
   protected _hiddenElement: HTMLInputElement;
   protected _removeElement: HTMLElement;
   protected _previewElement: HTMLElement;
-  protected _previewUrl: string = '';
+  protected _previewUrl: string = "";
   protected _lastMode: string;
 
-  constructor(element: HTMLElement, config: KTImageInputConfigInterface = null) {
+  constructor(
+    element: HTMLElement,
+    config: KTImageInputConfigInterface = null
+  ) {
     super();
 
     if (KTData.has(element as HTMLElement, this._name)) return;
@@ -28,33 +31,40 @@ export class KTImageInput extends KTComponent implements KTImageInputInterface {
 
     this._inputElement = this._element.querySelector('input[type="file"]');
     this._hiddenElement = this._element.querySelector('input[type="hidden"]');
-    this._removeElement = this._element.querySelector('[data-image-input-remove]');
-    this._previewElement = this._element.querySelector('.image-input-preview');
+    this._removeElement = this._element.querySelector(
+      "[data-image-input-remove]"
+    );
+    this._previewElement = this._element.querySelector(".image-input-preview");
 
     this._update();
     this._handlers();
   }
 
   protected _handlers(): void {
-    KTEventHandler.on(this._element, '.image-input-placeholder', 'click', (event: Event) => {
-      event.preventDefault();
+    KTEventHandler.on(
+      this._element,
+      ".image-input-placeholder",
+      "click",
+      (event: Event) => {
+        event.preventDefault();
 
-      this._inputElement.click();
-		});
+        this._inputElement.click();
+      }
+    );
 
-    this._inputElement.addEventListener('change', () => {
+    this._inputElement.addEventListener("change", () => {
       this._change();
     });
 
-    this._removeElement.addEventListener('click', () => {
+    this._removeElement.addEventListener("click", () => {
       this._remove();
     });
   }
 
   protected _change(): void {
-    const payload = {cancel: false};
-    this._fireEvent('change', payload);
-    this._dispatchEvent('change', payload);
+    const payload = { cancel: false };
+    this._fireEvent("change", payload);
+    this._dispatchEvent("change", payload);
     if (payload.cancel === true) {
       return;
     }
@@ -63,84 +73,97 @@ export class KTImageInput extends KTComponent implements KTImageInputInterface {
 
     reader.onload = () => {
       this._previewElement.style.backgroundImage = `url(${reader.result})`;
-    }
+    };
 
     reader.readAsDataURL(this._inputElement.files[0]);
     this._inputElement.value = "";
     this._hiddenElement.value = "";
-    this._lastMode = 'new';
+    this._lastMode = "new";
 
-    this._element.classList.add('changed');
-    this._removeElement.classList.remove('hidden');
-    this._element.classList.remove('empty');
+    this._element.classList.add("changed");
+    this._removeElement.classList.remove("hidden");
+    this._element.classList.remove("empty");
 
-    this._fireEvent('changed');
-    this._dispatchEvent('changed');
+    this._fireEvent("changed");
+    this._dispatchEvent("changed");
   }
 
   protected _remove(): void {
-    const payload = {cancel: false};
-    this._fireEvent('remove', payload);
-    this._dispatchEvent('remove', payload);
+    const payload = { cancel: false };
+    this._fireEvent("remove", payload);
+    this._dispatchEvent("remove", payload);
     if (payload.cancel === true) {
       return;
     }
 
-    this._element.classList.remove('empty');
-    this._element.classList.remove('changed');
+    this._element.classList.remove("empty");
+    this._element.classList.remove("changed");
 
-    if (this._lastMode == 'new') {
-      if (this._previewUrl == '') this._removeElement.classList.add(this._getOption('hiddenClass') as string);
+    if (this._lastMode == "new") {
+      if (this._previewUrl == "")
+        this._removeElement.classList.add(
+          this._getOption("hiddenClass") as string
+        );
 
       if (this._previewUrl) {
         this._previewElement.style.backgroundImage = `url(${this._previewUrl})`;
       } else {
-        this._previewElement.style.backgroundImage = 'none';
-        this._element.classList.add('empty');
+        this._previewElement.style.backgroundImage = "none";
+        this._element.classList.add("empty");
       }
 
       this._inputElement.value = "";
       this._hiddenElement.value = "";
 
-      this._lastMode = 'saved';
-    } else if (this._lastMode == 'saved') {
-      if (this._previewUrl == '') this._removeElement.classList.add(this._getOption('hiddenClass') as string);
+      this._lastMode = "saved";
+    } else if (this._lastMode == "saved") {
+      if (this._previewUrl == "")
+        this._removeElement.classList.add(
+          this._getOption("hiddenClass") as string
+        );
 
-      this._previewElement.style.backgroundImage = 'none';
-      this._element.classList.add('empty');
+      this._previewElement.style.backgroundImage = "none";
+      this._element.classList.add("empty");
 
       this._hiddenElement.value = "1";
       this._inputElement.value = "";
 
-      this._lastMode = 'placeholder';
-    } else if (this._lastMode == 'placeholder') {
-      if (this._previewUrl == '') this._removeElement.classList.add(this._getOption('hiddenClass') as string);
+      this._lastMode = "placeholder";
+    } else if (this._lastMode == "placeholder") {
+      if (this._previewUrl == "")
+        this._removeElement.classList.add(
+          this._getOption("hiddenClass") as string
+        );
 
       if (this._previewUrl) {
         this._previewElement.style.backgroundImage = `url(${this._previewUrl})`;
       } else {
-        this._element.classList.add('empty');
+        this._element.classList.add("empty");
       }
 
       this._inputElement.value = "";
       this._hiddenElement.value = "";
 
-      this._lastMode = 'saved';
+      this._lastMode = "saved";
     }
 
-    this._fireEvent('remove');
-    this._dispatchEvent('remove');
+    this._fireEvent("remove");
+    this._dispatchEvent("remove");
   }
 
   protected _update() {
     if (this._previewElement.style.backgroundImage) {
       this._setPreviewUrl(this._previewElement.style.backgroundImage);
-      this._removeElement.classList.remove(this._getOption('hiddenClass') as string);
-      this._lastMode = 'saved';
+      this._removeElement.classList.remove(
+        this._getOption("hiddenClass") as string
+      );
+      this._lastMode = "saved";
     } else {
-      this._removeElement.classList.add(this._getOption('hiddenClass') as string);
-      this._element.classList.add('empty');
-      this._lastMode = 'placeholder';
+      this._removeElement.classList.add(
+        this._getOption("hiddenClass") as string
+      );
+      this._element.classList.add("empty");
+      this._lastMode = "placeholder";
     }
   }
 
@@ -149,7 +172,7 @@ export class KTImageInput extends KTComponent implements KTImageInputInterface {
   }
 
   protected _setPreviewUrl(url: string): void {
-    this._previewUrl = url.replace(/(url\(|\)|")/g, '');
+    this._previewUrl = url.replace(/(url\(|\)|")/g, "");
   }
 
   public isEmpty(): boolean {
@@ -177,10 +200,13 @@ export class KTImageInput extends KTComponent implements KTImageInputInterface {
   }
 
   public static getInstance(element: HTMLElement): KTImageInput {
-    return KTData.get(element, 'image-input') as KTImageInput;
+    return KTData.get(element, "image-input") as KTImageInput;
   }
 
-  public static getOrCreateInstance(element: HTMLElement, config?: KTImageInputConfigInterface): KTImageInput {
+  public static getOrCreateInstance(
+    element: HTMLElement,
+    config?: KTImageInputConfigInterface
+  ): KTImageInput {
     return this.getInstance(element) || new KTImageInput(element, config);
   }
 

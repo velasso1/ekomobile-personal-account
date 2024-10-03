@@ -1,7 +1,7 @@
 export interface KTImageInputConfigInterface {
-	hiddenClass: string;
+  hiddenClass: string;
 }
 
-export interface KTImageInputInterface {		
-	remove(): void;
+export interface KTImageInputInterface {
+  remove(): void;
 }

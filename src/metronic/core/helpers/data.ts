@@ -35,7 +35,7 @@ const KTData = {
     if (valueMap.size === 0) {
       KTElementMap.delete(element);
     }
-  }
+  },
 };
 
 export default KTData;

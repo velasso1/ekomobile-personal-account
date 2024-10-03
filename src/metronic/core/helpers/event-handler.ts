@@ -1,5 +1,5 @@
-import { KTCallableType } from '../types';
-import KTUtils from './utils';
+import { KTCallableType } from "../types";
+import KTUtils from "./utils";
 
 export interface KTDelegatedEventHandlersInterface {
   [key: string]: KTCallableType;
@@ -8,20 +8,27 @@ export interface KTDelegatedEventHandlersInterface {
 const KTDelegatedEventHandlers: KTDelegatedEventHandlersInterface = {};
 
 const KTEventHandler = {
-  on: function(element: HTMLElement, selector: string, eventName: string, handler: KTCallableType): string {
-    if ( element === null ) {
+  on: function (
+    element: HTMLElement,
+    selector: string,
+    eventName: string,
+    handler: KTCallableType
+  ): string {
+    if (element === null) {
       return null;
     }
 
-    const eventId = KTUtils.geUID('event');
+    const eventId = KTUtils.geUID("event");
 
-    KTDelegatedEventHandlers[eventId] = (event: Event & {target: HTMLElement}) => {
+    KTDelegatedEventHandlers[eventId] = (
+      event: Event & { target: HTMLElement }
+    ) => {
       const targets = element.querySelectorAll(selector);
       let target = event.target;
 
       while (target && target !== element) {
-        for (let i = 0, j = targets.length; i < j; i++ ) {
-          if (target === targets[i] ) {
+        for (let i = 0, j = targets.length; i < j; i++) {
+          if (target === targets[i]) {
             handler.call(this, event, target);
           }
         }
@@ -43,7 +50,7 @@ const KTEventHandler = {
     element.removeEventListener(eventName, KTDelegatedEventHandlers[eventId]);
 
     delete KTDelegatedEventHandlers[eventId];
-  }
+  },
 };
 
 export default KTEventHandler;

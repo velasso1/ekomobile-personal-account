@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTEventHandler from '../../helpers/event-handler';
-import KTComponent from '../component';
-import { KTModalInterface, KTModalConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTEventHandler from "../../helpers/event-handler";
+import KTComponent from "../component";
+import { KTModalInterface, KTModalConfigInterface } from "./types";
 
 declare global {
   interface Window {
@@ -16,17 +16,18 @@ declare global {
 window.KT_MODAL_INITIALIZED = false;
 
 export class KTModal extends KTComponent implements KTModalInterface {
-  protected override _name: string = 'modal';
+  protected override _name: string = "modal";
   protected override _defaultConfig: KTModalConfigInterface = {
-    zindex: '90',
+    zindex: "90",
     backdrop: true,
-    backdropClass: 'transition-all duration-300 fixed inset-0 bg-gray-900 opacity-25',
+    backdropClass:
+      "transition-all duration-300 fixed inset-0 bg-gray-900 opacity-25",
     backdropStatic: false,
     keyboard: true,
     disableScroll: true,
     persistent: false,
     focus: true,
-    hiddenClass: 'hidden'
+    hiddenClass: "hidden",
   };
   protected override _config: KTModalConfigInterface = this._defaultConfig;
   protected _isOpen: boolean = false;
@@ -45,10 +46,10 @@ export class KTModal extends KTComponent implements KTModalInterface {
   }
 
   protected _handlers() {
-    this._element.addEventListener('click', (event: Event) => {
-      if (this._element !== event.target ) return;
+    this._element.addEventListener("click", (event: Event) => {
+      if (this._element !== event.target) return;
 
-      if (this._getOption('backdropStatic') === false) {
+      if (this._getOption("backdropStatic") === false) {
         this._hide();
       }
     });
@@ -56,8 +57,8 @@ export class KTModal extends KTComponent implements KTModalInterface {
 
   protected _toggle(targetElement?: HTMLElement): void {
     const payload = { cancel: false };
-    this._fireEvent('toggle', payload);
-    this._dispatchEvent('toggle', payload);
+    this._fireEvent("toggle", payload);
+    this._dispatchEvent("toggle", payload);
     if (payload.cancel === true) {
       return;
     }
@@ -82,44 +83,43 @@ export class KTModal extends KTComponent implements KTModalInterface {
     if (targetElement) this._targetElement = targetElement;
 
     const payload = { cancel: false };
-    this._fireEvent('show', payload);
-    this._dispatchEvent('show', payload);
+    this._fireEvent("show", payload);
+    this._dispatchEvent("show", payload);
     if (payload.cancel === true) {
       return;
-    }    
+    }
 
     KTModal.hide();
 
     if (!this._element) return;
     this._isTransitioning = true;
-    this._element.setAttribute('role', 'dialog');
-    this._element.setAttribute('aria-modal', 'true');
-    this._element.setAttribute('tabindex', '-1');
+    this._element.setAttribute("role", "dialog");
+    this._element.setAttribute("aria-modal", "true");
+    this._element.setAttribute("tabindex", "-1");
 
     this._setZindex();
-    if (this._getOption('backdrop') === true) this._createBackdrop();    
+    if (this._getOption("backdrop") === true) this._createBackdrop();
 
-    if (this._getOption('disableScroll')) {
-      document.body.style.overflow = 'hidden';
+    if (this._getOption("disableScroll")) {
+      document.body.style.overflow = "hidden";
     }
 
-    this._element.style.display = 'block';
+    this._element.style.display = "block";
     KTDom.reflow(this._element);
-    this._element.classList.add('open');
-    this._element.classList.remove(this._getOption('hiddenClass') as string);
+    this._element.classList.add("open");
+    this._element.classList.remove(this._getOption("hiddenClass") as string);
 
-    
     KTDom.transitionEnd(this._element, () => {
       this._isTransitioning = false;
       this._isOpen = true;
 
-      if (this._getOption('focus') === true) {
+      if (this._getOption("focus") === true) {
         this._autoFocus();
       }
 
-      this._fireEvent('shown');
-      this._dispatchEvent('shown');
-    });  
+      this._fireEvent("shown");
+      this._dispatchEvent("shown");
+    });
   }
 
   protected _hide(): void {
@@ -129,24 +129,24 @@ export class KTModal extends KTComponent implements KTModalInterface {
     }
 
     const payload = { cancel: false };
-    this._fireEvent('hide', payload);
-    this._dispatchEvent('hide', payload);
+    this._fireEvent("hide", payload);
+    this._dispatchEvent("hide", payload);
     if (payload.cancel === true) {
       return;
     }
 
     this._isTransitioning = true;
-    this._element.removeAttribute('role');
-    this._element.removeAttribute('aria-modal');
-    this._element.removeAttribute('tabindex');
-    if (this._getOption('disableScroll')) {
-      document.body.style.overflow = '';
+    this._element.removeAttribute("role");
+    this._element.removeAttribute("aria-modal");
+    this._element.removeAttribute("tabindex");
+    if (this._getOption("disableScroll")) {
+      document.body.style.overflow = "";
     }
 
     KTDom.reflow(this._element);
-    this._element.classList.remove('open');
+    this._element.classList.remove("open");
 
-    if (this._getOption('backdrop') === true) {
+    if (this._getOption("backdrop") === true) {
       this._deleteBackdrop();
     }
 
@@ -155,23 +155,23 @@ export class KTModal extends KTComponent implements KTModalInterface {
 
       this._isTransitioning = false;
       this._isOpen = false;
-      this._element.style.display = '';
-      this._element.classList.add(this._getOption('hiddenClass') as string);
+      this._element.style.display = "";
+      this._element.classList.add(this._getOption("hiddenClass") as string);
 
-      this._fireEvent('hidden');
-      this._dispatchEvent('hidden');
+      this._fireEvent("hidden");
+      this._dispatchEvent("hidden");
     });
   }
 
   protected _setZindex(): void {
-    let zindex: number = parseInt(this._getOption('zindex') as string);
-    
-    if (parseInt(KTDom.getCssProp(this._element, 'z-index')) > zindex) {
-      zindex = parseInt(KTDom.getCssProp(this._element, 'z-index'));
+    let zindex: number = parseInt(this._getOption("zindex") as string);
+
+    if (parseInt(KTDom.getCssProp(this._element, "z-index")) > zindex) {
+      zindex = parseInt(KTDom.getCssProp(this._element, "z-index"));
     }
-    
+
     if (KTDom.getHighestZindex(this._element) > zindex) {
-      zindex =KTDom.getHighestZindex(this._element) + 1;
+      zindex = KTDom.getHighestZindex(this._element) + 1;
     }
 
     this._element.style.zIndex = String(zindex);
@@ -179,19 +179,25 @@ export class KTModal extends KTComponent implements KTModalInterface {
 
   protected _autoFocus(): void {
     if (!this._element) return;
-    const input: HTMLInputElement | null = this._element.querySelector('[data-modal-input-focus]');
-    if (!input) return; else input.focus();
+    const input: HTMLInputElement | null = this._element.querySelector(
+      "[data-modal-input-focus]"
+    );
+    if (!input) return;
+    else input.focus();
   }
 
   protected _createBackdrop(): void {
     if (!this._element) return;
-    const zindex: number = parseInt(KTDom.getCssProp(this._element, 'z-index'));
-    this._backdropElement = document.createElement('DIV');
+    const zindex: number = parseInt(KTDom.getCssProp(this._element, "z-index"));
+    this._backdropElement = document.createElement("DIV");
     this._backdropElement.style.zIndex = (zindex - 1).toString();
-    this._backdropElement.classList.add('modal-backdrop');
+    this._backdropElement.classList.add("modal-backdrop");
     document.body.append(this._backdropElement);
     KTDom.reflow(this._backdropElement);
-    KTDom.addClass(this._backdropElement, this._getOption('backdropClass') as string);    
+    KTDom.addClass(
+      this._backdropElement,
+      this._getOption("backdropClass") as string
+    );
   }
 
   protected _deleteBackdrop(): void {
@@ -227,15 +233,18 @@ export class KTModal extends KTComponent implements KTModalInterface {
   }
 
   public static getInstance(element: HTMLElement): KTModal {
-    return KTData.get(element, 'modal') as KTModal;
+    return KTData.get(element, "modal") as KTModal;
   }
 
-  public static getOrCreateInstance(element: HTMLElement, config?: KTModalConfigInterface): KTModal {
+  public static getOrCreateInstance(
+    element: HTMLElement,
+    config?: KTModalConfigInterface
+  ): KTModal {
     return this.getInstance(element) || new KTModal(element, config);
   }
 
   public static hide(): void {
-    const elements = document.querySelectorAll('[data-modal]');
+    const elements = document.querySelectorAll("[data-modal]");
 
     elements.forEach((element) => {
       const modal = KTModal.getInstance(element as HTMLElement);
@@ -247,69 +256,84 @@ export class KTModal extends KTComponent implements KTModalInterface {
   }
 
   public static handleToggle(): void {
-    KTEventHandler.on(document.body, '[data-modal-toggle]', 'click', (event: Event, target: HTMLElement) => {
-      event.stopPropagation();
+    KTEventHandler.on(
+      document.body,
+      "[data-modal-toggle]",
+      "click",
+      (event: Event, target: HTMLElement) => {
+        event.stopPropagation();
 
-      const selector = target.getAttribute("data-modal-toggle");
-      if (!selector) return;
+        const selector = target.getAttribute("data-modal-toggle");
+        if (!selector) return;
 
-      const modalElement = document.querySelector(selector);
-      const modal = KTModal.getInstance(modalElement as HTMLElement);
-      if (modal) {
-        modal.toggle(target);
+        const modalElement = document.querySelector(selector);
+        const modal = KTModal.getInstance(modalElement as HTMLElement);
+        if (modal) {
+          modal.toggle(target);
+        }
       }
-    });
+    );
   }
 
   public static handleDismiss(): void {
-    KTEventHandler.on(document.body, '[data-modal-dismiss]', 'click', (event: Event, target: HTMLElement) => {
-      event.stopPropagation();
+    KTEventHandler.on(
+      document.body,
+      "[data-modal-dismiss]",
+      "click",
+      (event: Event, target: HTMLElement) => {
+        event.stopPropagation();
 
-      const modalElement = target.closest('[data-modal]') as HTMLElement;
-      if (modalElement) {
-        const modal = KTModal.getInstance(modalElement);
-        if (modal) {
-          modal.hide();
+        const modalElement = target.closest("[data-modal]") as HTMLElement;
+        if (modalElement) {
+          const modal = KTModal.getInstance(modalElement);
+          if (modal) {
+            modal.hide();
+          }
         }
-      }      
-    });
+      }
+    );
   }
 
   public static handleClickAway() {
-    document.addEventListener('click', (event: Event) => {
-      const modalElement = document.querySelector('.open[data-modal]');
+    document.addEventListener("click", (event: Event) => {
+      const modalElement = document.querySelector(".open[data-modal]");
       if (!modalElement) return;
 
       const modal = KTModal.getInstance(modalElement as HTMLElement);
       if (!modal) return;
 
-      if (modal.getOption('persistent')) return;
+      if (modal.getOption("persistent")) return;
 
-      if (modal.getOption('backdrop')) return;
+      if (modal.getOption("backdrop")) return;
 
-      if (modalElement !== event.target &&
+      if (
+        modalElement !== event.target &&
         modal.getTargetElement() !== event.target &&
-        modalElement.contains(event.target as HTMLElement) === false) {
+        modalElement.contains(event.target as HTMLElement) === false
+      ) {
         modal.hide();
       }
     });
   }
 
   public static handleKeyword() {
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      const modalElement = document.querySelector('.open[data-modal]');
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      const modalElement = document.querySelector(".open[data-modal]");
       const modal = KTModal.getInstance(modalElement as HTMLElement);
       if (!modal) {
         return;
       }
 
       // if esc key was not pressed in combination with ctrl or alt or shift
-      if (event.key === 'Escape' && !(event.ctrlKey || event.altKey || event.shiftKey)) {
+      if (
+        event.key === "Escape" &&
+        !(event.ctrlKey || event.altKey || event.shiftKey)
+      ) {
         modal.hide();
       }
 
-      if (event.code === 'Tab' && !event.metaKey) {
-       return;
+      if (event.code === "Tab" && !event.metaKey) {
+        return;
       }
     });
   }
@@ -329,7 +353,7 @@ export class KTModal extends KTComponent implements KTModalInterface {
       KTModal.handleToggle();
       KTModal.handleDismiss();
       KTModal.handleClickAway();
-      KTModal.handleKeyword();      
+      KTModal.handleKeyword();
       window.KT_MODAL_INITIALIZED = true;
     }
   }

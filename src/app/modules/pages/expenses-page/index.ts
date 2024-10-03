@@ -1,2 +1,2 @@
-import ExpensesPage from './expenses-page';
+import ExpensesPage from "./expenses-page";
 export { ExpensesPage };

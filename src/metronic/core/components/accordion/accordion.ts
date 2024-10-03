@@ -1,15 +1,15 @@
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTEventHandler from '../../helpers/event-handler';
-import KTComponent from '../component';
-import { KTAccordionInterface, KTAccordionConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTEventHandler from "../../helpers/event-handler";
+import KTComponent from "../component";
+import { KTAccordionInterface, KTAccordionConfigInterface } from "./types";
 
 export class KTAccordion extends KTComponent implements KTAccordionInterface {
-  protected override _name: string = 'accordion';
+  protected override _name: string = "accordion";
   protected override _defaultConfig: KTAccordionConfigInterface = {
-    hiddenClass: 'hidden',
-    activeClass: 'active',
-    expandAll: false
+    hiddenClass: "hidden",
+    activeClass: "active",
+    expandAll: false,
   };
   protected override _config: KTAccordionConfigInterface = this._defaultConfig;
   protected _accordionElements: NodeListOf<HTMLElement>;
@@ -25,9 +25,9 @@ export class KTAccordion extends KTComponent implements KTAccordionInterface {
   }
 
   protected _handlers(): void {
-    KTEventHandler.on(this._element, '[data-accordion-toggle]', 'click', (event: Event, target: HTMLElement) => {
+    KTEventHandler.on(this._element, "[data-accordion-toggle]", "click", (event: Event, target: HTMLElement) => {
       event.preventDefault();
-      const accordionElement = target.closest('[data-accordion-item]') as HTMLElement;
+      const accordionElement = target.closest("[data-accordion-item]") as HTMLElement;
 
       if (accordionElement) this._toggle(accordionElement);
     });
@@ -35,13 +35,13 @@ export class KTAccordion extends KTComponent implements KTAccordionInterface {
 
   protected _toggle(accordionElement: HTMLElement): void {
     const payload = { cancel: false };
-    this._fireEvent('toggle', payload);
-    this._dispatchEvent('toggle', payload);
+    this._fireEvent("toggle", payload);
+    this._dispatchEvent("toggle", payload);
     if (payload.cancel === true) {
       return;
     }
 
-    if (accordionElement.classList.contains('active')) {
+    if (accordionElement.classList.contains("active")) {
       this._hide(accordionElement);
     } else {
       this._show(accordionElement);
@@ -49,73 +49,81 @@ export class KTAccordion extends KTComponent implements KTAccordionInterface {
   }
 
   protected _show(accordionElement: HTMLElement): void {
-    if (accordionElement.hasAttribute('animating') || accordionElement.classList.contains(this._getOption('activeClass') as string)) return;
+    if (
+      accordionElement.hasAttribute("animating") ||
+      accordionElement.classList.contains(this._getOption("activeClass") as string)
+    )
+      return;
 
-    const toggleElement = KTDom.child(accordionElement, '[data-accordion-toggle]');
+    const toggleElement = KTDom.child(accordionElement, "[data-accordion-toggle]");
     if (!toggleElement) return;
 
-    const contentElement = KTDom.getElement(toggleElement.getAttribute('data-accordion-toggle'));
+    const contentElement = KTDom.getElement(toggleElement.getAttribute("data-accordion-toggle"));
     if (!contentElement) return;
 
     const payload = { cancel: false };
-    this._fireEvent('show', payload);
-    this._dispatchEvent('show', payload);
+    this._fireEvent("show", payload);
+    this._dispatchEvent("show", payload);
     if (payload.cancel === true) {
       return;
     }
 
-    if (this._getOption('expandAll') as boolean === false) {
+    if ((this._getOption("expandAll") as boolean) === false) {
       this._hideSiblings(accordionElement);
     }
 
-    accordionElement.setAttribute('aria-expanded', 'true');
-    accordionElement.classList.add(this._getOption('activeClass') as string);
+    accordionElement.setAttribute("aria-expanded", "true");
+    accordionElement.classList.add(this._getOption("activeClass") as string);
 
-    accordionElement.setAttribute('animating', 'true');
-    contentElement.classList.remove(this._getOption('hiddenClass') as string);
+    accordionElement.setAttribute("animating", "true");
+    contentElement.classList.remove(this._getOption("hiddenClass") as string);
     contentElement.style.height = `0px`;
     KTDom.reflow(contentElement);
     contentElement.style.height = `${contentElement.scrollHeight}px`;
 
     KTDom.transitionEnd(contentElement, () => {
-      accordionElement.removeAttribute('animating');
-      contentElement.style.height = ''
+      accordionElement.removeAttribute("animating");
+      contentElement.style.height = "";
 
-      this._fireEvent('shown');
-      this._dispatchEvent('shown');
+      this._fireEvent("shown");
+      this._dispatchEvent("shown");
     });
   }
 
   protected _hide(accordionElement: HTMLElement): void {
-    if (accordionElement.hasAttribute('animating') || !accordionElement.classList.contains(this._getOption('activeClass') as string)) return;
+    if (
+      accordionElement.hasAttribute("animating") ||
+      !accordionElement.classList.contains(this._getOption("activeClass") as string)
+    )
+      return;
 
-    const toggleElement = KTDom.child(accordionElement, '[data-accordion-toggle]');
+    const toggleElement = KTDom.child(accordionElement, "[data-accordion-toggle]");
     if (!toggleElement) return;
 
-    const contentElement = KTDom.getElement(toggleElement.getAttribute('data-accordion-toggle'));
+    const contentElement = KTDom.getElement(toggleElement.getAttribute("data-accordion-toggle"));
     if (!contentElement) return;
 
     const payload = { cancel: false };
-    this._fireEvent('hide', payload);
-    this._dispatchEvent('hide', payload);
+    this._fireEvent("hide", payload);
+    this._dispatchEvent("hide", payload);
     if (payload.cancel === true) {
       return;
     }
 
-    accordionElement.setAttribute('aria-expanded', 'false');    
+    accordionElement.setAttribute("aria-expanded", "false");
 
     contentElement.style.height = `${contentElement.scrollHeight}px`;
     KTDom.reflow(contentElement);
-    contentElement.style.height = '0px';
-    accordionElement.setAttribute('animating', 'true');
+    contentElement.style.height = "0px";
+    accordionElement.setAttribute("animating", "true");
 
     KTDom.transitionEnd(contentElement, () => {
-      accordionElement.removeAttribute('animating');
-      accordionElement.classList.remove(this._getOption('activeClass') as string);
-      contentElement.classList.add(this._getOption('hiddenClass') as string);
+      accordionElement.removeAttribute("animating");
+      accordionElement.classList.remove(this._getOption("activeClass") as string);
+      contentElement.classList.add(this._getOption("hiddenClass") as string);
 
-      this._fireEvent('hidden');
-      this._dispatchEvent('hidden');
+      this._fireEvent("hidden");
+      this._dispatchEvent("hidden");
     });
   }
 
@@ -140,7 +148,7 @@ export class KTAccordion extends KTComponent implements KTAccordionInterface {
   }
 
   public static getInstance(element: HTMLElement): KTAccordion {
-    return KTData.get(element, 'accordion') as KTAccordion;
+    return KTData.get(element, "accordion") as KTAccordion;
   }
 
   public static getOrCreateInstance(element: HTMLElement, config?: KTAccordionConfigInterface): KTAccordion {

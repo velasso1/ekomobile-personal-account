@@ -1,5 +1,5 @@
-import { utils } from '../core/index.js';
-import { Framework } from '../plugin-framework/index.js';
+import { utils } from "../core/index.js";
+import { Framework } from "../plugin-framework/index.js";
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -17,19 +17,31 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
+var extendStatics = function (d, b) {
+  extendStatics =
+    Object.setPrototypeOf ||
+    ({ __proto__: [] } instanceof Array &&
+      function (d, b) {
+        d.__proto__ = b;
+      }) ||
+    function (d, b) {
+      for (var p in b)
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    };
+  return extendStatics(d, b);
 };
 
 function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError(
+      "Class extends value " + String(b) + " is not a constructor or null"
+    );
+  extendStatics(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  d.prototype =
+    b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
 }
 
 /**
@@ -40,29 +52,38 @@ function __extends(d, b) {
 var classSet = utils.classSet;
 // Support mini.css framework (https://minicss.org)
 var Mini = /** @class */ (function (_super) {
-    __extends(Mini, _super);
-    function Mini(opts) {
-        return _super.call(this, Object.assign({}, {
-            formClass: 'fv-plugins-mini',
-            messageClass: 'fv-help-block',
-            rowInvalidClass: 'fv-invalid-row',
+  __extends(Mini, _super);
+  function Mini(opts) {
+    return (
+      _super.call(
+        this,
+        Object.assign(
+          {},
+          {
+            formClass: "fv-plugins-mini",
+            messageClass: "fv-help-block",
+            rowInvalidClass: "fv-invalid-row",
             rowPattern: /^(.*)col-(sm|md|lg|xl)(-offset)*-[0-9]+(.*)$/,
-            rowSelector: '.row',
-            rowValidClass: 'fv-valid-row',
-        }, opts)) || this;
+            rowSelector: ".row",
+            rowValidClass: "fv-valid-row",
+          },
+          opts
+        )
+      ) || this
+    );
+  }
+  Mini.prototype.onIconPlaced = function (e) {
+    var type = e.element.getAttribute("type");
+    var parent = e.element.parentElement;
+    if ("checkbox" === type || "radio" === type) {
+      // Place it after the container of checkbox/radio
+      parent.parentElement.insertBefore(e.iconElement, parent.nextSibling);
+      classSet(e.iconElement, {
+        "fv-plugins-icon-check": true,
+      });
     }
-    Mini.prototype.onIconPlaced = function (e) {
-        var type = e.element.getAttribute('type');
-        var parent = e.element.parentElement;
-        if ('checkbox' === type || 'radio' === type) {
-            // Place it after the container of checkbox/radio
-            parent.parentElement.insertBefore(e.iconElement, parent.nextSibling);
-            classSet(e.iconElement, {
-                'fv-plugins-icon-check': true,
-            });
-        }
-    };
-    return Mini;
-}(Framework));
+  };
+  return Mini;
+})(Framework);
 
 export { Mini };

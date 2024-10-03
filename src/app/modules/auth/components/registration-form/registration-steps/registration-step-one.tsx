@@ -1,14 +1,16 @@
-import { FC, useState } from 'react';
-import { IRegistrationStepsProps } from './registration-skelet';
+import { FC, useState } from "react";
+import { IRegistrationStepsProps } from "./registration-skelet";
 
-import NumberField from '../../../../ui/fields/number-field';
-import SuccessIcon from '../../../../../utils/icons/success-icon';
+import NumberField from "../../../../ui/fields/number-field";
+import { Button } from "../../../../ui/button";
 
-const RegistrationStepOne: FC<IRegistrationStepsProps> = ({
-  step,
-  setStep,
-}) => {
-  const [userPhone, setUserPhone] = useState<string>('');
+import SuccessIcon from "../../../../../utils/icons/success-icon";
+// import { defaultStyles } from "../../../../../utils/default-styles";
+
+const RegistrationStepOne: FC<IRegistrationStepsProps> = ({ step, setStep }) => {
+  const [userPhone, setUserPhone] = useState<string>("");
+
+  // const { bgColor } = defaultStyles;
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -23,16 +25,15 @@ const RegistrationStepOne: FC<IRegistrationStepsProps> = ({
             Icon={SuccessIcon}
           />
         </div>
-        <div className="flex w-[290px] flex-col justify-center">
-          <button
-            className="btn mt-[20px] justify-center bg-[#005DA6] text-center font-sans font-medium text-[#F6F8F8]"
-            onClick={(e) => {
+        <div className="mt-[20px] flex w-[290px] flex-col justify-center">
+          <Button
+            buttonType="default"
+            title="Продолжить"
+            onClickCb={(e) => {
               e.preventDefault();
               setStep(step + 1);
             }}
-          >
-            Продолжить
-          </button>
+          />
         </div>
       </form>
     </div>

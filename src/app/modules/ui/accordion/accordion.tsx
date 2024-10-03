@@ -1,7 +1,8 @@
-import { FC } from 'react';
-import config from '../../../../../auxuliary.json';
+import { FC, useState } from "react";
+import config from "../../../../../auxuliary.json";
 
-import ModalServices from '../modals/modal-services';
+import ModalServices from "../modals/modal-services";
+import { defaultStyles } from "../../../utils/default-styles";
 
 interface IAccordionProps {
   accordionNumber: number;
@@ -9,17 +10,12 @@ interface IAccordionProps {
   connect?: boolean;
 }
 
-const Accordion: FC<IAccordionProps> = ({
-  accordionNumber,
-  accordionTitle,
-  connect,
-}) => {
+const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, connect }) => {
+  const [accordionOpen, setAccOpen] = useState<boolean>(false);
+  const { textSize, textColor } = defaultStyles;
   return (
     <>
-      <div
-        className="my-[20px] flex flex-col gap-5 pr-[45px]"
-        data-accordion="true"
-      >
+      <div className="my-[20px] flex flex-col gap-5 pr-[45px] xs:w-[283px] md:w-auto" data-accordion="true">
         <div
           className="accordion-item rounded-xl border bg-[#fff]"
           data-accordion-item="true"
@@ -28,20 +24,23 @@ const Accordion: FC<IAccordionProps> = ({
           <button
             className="accordion-toggle p-4"
             data-accordion-toggle={`#accordion_4_content_${accordionNumber}`}
+            onClick={(e) => {
+              e.preventDefault();
+              setAccOpen((prev) => !prev);
+            }}
           >
-            <span className="text-[16px] text-base font-semibold">
-              {accordionTitle}{' '}
-              <span className="font-semibold text-[#78829D]">4</span>
-            </span>
+            <p className={`text-base font-semibold sm:${textSize.default} md:text-[16px]`}>
+              {accordionTitle}
+              <span className={`ml-[5px] font-semibold ${textColor.grey}`}>4</span>
+            </p>
             <i className="ki-outline ki-plus block text-2sm text-gray-600 accordion-active:hidden"></i>
             <i className="ki-outline ki-minus hidden text-2sm text-gray-600 accordion-active:block"></i>
           </button>
           <div
-            className="accordion-content hidden border-t"
+            className={`accordion-content ${accordionOpen ? "active" : "hidden"} border-t xs:overflow-scroll lg:overflow-auto`}
             id={`accordion_4_content_${accordionNumber}`}
           >
             <div className="p-4 text-md text-gray-700">
-              {/* <TableServices tableItem={config.servTableInfo} /> */}
               <div className="card-table pb-[20px]">
                 <table className="table flex align-middle text-sm font-medium text-gray-700">
                   <thead>
@@ -55,40 +54,29 @@ const Accordion: FC<IAccordionProps> = ({
                       <th className="">Действия</th>
                     </tr>
                   </thead>
-                  <tbody className="text-[#78829D]">
-                    {config.servTableInfo.map((item, index) => {
+                  <tbody className={`${textColor.grey}`}>
+                    {config.servTableInfo.map((item) => {
                       return (
-                        <tr key={index}>
-                          <td className="text-[14px] font-semibold text-[#071437]">
-                            {item.name}
-                          </td>
+                        <tr key={item.id}>
+                          <td className={`text-[14px] font-semibold ${textColor.darkBlue}`}>{item.name}</td>
                           <td>{item.description}</td>
                           <td>{item.date} ₽</td>
 
                           <td>{item.price}</td>
                           <td>
-                            {item.typePrice}{' '}
-                            <i
-                              className="ki-outline ki-information-2 cursor-pointer"
-                              data-modal-toggle="#modal_1"
-                            ></i>
+                            {item.typePrice}
+                            <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
                           </td>
                           <td>
                             <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
                           </td>
                           <td>
                             {item.actions ? (
-                              <span className="">
-                                Для уточнения обратитесь в поддержку
-                              </span>
+                              <span className="">Для уточнения обратитесь в поддержку</span>
                             ) : !connect ? (
-                              <span className="badge badge-danger">
-                                Отключить
-                              </span>
+                              <span className="badge badge-danger hover:cursor-pointer">Отключить</span>
                             ) : (
-                              <span className="badge badge-primary">
-                                Подключить
-                              </span>
+                              <span className="badge badge-primary">Подключить</span>
                             )}
                           </td>
                         </tr>

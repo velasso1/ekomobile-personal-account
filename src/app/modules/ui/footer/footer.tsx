@@ -1,36 +1,38 @@
-import { FC } from 'react';
-import { Link } from 'react-router-dom';
+import { FC } from "react";
+import { Link } from "react-router-dom";
+
+import { defaultStyles } from "../../../utils/default-styles";
 
 const Footer: FC = () => {
   const year = new Date().getFullYear();
+  const { textSize, textColor } = defaultStyles;
 
   return (
-    <footer className="footer flex h-full w-full justify-start bg-[#fff] px-[45px] text-[12px] text-[#78829D]">
-      <div className="authorship">
-        {year} ©{' '}
-        <Link className="text-[#005DA6]" to="https://ekomobile.ru/">
+    <footer
+      className={`footer flex justify-start bg-[#fff] px-[45px] ${textSize.default} ${textColor.grey} pt-[20px] xs:flex-col md:flex-row`}
+    >
+      <div className={`authorship`}>
+        {year} ©
+        <Link className={`ml-[5px] ${textColor.primary}`} to="https://ekomobile.ru/">
           EkoMobile
         </Link>
       </div>
-      <div className="contact-info pl-[20vw]">
-        <span className="contact-title">E-mail:</span>{' '}
-        <a
-          className="contact-email text-[#005DA6]"
-          href="mailto=info@ekomobile.ru"
-        >
+      <div className={`contact-info md:pl-[20vw]`}>
+        <span className="contact-title">E-mail:</span>
+        <a className={`contact-email ml-[5px] ${textColor.primary}`} href="mailto=info@ekomobile.ru ">
           info@ekomobile.ru
         </a>
       </div>
-      <div className="contact-numbers pl-[20vw]">
-        <a className="text-[#005DA6]" href="tel:+74950110522">
+      <div className={`contact-numbers sm:pl-[10vw] md:pl-[20vw]`}>
+        <a className={`${textColor.primary}`} href="tel:+74950110522">
           +7 (495) 011-05-22
         </a>
-        <span className="px-[5px]">или</span>
-        <a className="text-[#005DA6]" href="tel:0522">
+        <span className="">&nbsp;или&nbsp;</span>
+        <a className={`${textColor.primary}`} href="tel:0522">
           0522
         </a>
         <span className="px-[5px]">(с мобильного)</span>
-        <a className="mt-[5px] block text-[#005DA6]" href="tel:+78007770522">
+        <a className={`mt-[5px] block`} href="tel:+78007770522">
           +7 (800) 777-05-22
         </a>
       </div>

@@ -1,2 +1,2 @@
-import ServicesPage from './services-page';
+import ServicesPage from "./services-page";
 export { ServicesPage };

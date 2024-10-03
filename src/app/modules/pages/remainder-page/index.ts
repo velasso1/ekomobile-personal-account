@@ -1,2 +1,2 @@
-import RemainderPage from './remainder-page';
+import RemainderPage from "./remainder-page";
 export { RemainderPage };

@@ -1,8 +1,8 @@
 export interface KTStepperConfigInterface {
-	hiddenClass: string,
-	activeStep: number
+  hiddenClass: string;
+  activeStep: number;
 }
 
-export interface KTStepperInterface {		
-	go(step: number): void;
+export interface KTStepperInterface {
+  go(step: number): void;
 }

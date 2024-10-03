@@ -1,2 +1,2 @@
-import BalancePage from './balance-page';
+import BalancePage from "./balance-page";
 export { BalancePage };

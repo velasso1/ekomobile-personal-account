@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC } from "react";
 
 interface INumberFieldProps {
   id: string;
@@ -10,22 +10,11 @@ interface INumberFieldProps {
   addStyle?: string;
 }
 
-const NumberField: FC<INumberFieldProps> = ({
-  id,
-  placeholder,
-  label,
-  onChangeCb,
-  value,
-  Icon,
-  addStyle,
-}) => {
+const NumberField: FC<INumberFieldProps> = ({ id, placeholder, label, onChangeCb, value, Icon, addStyle }) => {
   return (
     <>
-      <label
-        className="mb-[5px] block text-left text-sm font-medium dark:text-white"
-        htmlFor={id}
-      >
-        {typeof label === 'string' ? label : null}
+      <label className="mb-[5px] block text-left text-sm font-medium dark:text-white" htmlFor={id}>
+        {typeof label === "string" ? label : null}
       </label>
       {Icon ? (
         <div className="input">

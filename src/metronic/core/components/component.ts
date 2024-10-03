@@ -8,11 +8,11 @@ declare global {
   }
 }
 
-import KTData from '../helpers/data';
-import KTDom from '../helpers/dom';
-import KTUtils from '../helpers/utils';
-import KTGlobalComponentsConfig from './config';
-import {KTBreakpointType, KTOptionType} from '../types';
+import KTData from "../helpers/data";
+import KTDom from "../helpers/dom";
+import KTUtils from "../helpers/utils";
+import KTGlobalComponentsConfig from "./config";
+import { KTBreakpointType, KTOptionType } from "../types";
 
 export default class KTComponent {
   protected _name: string;
@@ -57,7 +57,7 @@ export default class KTComponent {
   protected _getOption(name: string): KTOptionType {
     const value = this._config[name as keyof object];
 
-    if (value && (typeof value) === 'string') {
+    if (value && typeof value === "string") {
       return this._getResponsiveOption(value);
     } else {
       return value;
@@ -67,12 +67,12 @@ export default class KTComponent {
   protected _getResponsiveOption(value: string): KTOptionType {
     let result = null;
     const width = KTDom.getViewPort().width;
-    const parts = String(value).split('|');
+    const parts = String(value).split("|");
 
     if (parts.length > 1) {
       parts.every((part) => {
-        if (part.includes(':')) {
-          const [breakpointKey, breakpointValue] = part.split(':');
+        if (part.includes(":")) {
+          const [breakpointKey, breakpointValue] = part.split(":");
           const breakpoint = KTUtils.getBreakpoint(breakpointKey as KTBreakpointType);
 
           if (breakpoint <= width) {

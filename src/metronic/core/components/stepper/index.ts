@@ -1,2 +1,2 @@
-export { KTStepper } from './stepper';
-export type { KTStepperConfigInterface, KTStepperInterface } from './types';
+export { KTStepper } from "./stepper";
+export type { KTStepperConfigInterface, KTStepperInterface } from "./types";

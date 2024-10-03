@@ -1,2 +1,2 @@
-import NumbersPage from './numbers-page';
+import NumbersPage from "./numbers-page";
 export { NumbersPage };

@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 /**
  * FormValidation (https://formvalidation.io)
@@ -10,11 +10,11 @@
  * It can be used when we want to show the custom message returned from server
  */
 function blank() {
-    return {
-        validate: function (_input) {
-            return { valid: true };
-        },
-    };
+  return {
+    validate: function (_input) {
+      return { valid: true };
+    },
+  };
 }
 
 exports.blank = blank;

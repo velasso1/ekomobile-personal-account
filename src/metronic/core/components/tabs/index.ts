@@ -1,2 +1,2 @@
-export { KTTabs } from './tabs';
-export type { KTTabsConfigInterface, KTTabsInterface } from './types';
+export { KTTabs } from "./tabs";
+export type { KTTabsConfigInterface, KTTabsInterface } from "./types";

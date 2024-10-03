@@ -1,61 +1,60 @@
-import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { FC, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
-import SideBarItem from './side-bar-items/side-bar-item';
+import SideBarItem from "./side-bar-items/side-bar-item";
+import { Button } from "../../ui/button";
 
-import logo from '../../../assets/images/logo.svg';
+import { Context } from "../../main/main-module";
 
-const SideBar: FC = () => {
+import logo from "../../../assets/images/logo.svg";
+
+import { authRoutes } from "../../../utils/routes-name/main-routes";
+import { defaultStyles } from "../../../utils/default-styles";
+
+interface ISideBarProps {
+  changeVis: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const SideBar: FC<ISideBarProps> = ({ changeVis }) => {
   const navigate = useNavigate();
+  const sidePanelOpen = useContext(Context);
+
+  const { textColor } = defaultStyles;
+
   return (
-    <>
-      <div
-        className="fixed flex h-full min-w-[290px] max-w-[100%] flex-col items-center bg-[#000]"
-        data-drawer="true"
-        id="drawer_1"
+    <div
+      className={`flex h-[100vh] min-w-[290px] max-w-[100%] flex-col items-center bg-[#000] md:fixed md:block lg:fixed lg:left-[0px] ${sidePanelOpen ? "absolute" : "hidden"} z-10`}
+      data-drawer="true"
+      id="drawer_1"
+      data-drawer-disable-scroll="false"
+    >
+      <button
+        className="btn absolute left-[85%] top-0 text-[#fff] md:hidden"
+        onClick={() => changeVis((prev) => !prev)}
       >
-        <div className="mb-[10px] flex w-full items-start justify-start px-[30px] py-[20px]">
-          <img src={logo} alt="Экомобайл" />
-        </div>
-        <SideBarItem title="Главная" icon="ki-home" redirectTo="main" />
-        <SideBarItem title="Мои номера" icon="ki-data" redirectTo="numbers" />
-        <SideBarItem title="Услуги" icon="ki-briefcase" redirectTo="services" />
-        <SideBarItem
-          title="Расходы"
-          icon="ki-chart-pie-simple"
-          redirectTo="expenses"
-        />
-        <SideBarItem
-          title="Детализация"
-          icon="ki-setting-2"
-          redirectTo="details"
-        />
-        <SideBarItem
-          title="Остатки пакетов"
-          icon="ki-chart-simple"
-          redirectTo="remainder"
-        />
-        <SideBarItem
-          title="Пополнение баланса"
-          icon="ki-wallet"
-          redirectTo="balance"
-        />
-        <SideBarItem
-          title="Заявки"
-          icon="ki-message-text"
-          redirectTo="applications"
-        />
-        <SideBarItem title="Профиль" icon="ki-user" redirectTo="profile" />
-        <div className="flex w-full px-[20px] pt-[27vh]">
-          <button
-            className="btn btn-outline border-[#fff] text-[#fff]"
-            onClick={() => navigate('/auth/login')}
-          >
-            Выйти
-          </button>
-        </div>
+        <i className="ki-filled ki-cross"></i>
+      </button>
+      <div className="mb-[10px] flex w-full items-start justify-start px-[30px] py-[20px]">
+        <img src={logo} alt="Экомобайл" />
       </div>
-    </>
+      <SideBarItem title="Главная" icon="ki-home" redirectTo="main" />
+      <SideBarItem title="Мои номера" icon="ki-data" redirectTo="numbers" />
+      <SideBarItem title="Услуги" icon="ki-briefcase" redirectTo="services" />
+      <SideBarItem title="Расходы" icon="ki-chart-pie-simple" redirectTo="expenses" />
+      <SideBarItem title="Детализация" icon="ki-setting-2" redirectTo="details" />
+      <SideBarItem title="Остатки пакетов" icon="ki-chart-simple" redirectTo="remainder" />
+      <SideBarItem title="Пополнение баланса" icon="ki-wallet" redirectTo="balance" />
+      <SideBarItem title="Заявки" icon="ki-message-text" redirectTo="applications" />
+      <SideBarItem title="Профиль" icon="ki-user" redirectTo="profile" />
+      <div className="flex w-full px-[20px] pt-[27vh]">
+        <Button
+          buttonType="custom"
+          customStyle={`btn-outline border-[#fff] ${textColor.white}`}
+          title="Выйти"
+          onClickCb={() => navigate(authRoutes.login)}
+        />
+      </div>
+    </div>
   );
 };
 

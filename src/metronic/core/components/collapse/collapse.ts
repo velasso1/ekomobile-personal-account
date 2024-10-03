@@ -1,17 +1,17 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTComponent from '../component';
-import { KTCollapseInterface, KTCollapseConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTComponent from "../component";
+import { KTCollapseInterface, KTCollapseConfigInterface } from "./types";
 
 export class KTCollapse extends KTComponent implements KTCollapseInterface {
-  protected override _name: string = 'collapse';
+  protected override _name: string = "collapse";
   protected override _defaultConfig: KTCollapseConfigInterface = {
-    hiddenClass: 'hidden',
-    activeClass: 'active',
-    target: ''
+    hiddenClass: "hidden",
+    activeClass: "active",
+    target: "",
   };
   protected override _config: KTCollapseConfigInterface = this._defaultConfig;
   protected _isAnimating: boolean = false;
@@ -34,18 +34,18 @@ export class KTCollapse extends KTComponent implements KTCollapseInterface {
   }
 
   private _getTargetElement(): HTMLElement | null {
-    return (      
-      KTDom.getElement(this._element.getAttribute('data-collapse') as string) ||
-      KTDom.getElement(this._getOption('target') as string)
+    return (
+      KTDom.getElement(this._element.getAttribute("data-collapse") as string) ||
+      KTDom.getElement(this._getOption("target") as string)
     );
   }
 
   protected _isOpen(): boolean {
-    return this._targetElement.classList.contains(this._getOption('activeClass') as string);
+    return this._targetElement.classList.contains(this._getOption("activeClass") as string);
   }
 
   protected _handlers(): void {
-    this._element.addEventListener('click', (event: Event) => {
+    this._element.addEventListener("click", (event: Event) => {
       event.preventDefault();
 
       this._toggle();
@@ -58,32 +58,32 @@ export class KTCollapse extends KTComponent implements KTCollapseInterface {
     }
 
     const payload = { cancel: false };
-    this._fireEvent('expand', payload);
-    this._dispatchEvent('expand', payload);
+    this._fireEvent("expand", payload);
+    this._dispatchEvent("expand", payload);
     if (payload.cancel === true) {
       return;
     }
 
     if (this._element) {
-      this._element.setAttribute('aria-expanded', 'true');
-      this._element.classList.add(this._getOption('activeClass') as string);
+      this._element.setAttribute("aria-expanded", "true");
+      this._element.classList.add(this._getOption("activeClass") as string);
     }
-    this._targetElement.classList.remove(this._getOption('hiddenClass') as string);
-    this._targetElement.classList.add(this._getOption('activeClass') as string);
+    this._targetElement.classList.remove(this._getOption("hiddenClass") as string);
+    this._targetElement.classList.add(this._getOption("activeClass") as string);
 
-    this._targetElement.style.height = '0px';
-    this._targetElement.style.overflow = 'hidden';
+    this._targetElement.style.height = "0px";
+    this._targetElement.style.overflow = "hidden";
     KTDom.reflow(this._targetElement);
     this._targetElement.style.height = `${this._targetElement.scrollHeight}px`;
     this._isAnimating = true;
 
     KTDom.transitionEnd(this._targetElement, () => {
       this._isAnimating = false;
-      this._targetElement.style.height = '';
-      this._targetElement.style.overflow = '';
+      this._targetElement.style.height = "";
+      this._targetElement.style.overflow = "";
 
-      this._fireEvent('expanded');
-      this._dispatchEvent('expanded');
+      this._fireEvent("expanded");
+      this._dispatchEvent("expanded");
     });
   }
 
@@ -93,37 +93,37 @@ export class KTCollapse extends KTComponent implements KTCollapseInterface {
     }
 
     const payload = { cancel: false };
-    this._fireEvent('collapse', payload);
-    this._dispatchEvent('collapse', payload);
+    this._fireEvent("collapse", payload);
+    this._dispatchEvent("collapse", payload);
     if (payload.cancel === true) {
       return;
     }
 
     if (!this._element) return;
-    this._element.setAttribute('aria-expanded', 'false');
-    this._element.classList.remove(this._getOption('activeClass') as string);
-    this._targetElement.classList.remove(this._getOption('activeClass') as string);
+    this._element.setAttribute("aria-expanded", "false");
+    this._element.classList.remove(this._getOption("activeClass") as string);
+    this._targetElement.classList.remove(this._getOption("activeClass") as string);
 
     this._targetElement.style.height = `${this._targetElement.scrollHeight}px`;
     KTDom.reflow(this._targetElement);
     this._targetElement.style.height = `0px`;
-    this._targetElement.style.overflow = 'hidden';
+    this._targetElement.style.overflow = "hidden";
     this._isAnimating = true;
 
     KTDom.transitionEnd(this._targetElement, () => {
       this._isAnimating = false;
-      this._targetElement.classList.add(this._getOption('hiddenClass') as string);
-      this._targetElement.style.overflow = '';
+      this._targetElement.classList.add(this._getOption("hiddenClass") as string);
+      this._targetElement.style.overflow = "";
 
-      this._fireEvent('collapsed');
-      this._dispatchEvent('collapsed');
+      this._fireEvent("collapsed");
+      this._dispatchEvent("collapsed");
     });
   }
 
   protected _toggle(): void {
     const payload = { cancel: false };
-    this._fireEvent('toggle', payload);
-    this._dispatchEvent('toggle', payload);
+    this._fireEvent("toggle", payload);
+    this._dispatchEvent("toggle", payload);
     if (payload.cancel === true) {
       return;
     }
@@ -148,7 +148,7 @@ export class KTCollapse extends KTComponent implements KTCollapseInterface {
   }
 
   public static getInstance(element: HTMLElement): KTCollapse {
-    return KTData.get(element, 'collapse') as KTCollapse;
+    return KTData.get(element, "collapse") as KTCollapse;
   }
 
   public static getOrCreateInstance(element: HTMLElement, config?: KTCollapseConfigInterface): KTCollapse {

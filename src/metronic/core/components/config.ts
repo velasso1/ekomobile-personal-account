@@ -1,25 +1,24 @@
 /* eslint-disable max-len */
 const KTGlobalComponentsConfig = {
   modal: {
-    backdropClass: 'transition-all duration-300',
+    backdropClass: "transition-all duration-300",
   },
   drawer: {
-    backdropClass: 'transition-all duration-300',
-    hiddenClass: 'hidden'
+    backdropClass: "transition-all duration-300",
+    hiddenClass: "hidden",
   },
   collapse: {
-    hiddenClass: 'hidden',
+    hiddenClass: "hidden",
   },
   dismiss: {
-    hiddenClass: 'hidden',
+    hiddenClass: "hidden",
   },
   tabs: {
-    hiddenClass: 'hidden',
+    hiddenClass: "hidden",
   },
   accordion: {
-    hiddenClass: 'hidden',
-  }
+    hiddenClass: "hidden",
+  },
 };
 
 export default KTGlobalComponentsConfig;
-

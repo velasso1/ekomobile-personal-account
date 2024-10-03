@@ -1,4 +1,5 @@
 export interface IItemTableNumbersProps {
+  id: string;
   number: string;
   tarif: string;
   balance: string | number;
@@ -31,6 +32,7 @@ export interface IServiceTableProps {
 ///////////////////////////////////////
 
 export interface ITableExpensesItem {
+  id: string;
   date: string;
   sum: string;
   operationType: string;

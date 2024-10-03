@@ -1,4 +1,4 @@
-import { utils, Plugin } from '../core/index.js';
+import { utils, Plugin } from "../core/index.js";
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -16,19 +16,31 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 /* global Reflect, Promise */
 
-var extendStatics = function(d, b) {
-    extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-    return extendStatics(d, b);
+var extendStatics = function (d, b) {
+  extendStatics =
+    Object.setPrototypeOf ||
+    ({ __proto__: [] } instanceof Array &&
+      function (d, b) {
+        d.__proto__ = b;
+      }) ||
+    function (d, b) {
+      for (var p in b)
+        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    };
+  return extendStatics(d, b);
 };
 
 function __extends(d, b) {
-    if (typeof b !== "function" && b !== null)
-        throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-    extendStatics(d, b);
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  if (typeof b !== "function" && b !== null)
+    throw new TypeError(
+      "Class extends value " + String(b) + " is not a constructor or null"
+    );
+  extendStatics(d, b);
+  function __() {
+    this.constructor = d;
+  }
+  d.prototype =
+    b === null ? Object.create(b) : ((__.prototype = b.prototype), new __());
 }
 
 /**
@@ -38,31 +50,44 @@ function __extends(d, b) {
  */
 var removeUndefined = utils.removeUndefined;
 var Excluded = /** @class */ (function (_super) {
-    __extends(Excluded, _super);
-    function Excluded(opts) {
-        var _this = _super.call(this, opts) || this;
-        _this.opts = Object.assign({}, { excluded: Excluded.defaultIgnore }, removeUndefined(opts));
-        _this.ignoreValidationFilter = _this.ignoreValidation.bind(_this);
-        return _this;
+  __extends(Excluded, _super);
+  function Excluded(opts) {
+    var _this = _super.call(this, opts) || this;
+    _this.opts = Object.assign(
+      {},
+      { excluded: Excluded.defaultIgnore },
+      removeUndefined(opts)
+    );
+    _this.ignoreValidationFilter = _this.ignoreValidation.bind(_this);
+    return _this;
+  }
+  Excluded.defaultIgnore = function (_field, element, _elements) {
+    var isVisible = !!(
+      element.offsetWidth ||
+      element.offsetHeight ||
+      element.getClientRects().length
+    );
+    var disabled = element.getAttribute("disabled");
+    return (
+      disabled === "" ||
+      disabled === "disabled" ||
+      element.getAttribute("type") === "hidden" ||
+      !isVisible
+    );
+  };
+  Excluded.prototype.install = function () {
+    this.core.registerFilter("element-ignored", this.ignoreValidationFilter);
+  };
+  Excluded.prototype.uninstall = function () {
+    this.core.deregisterFilter("element-ignored", this.ignoreValidationFilter);
+  };
+  Excluded.prototype.ignoreValidation = function (field, element, elements) {
+    if (!this.isEnabled) {
+      return false;
     }
-    Excluded.defaultIgnore = function (_field, element, _elements) {
-        var isVisible = !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
-        var disabled = element.getAttribute('disabled');
-        return disabled === '' || disabled === 'disabled' || element.getAttribute('type') === 'hidden' || !isVisible;
-    };
-    Excluded.prototype.install = function () {
-        this.core.registerFilter('element-ignored', this.ignoreValidationFilter);
-    };
-    Excluded.prototype.uninstall = function () {
-        this.core.deregisterFilter('element-ignored', this.ignoreValidationFilter);
-    };
-    Excluded.prototype.ignoreValidation = function (field, element, elements) {
-        if (!this.isEnabled) {
-            return false;
-        }
-        return this.opts.excluded.apply(this, [field, element, elements]);
-    };
-    return Excluded;
-}(Plugin));
+    return this.opts.excluded.apply(this, [field, element, elements]);
+  };
+  return Excluded;
+})(Plugin);
 
 export { Excluded };

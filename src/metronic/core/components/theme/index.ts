@@ -1,2 +1,2 @@
-export { KTTheme } from './theme';
-export type { KTThemeConfigInterface, KTThemeInterface } from './types';
+export { KTTheme } from "./theme";
+export type { KTThemeConfigInterface, KTThemeInterface } from "./types";

@@ -33,10 +33,7 @@ export default class KTLayout {
     const scrollableEl = document.querySelector("#sidebar_scrollable");
     const menuActiveItemEl = menuEl.querySelector(".menu-item.active");
 
-    if (
-      !menuActiveItemEl ||
-      KTDom.isVisibleInParent(menuActiveItemEl, scrollableEl)
-    ) {
+    if (!menuActiveItemEl || KTDom.isVisibleInParent(menuActiveItemEl, scrollableEl)) {
       return;
     }
 

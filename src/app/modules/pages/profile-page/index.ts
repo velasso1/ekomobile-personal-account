@@ -1,2 +1,2 @@
-import ProfilePage from './profile-page';
+import ProfilePage from "./profile-page";
 export { ProfilePage };

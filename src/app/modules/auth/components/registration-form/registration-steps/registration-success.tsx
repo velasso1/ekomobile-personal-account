@@ -1,23 +1,23 @@
-import React, { FC } from 'react';
+import { FC } from "react";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { defaultStyles } from "../../../../../utils/default-styles";
+
+import { authRoutes } from "../../../../../utils/routes-name/main-routes";
+import { Button } from "../../../../ui/button";
 
 const RegistrationSuccess: FC = () => {
   const navigate = useNavigate();
+
+  const { textColor } = defaultStyles;
+
   return (
-    <>
-      <div className="flex min-w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-10 text-center">
-        <p className="text-lg font-semibold text-[#071437]">
-          Регистрация прошла успешно!
-        </p>
-        <button
-          className="btn mt-[20px] w-[290px] justify-center bg-[#005DA6] text-center font-sans font-medium text-[#F6F8F8]"
-          onClick={() => navigate('/login')}
-        >
-          Авторизоваться
-        </button>
+    <div className="flex min-w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-10 text-center">
+      <div className="flex flex-col">
+        <p className={`text-lg font-semibold ${textColor.darkBlue} mb-[20px]`}>Регистрация прошла успешно!</p>
+        <Button buttonType="default" title="Авторизоваться" onClickCb={() => navigate(authRoutes.login)} />
       </div>
-    </>
+    </div>
   );
 };
 

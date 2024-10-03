@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
-import KTUtils from './utils';
-import { KTOffsetType, KTOptionType, KTViewPortType } from '../types';
+import KTUtils from "./utils";
+import { KTOffsetType, KTOptionType, KTViewPortType } from "../types";
 
 const KTDom = {
   isElement(element: HTMLElement): boolean {
@@ -17,7 +17,7 @@ const KTDom = {
     }
 
     if (element && (element as string).length > 0) {
-      return document.querySelector(KTUtils.parseSelector((element as string)));
+      return document.querySelector(KTUtils.parseSelector(element as string));
     }
 
     return null;
@@ -31,8 +31,8 @@ const KTDom = {
 
   hasClass(element: HTMLElement, className: string): boolean {
     // Split classNames string into an array of individual class names
-    const classes = className.split(' ');
-    
+    const classes = className.split(" ");
+
     // Loop through each class name
     for (const className of classes) {
       // Check if the element has the current class name
@@ -41,13 +41,13 @@ const KTDom = {
         return false;
       }
     }
-    
+
     // Return true if all classes are present
     return true;
   },
 
   addClass(element: HTMLElement, className: string): void {
-    const classNames = className.split(' ');
+    const classNames = className.split(" ");
 
     if (element.classList) {
       for (let i = 0; i < classNames.length; i++) {
@@ -57,13 +57,13 @@ const KTDom = {
       }
     } else if (!this.hasClass(element, className)) {
       for (let x = 0; x < classNames.length; x++) {
-        element.className += ' ' + classNames[x].trim();
+        element.className += " " + classNames[x].trim();
       }
     }
   },
 
   removeClass(element: HTMLElement, className: string): void {
-    const classNames = className.split(' ');
+    const classNames = className.split(" ");
 
     if (element.classList) {
       for (let i = 0; i < classNames.length; i++) {
@@ -71,13 +71,18 @@ const KTDom = {
       }
     } else if (this.hasClass(element, className)) {
       for (let x = 0; x < classNames.length; x++) {
-        element.className = element.className.replace(new RegExp('\\b' + classNames[x].trim() + '\\b', 'g'), '');
+        element.className = element.className.replace(
+          new RegExp("\\b" + classNames[x].trim() + "\\b", "g"),
+          ""
+        );
       }
     }
   },
 
   getCssProp(element: HTMLElement, prop: string): string {
-    return (element ? window.getComputedStyle(element).getPropertyValue(prop) : '').replace(' ', '');
+    return (
+      element ? window.getComputedStyle(element).getPropertyValue(prop) : ""
+    ).replace(" ", "");
   },
 
   setCssProp(element: HTMLElement, prop: string, value: string) {
@@ -101,7 +106,7 @@ const KTDom = {
       top: rect.top + (view?.scrollY || 0),
       left: rect.left,
       right: window.innerWidth - rect.right,
-      bottom: 0
+      bottom: 0,
     };
   },
 
@@ -127,7 +132,11 @@ const KTDom = {
     const parents: Array<HTMLElement> = [];
 
     // Push each parent element to the array
-    for (element && element !== document.documentElement; (element = element.parentElement as HTMLElement);) {
+    for (
+      element && element !== document.documentElement;
+      (element = element.parentElement as HTMLElement);
+
+    ) {
       if (selector) {
         if (element.matches(selector)) {
           parents.push(element as HTMLElement);
@@ -154,10 +163,13 @@ const KTDom = {
 
     const result: Array<HTMLElement> = [];
     const l = element.childNodes.length;
-    let i = 0; 
+    let i = 0;
 
     for (i = 0; i < l; i++) {
-      if (element.childNodes[i].nodeType == 1 && (element.childNodes[i] as HTMLElement).matches(selector)) {
+      if (
+        element.childNodes[i].nodeType == 1 &&
+        (element.childNodes[i] as HTMLElement).matches(selector)
+      ) {
         result.push(element.childNodes[i] as HTMLElement);
       }
     }
@@ -177,23 +189,30 @@ const KTDom = {
     }
 
     // eslint-disable-next-line max-len
-    return getComputedStyle(element).getPropertyValue('visibility') === 'visible';
+    return (
+      getComputedStyle(element).getPropertyValue("visibility") === "visible"
+    );
   },
 
-  isDisabled(element: HTMLInputElement | HTMLSelectElement | HTMLButtonElement): boolean {
+  isDisabled(
+    element: HTMLInputElement | HTMLSelectElement | HTMLButtonElement
+  ): boolean {
     if (!element || element.nodeType !== Node.ELEMENT_NODE) {
       return true;
     }
 
-    if (element.classList.contains('disabled')) {
+    if (element.classList.contains("disabled")) {
       return true;
     }
 
-    if (typeof element.disabled !== 'undefined') {
+    if (typeof element.disabled !== "undefined") {
       return element.disabled;
     }
 
-    return element.hasAttribute('disabled') && element.getAttribute('disabled') !== 'false';
+    return (
+      element.hasAttribute("disabled") &&
+      element.getAttribute("disabled") !== "false"
+    );
   },
 
   transitionEnd(element: HTMLElement, callback: CallableFunction): void {
@@ -213,15 +232,19 @@ const KTDom = {
   },
 
   getCSSTransitionDuration(element: HTMLElement): number {
-    return (parseFloat(window.getComputedStyle(element).transitionDuration)) * 1000;
+    return (
+      parseFloat(window.getComputedStyle(element).transitionDuration) * 1000
+    );
   },
 
   getCSSAnimationDuration(element: HTMLElement): number {
-    return (parseFloat(window.getComputedStyle(element).animationDuration)) * 1000;
+    return (
+      parseFloat(window.getComputedStyle(element).animationDuration) * 1000
+    );
   },
 
   reflow(element: HTMLElement): void {
-    element.offsetHeight; 
+    element.offsetHeight;
   },
 
   insertAfter(element: HTMLElement, referenceNode: HTMLElement) {
@@ -240,7 +263,11 @@ const KTDom = {
       // WebKit always returns auto if the element is positioned
       position = element.style.position;
 
-      if (position === "absolute" || position === "relative" || position === "fixed") {
+      if (
+        position === "absolute" ||
+        position === "relative" ||
+        position === "fixed"
+      ) {
         // IE returns 0 when zIndex is not specified
         // other browsers return a string
         // we ignore the case of nested elements with an explicit value of 0
@@ -265,7 +292,7 @@ const KTDom = {
 
     const computedStyle = window.getComputedStyle(element);
 
-    if (computedStyle.display === 'none') {
+    if (computedStyle.display === "none") {
       return true;
     }
 
@@ -275,7 +302,7 @@ const KTDom = {
   getViewPort(): KTViewPortType {
     return {
       width: window.innerWidth,
-      height: window.innerHeight
+      height: window.innerHeight,
     };
   },
 
@@ -287,21 +314,29 @@ const KTDom = {
     const rect = element.getBoundingClientRect();
 
     return (
-      rect.top >= 0 && rect.left >= 0 && rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      rect.top >= 0 &&
+      rect.left >= 0 &&
+      rect.bottom <=
+        (window.innerHeight || document.documentElement.clientHeight) &&
+      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
     );
   },
 
   isPartiallyInViewport(element: HTMLElement): boolean {
     const x = element.getBoundingClientRect().left;
     const y = element.getBoundingClientRect().top;
-    const ww = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
-    const hw = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+    const ww = Math.max(
+      document.documentElement.clientWidth,
+      window.innerWidth || 0
+    );
+    const hw = Math.max(
+      document.documentElement.clientHeight,
+      window.innerHeight || 0
+    );
     const w = element.clientWidth;
     const h = element.clientHeight;
 
-    return (
-      (y < hw && y + h > 0) && (x < ww && x + w > 0)
-    );
+    return y < hw && y + h > 0 && x < ww && x + w > 0;
   },
 
   isVisibleInParent(child: HTMLElement, parent: HTMLElement): boolean {
@@ -309,15 +344,21 @@ const KTDom = {
     const parentRect = parent.getBoundingClientRect();
 
     // Check if the child element is visible
-    if (child.offsetParent === null || getComputedStyle(child).visibility === 'hidden' || getComputedStyle(child).display === 'none') {
-        return false;
+    if (
+      child.offsetParent === null ||
+      getComputedStyle(child).visibility === "hidden" ||
+      getComputedStyle(child).display === "none"
+    ) {
+      return false;
     }
 
     // Check if the child is within the vertical bounds of the parent
-    const isVisibleVertically = childRect.top >= parentRect.top && childRect.bottom <= parentRect.bottom;
+    const isVisibleVertically =
+      childRect.top >= parentRect.top && childRect.bottom <= parentRect.bottom;
 
     // Check if the child is within the horizontal bounds of the parent
-    const isVisibleHorizontally = childRect.left >= parentRect.left && childRect.right <= parentRect.right;
+    const isVisibleHorizontally =
+      childRect.left >= parentRect.left && childRect.right <= parentRect.right;
 
     return isVisibleVertically && isVisibleHorizontally;
   },
@@ -338,28 +379,32 @@ const KTDom = {
     }
 
     prefix = KTUtils.camelCase(prefix);
-    
+
     const attributes: { [key: string]: KTOptionType } = {};
-    const keys = Object.keys(element.dataset).filter((key) => key.startsWith(prefix));
+    const keys = Object.keys(element.dataset).filter((key) =>
+      key.startsWith(prefix)
+    );
 
     for (const key of keys) {
-      let normalizedKey = key.replace(prefix, '');
+      let normalizedKey = key.replace(prefix, "");
       normalizedKey = KTUtils.uncapitalize(normalizedKey);
-      attributes[normalizedKey] = KTUtils.parseDataAttribute(element.dataset[key]);
+      attributes[normalizedKey] = KTUtils.parseDataAttribute(
+        element.dataset[key]
+      );
     }
 
     return attributes;
   },
 
   ready(callback: CallableFunction): void {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
         callback();
       });
     } else {
       callback();
     }
-  }
+  },
 };
 
 export default KTDom;

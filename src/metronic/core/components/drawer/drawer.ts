@@ -1,12 +1,12 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTUtils from '../../helpers/utils';
-import KTEventHandler from '../../helpers/event-handler';
-import KTComponent from '../component';
-import { KTDrawerInterface, KTDrawerConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTUtils from "../../helpers/utils";
+import KTEventHandler from "../../helpers/event-handler";
+import KTComponent from "../component";
+import { KTDrawerInterface, KTDrawerConfigInterface } from "./types";
 
 declare global {
   interface Window {
@@ -17,19 +17,20 @@ declare global {
 window.KT_DRAWER_INITIALIZED = false;
 
 export class KTDrawer extends KTComponent implements KTDrawerInterface {
-  protected override _name: string = 'drawer';
+  protected override _name: string = "drawer";
   protected override _defaultConfig: KTDrawerConfigInterface = {
-    zindex: '100',
+    zindex: "100",
     enable: true,
-    class: '',
-    hiddenClass: 'hidden',
+    class: "",
+    hiddenClass: "hidden",
     backdrop: true,
-    backdropClass: 'transition-all duration-300 fixed inset-0 bg-gray-900 opacity-25',
+    backdropClass:
+      "transition-all duration-300 fixed inset-0 bg-gray-900 opacity-25",
     backdropStatic: false,
     keyboard: true,
     disableScroll: true,
     persistent: false,
-    focus: true
+    focus: true,
   };
   protected override _config: KTDrawerConfigInterface = this._defaultConfig;
   protected _isOpen: boolean = false;
@@ -50,15 +51,15 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
 
   protected _handleClose(): void {
     if (!this._element) return;
-    KTEventHandler.on(this._element, '[data-drawer-hide]', 'click', () => {
+    KTEventHandler.on(this._element, "[data-drawer-hide]", "click", () => {
       this._hide();
     });
   }
 
   protected _toggle(relatedTarget?: HTMLElement): void {
     const payload = { cancel: false };
-    this._fireEvent('toggle', payload);
-    this._dispatchEvent('toggle', payload);
+    this._fireEvent("toggle", payload);
+    this._dispatchEvent("toggle", payload);
     if (payload.cancel === true) {
       return;
     }
@@ -76,48 +77,48 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
     }
 
     const payload = { cancel: false };
-    this._fireEvent('show', payload);
-    this._dispatchEvent('show', payload);
+    this._fireEvent("show", payload);
+    this._dispatchEvent("show", payload);
     if (payload.cancel === true) {
       return;
     }
 
     KTDrawer.hide();
 
-    if (this._getOption('backdrop') === true) this._createBackdrop();
+    if (this._getOption("backdrop") === true) this._createBackdrop();
 
     if (relatedTarget) this._relatedTarget = relatedTarget;
 
     if (!this._element) return;
     this._isTransitioning = true;
-    this._element.classList.remove(this._getOption('hiddenClass') as string);
-    this._element.setAttribute('role', 'dialog');
-    this._element.setAttribute('aria-modal', 'true');
-    this._element.setAttribute('tabindex', '-1');
+    this._element.classList.remove(this._getOption("hiddenClass") as string);
+    this._element.setAttribute("role", "dialog");
+    this._element.setAttribute("aria-modal", "true");
+    this._element.setAttribute("tabindex", "-1");
 
-    const zindex: number = parseInt(this._getOption('zindex') as string);
+    const zindex: number = parseInt(this._getOption("zindex") as string);
     if (zindex > 0) {
       this._element.style.zIndex = `${zindex}`;
-    }    
+    }
 
-    if (this._getOption('disableScroll')) {
-      document.body.style.overflow = 'hidden';
+    if (this._getOption("disableScroll")) {
+      document.body.style.overflow = "hidden";
     }
 
     KTDom.reflow(this._element);
-    this._element.classList.add('open');
-    
+    this._element.classList.add("open");
+
     KTDom.transitionEnd(this._element, () => {
       this._isTransitioning = false;
       this._isOpen = true;
 
-      if (this._getOption('focus') === true) {
+      if (this._getOption("focus") === true) {
         this._autoFocus();
       }
 
-      this._fireEvent('shown');
-      this._dispatchEvent('shown');
-    });  
+      this._fireEvent("shown");
+      this._dispatchEvent("shown");
+    });
   }
 
   protected _hide(): void {
@@ -127,24 +128,24 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
     }
 
     const payload = { cancel: false };
-    this._fireEvent('hide', payload);
-    this._dispatchEvent('hide', payload);
+    this._fireEvent("hide", payload);
+    this._dispatchEvent("hide", payload);
     if (payload.cancel === true) {
       return;
     }
 
     this._isTransitioning = true;
-    this._element.removeAttribute('role');
-    this._element.removeAttribute('aria-modal');
-    this._element.removeAttribute('tabindex');
-    if (this._getOption('disableScroll')) {
-      document.body.style.overflow = '';
+    this._element.removeAttribute("role");
+    this._element.removeAttribute("aria-modal");
+    this._element.removeAttribute("tabindex");
+    if (this._getOption("disableScroll")) {
+      document.body.style.overflow = "";
     }
 
     KTDom.reflow(this._element);
-    this._element.classList.remove('open');
+    this._element.classList.remove("open");
 
-    if (this._getOption('backdrop') === true) {
+    if (this._getOption("backdrop") === true) {
       this._deleteBackdrop();
     }
 
@@ -153,45 +154,51 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
 
       this._isTransitioning = false;
       this._isOpen = false;
-      this._element.classList.add(this._getOption('hiddenClass') as string);
-      this._element.style.zIndex = '';
+      this._element.classList.add(this._getOption("hiddenClass") as string);
+      this._element.style.zIndex = "";
 
-      this._fireEvent('hidden');
-      this._dispatchEvent('hidden');
+      this._fireEvent("hidden");
+      this._dispatchEvent("hidden");
     });
   }
 
   protected _update(): void {
-    if ((this._getOption('class') as string).length > 0) {
+    if ((this._getOption("class") as string).length > 0) {
       if (this.isEnabled()) {
-        KTDom.addClass(this._element, this._getOption('class') as string);
+        KTDom.addClass(this._element, this._getOption("class") as string);
       } else {
-        KTDom.removeClass(this._element, this._getOption('class') as string);
+        KTDom.removeClass(this._element, this._getOption("class") as string);
       }
-    }    
+    }
   }
 
   protected _autoFocus(): void {
     if (!this._element) return;
-    const input: HTMLInputElement | null = this._element.querySelector('[data-drawer-focus]');
-    if (!input) return; else input.focus();
+    const input: HTMLInputElement | null = this._element.querySelector(
+      "[data-drawer-focus]"
+    );
+    if (!input) return;
+    else input.focus();
   }
 
   protected _createBackdrop(): void {
     if (!this._element) return;
 
-    const zindex: number = parseInt(this._getOption('zindex') as string);
+    const zindex: number = parseInt(this._getOption("zindex") as string);
 
-    this._backdropElement = document.createElement('DIV');
+    this._backdropElement = document.createElement("DIV");
     this._backdropElement.style.zIndex = (zindex - 1).toString();
-    this._backdropElement.classList.add('drawer-backdrop');
+    this._backdropElement.classList.add("drawer-backdrop");
     document.body.append(this._backdropElement);
     KTDom.reflow(this._backdropElement);
-    KTDom.addClass(this._backdropElement, this._getOption('backdropClass') as string);
+    KTDom.addClass(
+      this._backdropElement,
+      this._getOption("backdropClass") as string
+    );
 
-    this._backdropElement.addEventListener('click', (event: Event) => {
+    this._backdropElement.addEventListener("click", (event: Event) => {
       event.preventDefault();
-      if (this._getOption('backdropStatic') === false) {
+      if (this._getOption("backdropStatic") === false) {
         this._hide();
       }
     });
@@ -210,7 +217,7 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
   }
 
   protected _isEnabled(): boolean {
-    return this._getOption('enable') as boolean;
+    return this._getOption("enable") as boolean;
   }
 
   public toggle(): void {
@@ -242,15 +249,18 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
   }
 
   public static getInstance(element: HTMLElement): KTDrawer {
-    return KTData.get(element, 'drawer') as KTDrawer;
+    return KTData.get(element, "drawer") as KTDrawer;
   }
 
-  public static getOrCreateInstance(element: HTMLElement, config?: KTDrawerConfigInterface): KTDrawer {
+  public static getOrCreateInstance(
+    element: HTMLElement,
+    config?: KTDrawerConfigInterface
+  ): KTDrawer {
     return this.getInstance(element) || new KTDrawer(element, config);
   }
 
   public static hide(): void {
-    const elements = document.querySelectorAll('[data-drawer]');
+    const elements = document.querySelectorAll("[data-drawer]");
 
     elements.forEach((element) => {
       const drawer = KTDrawer.getInstance(element as HTMLElement);
@@ -262,89 +272,110 @@ export class KTDrawer extends KTComponent implements KTDrawerInterface {
   }
 
   public static handleResize(): void {
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       let timer;
 
-      KTUtils.throttle(timer, () => {
-        document.querySelectorAll('[data-drawer]').forEach((element) => {
-          const drawer = KTDrawer.getInstance(element as HTMLElement);
-          drawer.update();
+      KTUtils.throttle(
+        timer,
+        () => {
+          document.querySelectorAll("[data-drawer]").forEach((element) => {
+            const drawer = KTDrawer.getInstance(element as HTMLElement);
+            drawer.update();
 
-          if (drawer && drawer.isOpen() && !drawer.isEnabled()) {
-            drawer.hide();
-          }
-        });
-      }, 200);
+            if (drawer && drawer.isOpen() && !drawer.isEnabled()) {
+              drawer.hide();
+            }
+          });
+        },
+        200
+      );
     });
   }
 
   public static handleToggle(): void {
-    KTEventHandler.on(document.body, '[data-drawer-toggle]', 'click', (event: Event, target: HTMLElement) => {
-      event.stopPropagation();
+    KTEventHandler.on(
+      document.body,
+      "[data-drawer-toggle]",
+      "click",
+      (event: Event, target: HTMLElement) => {
+        event.stopPropagation();
 
-      const selector = target.getAttribute("data-drawer-toggle");
-      if (!selector) return;
+        const selector = target.getAttribute("data-drawer-toggle");
+        if (!selector) return;
 
-      const drawerElement = document.querySelector(selector);
-      const drawer = KTDrawer.getInstance(drawerElement as HTMLElement);
-      if (drawer) {
-        drawer.toggle();
+        const drawerElement = document.querySelector(selector);
+        const drawer = KTDrawer.getInstance(drawerElement as HTMLElement);
+        if (drawer) {
+          drawer.toggle();
+        }
       }
-    });
+    );
   }
 
   public static handleDismiss(): void {
-    KTEventHandler.on(document.body, '[data-drawer-dismiss]', 'click', (event: Event, target: HTMLElement) => {
-      event.stopPropagation();
+    KTEventHandler.on(
+      document.body,
+      "[data-drawer-dismiss]",
+      "click",
+      (event: Event, target: HTMLElement) => {
+        event.stopPropagation();
 
-      const modalElement = target.closest('[data-drawer="true"]') as HTMLElement;
-      if (modalElement) {
-        const modal = KTDrawer.getInstance(modalElement);
-        if (modal) {
-          modal.hide();
+        const modalElement = target.closest(
+          '[data-drawer="true"]'
+        ) as HTMLElement;
+        if (modalElement) {
+          const modal = KTDrawer.getInstance(modalElement);
+          if (modal) {
+            modal.hide();
+          }
         }
-      }      
-    });
+      }
+    );
   }
 
   public static handleClickAway() {
-    document.addEventListener('click', (event: Event) => {
-      const drawerElement = document.querySelector('.open[data-drawer]');
+    document.addEventListener("click", (event: Event) => {
+      const drawerElement = document.querySelector(".open[data-drawer]");
       if (!drawerElement) return;
 
       const drawer = KTDrawer.getInstance(drawerElement as HTMLElement);
       if (!drawer) return;
 
-      if (drawer.getOption('persistent')) return;
+      if (drawer.getOption("persistent")) return;
 
-      if (drawer.getOption('backdrop')) return;
+      if (drawer.getOption("backdrop")) return;
 
-      if (drawerElement !== event.target &&
+      if (
+        drawerElement !== event.target &&
         drawer.getRelatedTarget() !== event.target &&
-        drawerElement.contains(event.target as HTMLElement) === false) {
+        drawerElement.contains(event.target as HTMLElement) === false
+      ) {
         drawer.hide();
       }
     });
   }
 
   public static handleKeyword() {
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
-      const drawerElement = document.querySelector('.open[data-drawer]');
+    document.addEventListener("keydown", (event: KeyboardEvent) => {
+      const drawerElement = document.querySelector(".open[data-drawer]");
       const drawer = KTDrawer.getInstance(drawerElement as HTMLElement);
       if (!drawer) {
         return;
       }
 
       // if esc key was not pressed in combination with ctrl or alt or shift
-      if (event.key === 'Escape' && !(event.ctrlKey || event.altKey || event.shiftKey)) {
+      if (
+        event.key === "Escape" &&
+        !(event.ctrlKey || event.altKey || event.shiftKey)
+      ) {
         drawer.hide();
       }
 
-      if (event.code === 'Tab' && !event.metaKey) {
-       return;
+      if (event.code === "Tab" && !event.metaKey) {
+        return;
       }
     });
-  } 
+  }
 
   public static createInstances(): void {
     const elements = document.querySelectorAll('[data-drawer="true"]');

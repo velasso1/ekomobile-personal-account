@@ -1,11 +1,11 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-import KTData from '../../helpers/data';
-import KTDom from '../../helpers/dom';
-import KTUtils from '../../helpers/utils';
-import KTComponent from '../component';
-import { KTScrollableInterface, KTScrollableConfigInterface } from './types';
+import KTData from "../../helpers/data";
+import KTDom from "../../helpers/dom";
+import KTUtils from "../../helpers/utils";
+import KTComponent from "../component";
+import { KTScrollableInterface, KTScrollableConfigInterface } from "./types";
 
 declare global {
   interface Window {
@@ -16,12 +16,12 @@ declare global {
 window.KT_SCROLL_INITIALIZED = false;
 
 export class KTScrollable extends KTComponent implements KTScrollableInterface {
-  protected override _name: string = 'scrollable';
+  protected override _name: string = "scrollable";
   protected override _defaultConfig: KTScrollableConfigInterface = {
     save: true,
-    dependencies: '',
-    wrappers: '',
-    offset: '',
+    dependencies: "",
+    wrappers: "",
+    offset: "",
   };
   protected override _config: KTScrollableConfigInterface = this._defaultConfig;
   protected _elementId: string | null = null;
@@ -35,16 +35,19 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
     this._buildConfig(config);
 
     if (!this._element) return;
-    this._elementId = this._element.getAttribute('id');
+    this._elementId = this._element.getAttribute("id");
     this._handlers();
     this._update();
   }
 
   protected _handlers(): void {
     if (!this._element) return;
-    this._element.addEventListener('scroll', () => {
+    this._element.addEventListener("scroll", () => {
       if (!this._element) return;
-      localStorage.setItem(`${this._elementId}st`, this._element.scrollTop.toString());
+      localStorage.setItem(
+        `${this._elementId}st`,
+        this._element.scrollTop.toString()
+      );
     });
   }
 
@@ -62,17 +65,17 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
     if (height && height.length > 0) {
       this._element.style.setProperty(heightType, height);
     } else {
-      this._element.style.setProperty(heightType, '');
+      this._element.style.setProperty(heightType, "");
     }
   }
 
   protected _setupState(): void {
     if (!this._element) return;
-    const stateEnabled = this._getOption('state') === true;
+    const stateEnabled = this._getOption("state") === true;
     const elementIdExists = Boolean(this._elementId);
 
     if (stateEnabled && elementIdExists) {
-      const storedPosition = localStorage.getItem(this._elementId + 'st');
+      const storedPosition = localStorage.getItem(this._elementId + "st");
 
       if (storedPosition) {
         const pos = parseInt(storedPosition);
@@ -80,7 +83,7 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
         if (pos > 0) {
           this._element.scroll({
             top: pos,
-            behavior: 'instant'
+            behavior: "instant",
           });
         }
       }
@@ -90,37 +93,41 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
   protected _getHeight(): string {
     const height = this._getHeightOption();
 
-    if (height !== null && typeof height === 'string' && height.toLowerCase() === 'auto') {
+    if (
+      height !== null &&
+      typeof height === "string" &&
+      height.toLowerCase() === "auto"
+    ) {
       return this._getAutoHeight();
     } else if (height) {
-      return parseInt(height).toString() + 'px';
+      return parseInt(height).toString() + "px";
     } else {
-      return '0';
+      return "0";
     }
   }
 
   protected _getAutoHeight(): string {
-    if (!this._element) return '';
+    if (!this._element) return "";
     let height = KTDom.getViewPort().height;
-    const dependencies = this._getOption('dependencies') as string;
-    const wrappers = this._getOption('wrappers') as string;
-    const offset = this._getOption('offset') as string;
+    const dependencies = this._getOption("dependencies") as string;
+    const wrappers = this._getOption("wrappers") as string;
+    const offset = this._getOption("offset") as string;
     height -= this._getElementSpacing(this._element);
 
     if (dependencies && dependencies.length > 0) {
       const elements = document.querySelectorAll(dependencies);
       elements.forEach((element) => {
-        if (KTDom.getCssProp(element as HTMLElement, 'display') === 'none') {
+        if (KTDom.getCssProp(element as HTMLElement, "display") === "none") {
           return;
         }
-        height -= this._getElementHeight(element as HTMLElement);        
+        height -= this._getElementHeight(element as HTMLElement);
       });
     }
 
     if (wrappers && wrappers.length > 0) {
       const elements = document.querySelectorAll(wrappers);
       elements.forEach((element) => {
-        if (KTDom.getCssProp(element as HTMLElement, 'display') === 'none') {
+        if (KTDom.getCssProp(element as HTMLElement, "display") === "none") {
           return;
         }
         height -= this._getElementSpacing(element as HTMLElement);
@@ -131,7 +138,7 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
       height -= parseInt(offset);
     }
 
-    return height.toString() + 'px';
+    return height.toString() + "px";
   }
 
   protected _getElementHeight(element: HTMLElement): number {
@@ -150,7 +157,7 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
     }
     if (computedStyle.marginBottom) {
       height += parseInt(computedStyle.marginBottom);
-    } 
+    }
     if (computedStyle.borderTopWidth) {
       height += parseInt(computedStyle.borderTopWidth);
     }
@@ -180,7 +187,7 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
     }
     if (computedStyle.paddingBottom) {
       spacing += parseInt(computedStyle.paddingBottom);
-    } 
+    }
     if (computedStyle.borderTopWidth) {
       spacing += parseInt(computedStyle.borderTopWidth);
     }
@@ -192,24 +199,26 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
   }
 
   protected _getHeightType(): string {
-    if (this._getOption('minHeight')) {
-      return 'min-height';
-    } if (this._getOption('maxHeight')) {
-      return 'max-height';
+    if (this._getOption("minHeight")) {
+      return "min-height";
+    }
+    if (this._getOption("maxHeight")) {
+      return "max-height";
     } else {
-      return 'height';
+      return "height";
     }
   }
 
   protected _getHeightOption(): string {
     const heightType = this._getHeightType();
 
-    if (heightType == 'min-height') {
-      return this._getOption('minHeight') as string;
-    } if (heightType == 'max-height') {
-      return this._getOption('maxHeight') as string;
+    if (heightType == "min-height") {
+      return this._getOption("minHeight") as string;
+    }
+    if (heightType == "max-height") {
+      return this._getOption("maxHeight") as string;
     } else {
-      return this._getOption('height') as string;
+      return this._getOption("height") as string;
     }
   }
 
@@ -222,10 +231,13 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
   }
 
   public static getInstance(element: HTMLElement): KTScrollable {
-    return KTData.get(element, 'scrollable') as KTScrollable;
+    return KTData.get(element, "scrollable") as KTScrollable;
   }
 
-  public static getOrCreateInstance(element: HTMLElement, config?: KTScrollableConfigInterface): KTScrollable {
+  public static getOrCreateInstance(
+    element: HTMLElement,
+    config?: KTScrollableConfigInterface
+  ): KTScrollable {
     return this.getInstance(element) || new KTScrollable(element, config);
   }
 
@@ -238,16 +250,20 @@ export class KTScrollable extends KTComponent implements KTScrollableInterface {
   }
 
   public static handleResize(): void {
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       let timer;
 
-      KTUtils.throttle(timer, function () {
-        // Locate and update scrollable instances on window resize
-        const elements = document.querySelectorAll('[data-scrollable]');
-        elements.forEach((element) => {
-          KTScrollable.getInstance(element as HTMLElement)?.update();
-        });
-      }, 200);
+      KTUtils.throttle(
+        timer,
+        function () {
+          // Locate and update scrollable instances on window resize
+          const elements = document.querySelectorAll("[data-scrollable]");
+          elements.forEach((element) => {
+            KTScrollable.getInstance(element as HTMLElement)?.update();
+          });
+        },
+        200
+      );
     });
   }
 

@@ -1,9 +1,9 @@
-import { FC } from 'react';
-import { ITableExpensesProps } from '../../../types/table-types';
+import { FC } from "react";
+import { ITableExpensesProps } from "../../../types/table-types";
 
 const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
   return (
-    <div className="card min-w-full">
+    <div className="card min-w-full xs:w-[283px] xs:overflow-scroll lg:overflow-auto">
       <div className="card-table">
         <table className="table align-middle text-sm font-medium text-gray-700">
           <thead>
@@ -35,9 +35,9 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
             </tr>
           </thead>
           <tbody>
-            {tableItem.map((item, index) => {
+            {tableItem.map((item) => {
               return (
-                <tr key={index}>
+                <tr key={item.id}>
                   <td>{item.date}</td>
                   <td>{item.sum} ₽</td>
                   <td>{item.operationType}</td>
