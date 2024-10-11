@@ -4,6 +4,7 @@
 @import "./metronic/vendors/keenicons/outline/style.css";
 
 @import "./metronic/css/styles.css";
+@import "./app/modules/pages/gosuslugi-about-page/gosuslugi-about.css";
 
 #__next {
   display: contents;

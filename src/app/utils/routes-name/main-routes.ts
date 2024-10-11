@@ -10,6 +10,8 @@ export const mainRoutes: IMainRoutes = {
   balance: "/main/balance",
   applications: "/main/applications",
   profile: "/main/profile",
+  gosuslugiNumbers: "/main/gosuslugi-numbers",
+  gosuslugiAbout: "/main/gosuslugi-about",
 };
 
 export const authRoutes: IAuthRoutes = {

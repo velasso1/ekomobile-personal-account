@@ -16,7 +16,7 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle })
     <>
       {buttonType === "default" && (
         <button
-          className={`btn w-full justify-center ${textColor.white} ${bgColor.primary}`}
+          className={`btn w-full justify-center ${textColor.white} ${bgColor.primary} ${textSize.p13}`}
           onClick={(e) => onClickCb(e)}
         >
           {title}
