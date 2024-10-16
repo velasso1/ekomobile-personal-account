@@ -1,17 +1,40 @@
 import { FC } from "react";
 
-import { ILineProgressBarProps } from "../../../types/line-progress-types";
+import DotForLineProgressBar from "../dot-line-progress-bar/dot-line-progress-bar";
 
 import { defaultStyles } from "../../../utils/default-styles";
 
-const LineProgressBar: FC<ILineProgressBarProps> = ({ color, value, name }) => {
-  const { textSize } = defaultStyles;
+interface ILineProgressBarProps {
+  firstValue: number;
+  firstbarName: string;
+  secondValue: number;
+  secondBarName: string;
+}
+
+const LineProgressBar: FC<ILineProgressBarProps> = ({ firstValue, firstbarName, secondValue, secondBarName }) => {
+  const { bgColor } = defaultStyles;
+
+  const sum = firstValue + secondValue;
+  const progressFirst = (firstValue / sum) * 100;
+  const progressSecond = (secondValue / sum) * 100;
 
   return (
-    <div className={`information mr-[15px] flex items-center ${textSize.default} font-medium`}>
-      <span className={`badge badge-dot mr-[5px] size-2.5 ${color}`}></span>
-      <span className="mr-[5px]">{name}</span>
-      <span>{typeof value === "number" ? value : value.sum} ₽</span>
+    <div className="">
+      <div className="progress mb-[20px]">
+        <div
+          className={`${bgColor.primary} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          style={{ width: `${progressFirst}%` }}
+        ></div>
+        <div
+          className={`${bgColor.yellow} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          style={{ width: `${progressSecond}%` }}
+        ></div>
+      </div>
+
+      <div className="flex">
+        <DotForLineProgressBar name={firstbarName} color={bgColor.primary} value={firstValue} />
+        <DotForLineProgressBar name={secondBarName} color={bgColor.yellow} value={secondValue} />
+      </div>
     </div>
   );
 };

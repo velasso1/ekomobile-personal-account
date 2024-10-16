@@ -2,15 +2,13 @@ import { FC, useState } from "react";
 import { IRegistrationStepsProps } from "./registration-skelet";
 
 import NumberField from "../../../../ui/fields/number-field";
+import Warning from "../../../../ui/warning/warning";
 import { Button } from "../../../../ui/button";
 
 import SuccessIcon from "../../../../../utils/icons/success-icon";
-// import { defaultStyles } from "../../../../../utils/default-styles";
 
-const RegistrationStepOne: FC<IRegistrationStepsProps> = ({ step, setStep }) => {
-  const [userPhone, setUserPhone] = useState<string>("");
-
-  // const { bgColor } = defaultStyles;
+const RegistrationStepOne: FC<IRegistrationStepsProps> = ({ userInfo, setUserInfo, step, setStep }) => {
+  const [emptyField, setEmptyField] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -20,9 +18,10 @@ const RegistrationStepOne: FC<IRegistrationStepsProps> = ({ step, setStep }) => 
             id="phone-field-reg"
             placeholder="телефон"
             label="Телефон"
-            value={userPhone}
-            onChangeCb={(e) => setUserPhone(e.target.value.trim())}
+            value={userInfo.phone}
+            onChangeCb={(e) => setUserInfo({ ...userInfo, phone: e.target.value.trim() })}
             Icon={SuccessIcon}
+            addStyle={`${emptyField && "border-[red]"}`}
           />
         </div>
         <div className="mt-[20px] flex w-[290px] flex-col justify-center">
@@ -31,9 +30,15 @@ const RegistrationStepOne: FC<IRegistrationStepsProps> = ({ step, setStep }) => 
             title="Продолжить"
             onClickCb={(e) => {
               e.preventDefault();
+              if (userInfo.phone.length < 10) {
+                setEmptyField(true);
+                return;
+              }
+
               setStep(step + 1);
             }}
           />
+          {emptyField && <Warning text="Ввёден некорректный номер" />}
         </div>
       </form>
     </div>

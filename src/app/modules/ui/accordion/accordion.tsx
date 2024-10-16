@@ -1,8 +1,10 @@
 import { FC, useState } from "react";
-import config from "../../../../../auxuliary.json";
 
 import ModalServices from "../modals/modal-services";
+
 import { defaultStyles } from "../../../utils/default-styles";
+
+import config from "../../../../../auxuliary.json";
 
 interface IAccordionProps {
   accordionNumber: number;
@@ -12,12 +14,12 @@ interface IAccordionProps {
 
 const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, connect }) => {
   const [accordionOpen, setAccOpen] = useState<boolean>(false);
-  const { textSize, textColor } = defaultStyles;
+  const { bgColor, textSize, textColor } = defaultStyles;
   return (
     <>
       <div className="my-[20px] flex flex-col gap-5 pr-[45px] xs:w-[283px] md:w-auto" data-accordion="true">
         <div
-          className="accordion-item rounded-xl border bg-[#fff]"
+          className={`accordion-item rounded-xl border ${bgColor.white}`}
           data-accordion-item="true"
           id={`accordion_4_item_${accordionNumber}`}
         >

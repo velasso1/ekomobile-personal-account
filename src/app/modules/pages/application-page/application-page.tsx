@@ -5,7 +5,6 @@ import { Card } from "../../ui/card";
 import Badge from "../../ui/badges/badge";
 
 import { renderSwitch } from "../../../utils/helpers/render-switch";
-
 import { defaultStyles } from "../../../utils/default-styles";
 
 import config from "../../../../../auxuliary.json";

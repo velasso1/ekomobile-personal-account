@@ -1,5 +1,7 @@
 import { FC } from "react";
+
 import TableServicesModal from "../tables/table-services-modal";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
 const ModalServices: FC = () => {

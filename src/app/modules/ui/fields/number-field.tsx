@@ -1,14 +1,6 @@
-import React, { FC } from "react";
+import { FC } from "react";
 
-interface INumberFieldProps {
-  id: string;
-  placeholder: string;
-  label: string | React.ElementType;
-  onChangeCb: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  value: string | number;
-  Icon?: React.ElementType;
-  addStyle?: string;
-}
+import { INumberFieldProps } from "../../../types/fields-props";
 
 const NumberField: FC<INumberFieldProps> = ({ id, placeholder, label, onChangeCb, value, Icon, addStyle }) => {
   return (
@@ -30,7 +22,8 @@ const NumberField: FC<INumberFieldProps> = ({ id, placeholder, label, onChangeCb
             value={value}
             required
           />
-          <Icon />
+
+          {value.toString().length > 10 && <Icon />}
         </div>
       ) : (
         <input

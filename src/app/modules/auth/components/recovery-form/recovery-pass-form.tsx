@@ -33,7 +33,7 @@ const RecoveryPassForm: FC = () => {
         <Button
           buttonType="custom"
           title="Отмена"
-          customStyle="w-full ml-[12px] border-[#F1F1F4] bg-[#fff]"
+          customStyle={`w-full ml-[12px] border-[#F1F1F4] ${bgColor.white}`}
           onClickCb={() => navigate(authRoutes.login)}
         />
       </div>

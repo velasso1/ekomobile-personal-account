@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
 const TableServicesModal: FC = () => {

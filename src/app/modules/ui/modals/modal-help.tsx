@@ -3,6 +3,7 @@ import { FC } from "react";
 import phoneTube from "../../../assets/images/phone-tube.svg";
 import telegram from "../../../assets/images/telegram.svg";
 import whatsapp from "../../../assets/images/whatsapp.svg";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
 const ModalHelp: FC = () => {

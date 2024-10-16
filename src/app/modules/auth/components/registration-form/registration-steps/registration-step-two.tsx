@@ -4,26 +4,25 @@ import { IRegistrationStepsProps } from "./registration-skelet";
 
 import TextField from "../../../../ui/fields/text-field";
 import NumberField from "../../../../ui/fields/number-field";
+import Warning from "../../../../ui/warning/warning";
 import { Button } from "../../../../ui/button";
 
-// import { defaultStyles } from "../../../../../utils/default-styles";
+const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ userInfo, setUserInfo, step, setStep }) => {
+  const [correctInfo, setCorrectInfo] = useState<boolean>(true);
 
-type UserInfoState = {
-  email: string;
-  contactName: string;
-  contactPhone: number | "";
-  sim: number | "";
-};
+  const checkUserInfo = () => {
+    setCorrectInfo(true);
+    for (const key in userInfo) {
+      if (step === 2 && key === "sim") continue;
 
-const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ step, setStep }) => {
-  const [userInfo, setUserInfo] = useState<UserInfoState>({
-    email: "",
-    contactName: "",
-    contactPhone: "",
-    sim: "",
-  });
+      if (userInfo[key].length < 2) {
+        setCorrectInfo(false);
+        return;
+      }
+    }
 
-  // const { bgColor } = defaultStyles;
+    setStep(step + 1);
+  };
 
   return (
     <div className="flex w-[290px] flex-col justify-center">
@@ -33,7 +32,7 @@ const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ step, setStep }) => 
           placeholder="SIM"
           label="SIM"
           value={userInfo.sim}
-          onChangeCb={(e) => setUserInfo({ ...userInfo, sim: +e.target.value.trim() })}
+          onChangeCb={(e) => setUserInfo({ ...userInfo, sim: e.target.value.trim() })}
         />
       ) : null}
 
@@ -62,10 +61,18 @@ const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ step, setStep }) => 
         placeholder="Номер телефона"
         label="Контактный номер телефона"
         value={userInfo.contactPhone}
-        onChangeCb={(e) => setUserInfo({ ...userInfo, contactPhone: +e.target.value.trim() })}
+        onChangeCb={(e) => setUserInfo({ ...userInfo, contactPhone: e.target.value.trim() })}
         addStyle="mb-[15px]"
       />
-      <Button buttonType="default" title="Отправить" onClickCb={() => setStep(step + 1)} />
+
+      <Button
+        buttonType="default"
+        title="Отправить"
+        onClickCb={() => {
+          checkUserInfo();
+        }}
+      />
+      {!correctInfo && <Warning text="Все поля должны быть заполнены" />}
     </div>
   );
 };

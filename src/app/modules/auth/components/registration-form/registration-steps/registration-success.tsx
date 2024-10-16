@@ -1,10 +1,11 @@
 import { FC } from "react";
 
 import { useNavigate } from "react-router-dom";
-import { defaultStyles } from "../../../../../utils/default-styles";
 
-import { authRoutes } from "../../../../../utils/routes-name/main-routes";
 import { Button } from "../../../../ui/button";
+
+import { defaultStyles } from "../../../../../utils/default-styles";
+import { authRoutes } from "../../../../../utils/routes-name/main-routes";
 
 const RegistrationSuccess: FC = () => {
   const navigate = useNavigate();

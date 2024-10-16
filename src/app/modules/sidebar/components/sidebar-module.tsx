@@ -1,5 +1,7 @@
 import React, { FC, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { useAppDispatch } from "../../../store";
+import { logOut } from "../../../store/slices/auth-slice";
 
 import SideBarItem from "./side-bar-items/side-bar-item";
 import { Button } from "../../ui/button";
@@ -8,7 +10,6 @@ import { Context } from "../../main/main-module";
 
 import logo from "../../../assets/images/logo.svg";
 
-import { authRoutes } from "../../../utils/routes-name/main-routes";
 import { defaultStyles } from "../../../utils/default-styles";
 
 interface ISideBarProps {
@@ -16,7 +17,7 @@ interface ISideBarProps {
 }
 
 const SideBar: FC<ISideBarProps> = ({ changeVis }) => {
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const sidePanelOpen = useContext(Context);
 
   const { textColor } = defaultStyles;
@@ -29,7 +30,7 @@ const SideBar: FC<ISideBarProps> = ({ changeVis }) => {
       data-drawer-disable-scroll="false"
     >
       <button
-        className="btn absolute left-[85%] top-0 text-[#fff] md:hidden"
+        className={`btn absolute left-[85%] top-0 ${textColor.white} md:hidden`}
         onClick={() => changeVis((prev) => !prev)}
       >
         <i className="ki-filled ki-cross"></i>
@@ -51,7 +52,9 @@ const SideBar: FC<ISideBarProps> = ({ changeVis }) => {
           buttonType="custom"
           customStyle={`btn-outline border-[#fff] ${textColor.white}`}
           title="Выйти"
-          onClickCb={() => navigate(authRoutes.login)}
+          onClickCb={() => {
+            dispatch(logOut());
+          }}
         />
       </div>
     </div>

@@ -16,10 +16,12 @@ import { RemainderPage } from "../pages/remainder-page";
 import { BalancePage } from "../pages/balance-page";
 import { ApplicationPage } from "../pages/application-page";
 import { ProfilePage } from "../pages/profile-page";
+import { defaultStyles } from "../../utils/default-styles";
 
 export const Context = createContext(null);
 
 const MainModule: FC = () => {
+  const { bgColor } = defaultStyles;
   const [sidePanelOpen, setPanelOpen] = useState<boolean>(false);
   return (
     <div
@@ -35,7 +37,7 @@ const MainModule: FC = () => {
         <Header changeVis={setPanelOpen} />
       </div>
 
-      <div className="main-content bg-[#F6F8F8] grid-in-main">
+      <div className={`main-content ${bgColor.littleGrey} grid-in-main`}>
         <Routes>
           <Route path="main" element={<MainPage />} />
           <Route path="numbers" element={<NumbersPage />} />

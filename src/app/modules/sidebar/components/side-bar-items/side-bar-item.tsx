@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 
 import { useParams, useNavigate } from "react-router-dom";
+
 import { ISideBarProps } from "../../../../types/side-bar-types";
 
 import { defaultStyles } from "../../../../utils/default-styles";
@@ -23,11 +24,11 @@ const SideBarItem: FC<ISideBarProps> = ({ title, icon, redirectTo }) => {
       <a className={`flex flex-row ${textSize.default}`}>
         <span className="menu-icon">
           <i
-            className={`ki-outline ${icon} cursor-pointer ${hover || params["*"] === redirectTo ? `${textColor.primary}` : "text-[#A8B1C3]"} `}
+            className={`ki-outline ${icon} cursor-pointer ${hover || params["*"] === redirectTo ? textColor.primary : textColor.lightGrey} `}
           ></i>
         </span>
         <span
-          className={`ml-[10px] cursor-pointer text-[#A8B1C3] text-[400] ${hover || params["*"] === redirectTo ? "text-[#ffffff]" : "text-[#A8B1C3]"}`}
+          className={`ml-[10px] cursor-pointer ${textColor.lightGrey} text-[400] ${hover || params["*"] === redirectTo ? textColor.white : textColor.lightGrey}`}
         >
           {title}
         </span>

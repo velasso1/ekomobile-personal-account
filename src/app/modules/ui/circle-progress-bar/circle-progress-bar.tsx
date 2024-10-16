@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
 interface ICircleBarProps {
@@ -45,7 +46,7 @@ const CircleProgressBar: FC<ICircleBarProps> = ({
       </svg>
 
       <div className="absolute start-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform items-center justify-center">
-        <span className={`block text-center font-bold text-[#161616] xs:${textSize.default}md:text-[14px]`}>
+        <span className={`block text-center font-bold ${textColor.darkGrey} xs:${textSize.default}md:text-[14px]`}>
           {nameOfValue}
         </span>
         {!valueInfinity ? (

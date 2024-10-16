@@ -10,7 +10,7 @@ interface IButtonProps {
 }
 
 const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle }) => {
-  const { bgColor, textSize, textColor } = defaultStyles;
+  const { bgColor, textColor } = defaultStyles;
 
   return (
     <>
@@ -33,7 +33,7 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle })
       {buttonType === "services" && (
         <div className="m-[5px] my-[5px] inline-block">
           <button className="">
-            <span className="badge text-[#4B5675]">{title}</span>
+            <span className={`badge ${textColor.greyBlue}`}>{title}</span>
           </button>
         </div>
       )}

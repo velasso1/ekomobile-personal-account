@@ -1,4 +1,5 @@
 import { FC } from "react";
+
 import { ITableExpensesProps } from "../../../types/table-types";
 
 const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {

@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { defaultStyles } from "../../../utils/default-styles";
 
 interface IHeaderSelectProps {
   label: string;
@@ -23,14 +24,16 @@ const exampleArr: TempExampleForOption[] = [
 ];
 
 const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) => {
+  const { textColor } = defaultStyles;
+
   return (
     <div className={`flex flex-wrap items-baseline gap-2.5 rounded-[8px] lg:flex-nowrap ${addStyle}`}>
-      <label className="form-label max-w-32 font-medium text-[#161616] xs:hidden md:block">{label}</label>
+      <label className={`form-label max-w-32 font-medium ${textColor.darkGrey} xs:hidden md:block`}>{label}</label>
       <select
         className={`select ml-[-30px] h-[32px] rounded-[8px] hover:cursor-pointer xs:w-[170px] md:w-[230px] ${selectStyle}`}
         name="select"
       >
-        {exampleArr.map((itm, idx) => {
+        {exampleArr.map((itm) => {
           return (
             <option
               className={`${itm.bold ? "font-semibold" : null} hover:cursor-pointer`}

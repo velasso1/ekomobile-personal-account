@@ -1,29 +1,50 @@
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import NumberField from "../../../ui/fields/number-field";
+import { mainRoutes } from "../../../../utils/routes-name/main-routes";
+
+import { useAppDispatch } from "../../../../store";
+import { signIn } from "../../../../store/slices/auth-slice";
+
 import { ModalHelp } from "../../../ui/index";
-import EyeIcon from "../../../../utils/icons/eye-icon";
+import { Button } from "../../../ui/button";
+import NumberField from "../../../ui/fields/number-field";
+import Warning from "../../../ui/warning/warning";
 
 import { defaultStyles } from "../../../../utils/default-styles";
-import { mainRoutes, authRoutes } from "../../../../utils/routes-name/main-routes";
-import { Button } from "../../../ui/button";
+import { authRoutes } from "../../../../utils/routes-name/main-routes";
+import EyeIcon from "../../../../utils/icons/eye-icon";
 
-type UserState = {
-  login: string;
+export type TUserState = {
+  username: string;
   password: string;
 };
 
 const LoginForm: FC = () => {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  // const { accIsAuth } = useAppSelector((state) => state.routeSlice);
 
   const [hidePass, setHidePass] = useState<boolean>(true);
-  const [userState, setUserState] = useState<UserState>({
-    login: "",
+  const [emptyField, setEmptyFields] = useState<boolean>(false);
+  const [userState, setUserState] = useState<TUserState>({
+    username: "",
     password: "",
   });
 
   const { textSize, textColor } = defaultStyles;
+
+  const handleSignIn = (): void => {
+    setEmptyFields(false);
+    if (userState.username.length > 5 && userState.password.length > 5) {
+      dispatch(signIn(userState));
+      setUserState({ username: "", password: "" });
+      navigate(mainRoutes.main);
+      return;
+    }
+
+    setEmptyFields(true);
+  };
 
   return (
     <>
@@ -46,14 +67,14 @@ const LoginForm: FC = () => {
             <div className="flex w-full justify-center">
               <div className="flex min-w-[290px] flex-col">
                 <NumberField
-                  id="phone-field-reg"
+                  id="phone-field-log"
                   placeholder="телефон"
                   label="Телефон"
-                  value={userState.login}
+                  value={userState.username}
                   onChangeCb={(e) =>
                     setUserState({
                       ...userState,
-                      login: e.target.value.trim(),
+                      username: e.target.value.trim(),
                     })
                   }
                 />
@@ -69,7 +90,7 @@ const LoginForm: FC = () => {
                     </div>
                   </div>
                 </label>
-                <div className="input w-[290px]">
+                <div className={`input w-[290px]`}>
                   <input
                     className=""
                     type={hidePass ? "password" : "text"}
@@ -96,7 +117,7 @@ const LoginForm: FC = () => {
                 title="Продолжить"
                 onClickCb={(e) => {
                   e.preventDefault();
-                  navigate(mainRoutes.main);
+                  handleSignIn();
                 }}
               />
               <button
@@ -111,6 +132,7 @@ const LoginForm: FC = () => {
             </div>
           </form>
         </div>
+        {emptyField && <Warning text="Заполните все поля корректно" />}
       </div>
       <ModalHelp />
     </>

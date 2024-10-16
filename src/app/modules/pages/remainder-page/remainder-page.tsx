@@ -2,6 +2,7 @@ import { FC } from "react";
 
 import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
 import config from "../../../../../auxuliary.json";
@@ -12,10 +13,12 @@ interface IRemaindersItem {
   remainderValue: string;
 }
 
+type TProgressBarColor = "primary" | "lightBlue" | "lightGrey";
+
 const RemainderPage: FC = () => {
   const remainderItems: IRemaindersItem[] = config.remainders;
 
-  const { bgColor, textSize } = defaultStyles;
+  const { bgColor, textColor, textSize } = defaultStyles;
 
   return (
     <div className="full h-full px-[45px] pt-[40px]">
@@ -31,18 +34,22 @@ const RemainderPage: FC = () => {
           </thead>
           <tbody>
             {remainderItems.map((item, index) => {
+              const progressWidth: string =
+                item.fullValue === "-1" ? "100%" : (+item.remainderValue / +item.fullValue) * 100 + "%";
+              const progressColor: TProgressBarColor[] = ["primary", "lightBlue", "lightGrey"];
+
               return (
                 <tr className="" key={item.typeRemainder}>
                   <td className="flex items-center">
                     <div className="w-[150px]">{item.typeRemainder}</div>
                     <div className="progress bg-[#eaeaea]">
                       <div
-                        className={`progress-bar rounded-[0px] ${index === 0 ? `${bgColor.primary}` : index === 1 ? "bg-[#5890BC]" : "bg-[#A8B1C3]"} px-[10px] py-[5px] text-left`}
+                        className={`progress-bar rounded-[0px] ${bgColor[`${progressColor[index]}`]} px-[10px] py-[5px] text-left`}
                         style={{
-                          width: `${item.fullValue === "-1" ? "100%" : (+item.remainderValue / +item.fullValue) * 100 + "%"}`,
+                          width: `${progressWidth}`,
                         }}
                       >
-                        <span className={`${textSize.default} text-[#FFFFFF]`}>
+                        <span className={`${textSize.default} ${textColor.white}`}>
                           {+item.fullValue === -1
                             ? "∞"
                             : ((+item.remainderValue / +item.fullValue) * 100).toFixed() + "%"}

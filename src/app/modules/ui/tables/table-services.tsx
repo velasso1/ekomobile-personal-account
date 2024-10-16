@@ -2,7 +2,7 @@ import { FC } from "react";
 
 import { IServiceTableProps } from "../../../types/table-types";
 
-const TableServices: FC<IServiceTableProps> = ({ tableName = "хз", tableItem }) => {
+const TableServices: FC<IServiceTableProps> = ({ tableName = "unknown", tableItem }) => {
   return (
     <div className="card">
       <div className="card-header">

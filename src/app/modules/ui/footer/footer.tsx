@@ -5,11 +5,11 @@ import { defaultStyles } from "../../../utils/default-styles";
 
 const Footer: FC = () => {
   const year = new Date().getFullYear();
-  const { textSize, textColor } = defaultStyles;
+  const { bgColor, textSize, textColor } = defaultStyles;
 
   return (
     <footer
-      className={`footer flex justify-start bg-[#fff] px-[45px] ${textSize.default} ${textColor.grey} pt-[20px] xs:flex-col md:flex-row`}
+      className={`footer flex justify-start ${bgColor.white} px-[45px] ${textSize.default} ${textColor.grey} pt-[20px] xs:flex-col md:flex-row`}
     >
       <div className={`authorship`}>
         {year} ©
