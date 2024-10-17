@@ -156,6 +156,8 @@ const MainPage: FC = () => {
 
               return (
                 <CircleProgressBar
+                  // добавил индекс, еслим будет изменение позиций, добавление или удаление,нужен будет статичный уникальный ключ
+                  key={"circle-progress-"+ index}
                   color={textColor[`${getCircleColor[index]}`]}
                   nameOfValue={item.type.slice(0, 3)}
                   initialValue={item.size}
@@ -185,9 +187,11 @@ const MainPage: FC = () => {
           <div className="card-body">
             <div className="sum mb-[10px] text-[30px] font-semibold">{userInfo.expenses.total} ₽</div>
             <div className="progress py-[5px]">
+             {/* TODO: add types! */}
               {userInfo.expenses.parts.map((item) => {
                 return (
                   <div
+                    key={item.type +"progress"}
                     className={`${bgColor.primary} progress-bar rounded-[3px] py-[5px]`}
                     style={{ width: `${(item.amount * 100) / userInfo.expenses.total}%` }}
                   ></div>
@@ -198,7 +202,9 @@ const MainPage: FC = () => {
             <div className="explanation mt-[20px] flex xs:flex-col">
               {userInfo.expenses.parts.map((item) => {
                 return (
-                  <div className={`information flex items-center ${textSize.default} font-medium md:mr-[15px]`}>
+                  <div
+                    key={item.type +"info"}                   
+                    className={`information flex items-center ${textSize.default} font-medium md:mr-[15px]`}>
                     <span className={`${bgColor.primary} badge badge-dot size-2.5 md:mr-[5px]`}></span>
                     <span className="md:mr-[5px]">{item.type}</span>
                     <span>{item.amount}₽</span>

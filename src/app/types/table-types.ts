@@ -42,3 +42,31 @@ export interface ITableExpensesItem {
 export interface ITableExpensesProps {
   tableItem: ITableExpensesItem[];
 }
+
+///////////////////////////////////////
+
+export type TGUConfimationStatusId = "REQUIRED" | "NOT_REQUIRED" | "REQUESTED";
+
+export interface IGroupNumber {
+  msisdn: string;
+  guConfirmationInfo: {
+    status: {
+      name: string;
+      id: TGUConfimationStatusId;
+    };
+  };
+  mark: {
+    name: string;
+  };
+}
+
+export interface IGroup {
+  numbers: IGroupNumber[];
+}
+
+export interface ITableGosuslugiProps {
+  tableName: string;
+  tableItem: IGroupNumber[];
+}
+
+///////////////////////////////////////
