@@ -24,7 +24,7 @@ const GosuslugiAboutPage: FC = () => {
           <div className="mb-10">
             <div className="form-check-lg form-check-solid mt-7 flex">
               <input className="form-check-input mr-1" type="checkbox" value="" id="pdAgreement" />
-              <label className="form-check-label" for="flexCheckDefault">
+              <label className="form-check-label">
                 <ReactMarkdown children={aboutContent.pdAgreement} className={"markdown-gosuslugi-about"} />
               </label>
             </div>

@@ -10,7 +10,7 @@ interface IButtonProps {
 }
 
 const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle }) => {
-  const { bgColor, textColor } = defaultStyles;
+  const { bgColor, textColor, textSize } = defaultStyles;
 
   return (
     <>
