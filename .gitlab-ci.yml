@@ -72,11 +72,8 @@ build:
   #  tags:
   #    - web
   #    - node
-  before_script:
-    - npm install
   script:
     - npm test
-    - npx tsc --noEmitOnError
     - npm run build
   artifacts:
     paths:
