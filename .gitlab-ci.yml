@@ -16,7 +16,6 @@ variables:
   CACHE_COMPRESSION_LEVEL: fastest #default # same as above, but for caches
   DOCKER_DRIVER: overlay2
 
-
 ###########################################################################
 # Input variables. Create them on page /<group>/<project>/settings/ci_cd. #
 ###########################################################################
@@ -27,9 +26,8 @@ variables:
 # - DEPLOY_STAGE_DIR: Stage deploy directory.
 
 stages:
-  - build   # Compile & test.
-  - deploy  # Push to prod/stage server.
-
+  - build # Compile & test.
+  - deploy # Push to prod/stage server.
 
 # global cache settings for all jobs
 # Ensure compatibility with the install job
@@ -43,14 +41,13 @@ cache:
         - package-lock.json
     paths:
       - node_modules/
-    policy: pull  # prevent subsequent jobs from modifying cache
-
+    policy: pull # prevent subsequent jobs from modifying cache
 
 install:
-  stage: .pre   # always first, no matter if it is listed in stages
-#  tags:
-#    - web
-#    - node
+  stage: .pre # always first, no matter if it is listed in stages
+  #  tags:
+  #    - web
+  #    - node
   cache:
     # Mimic &global_cache_node_mods config but override policy
     # to allow this job to update the cache at the end of the job
@@ -70,19 +67,20 @@ install:
     # define cache dir & use it npm!
     - npm ci --prefer-offline --omit=dev
 
-
 build:
   stage: build
-#  tags:
-#    - web
-#    - node
+  #  tags:
+  #    - web
+  #    - node
+  before_script:
+    - npm install
   script:
     - npm test
+    - npx tsc --noEmitOnError
     - npm run build
   artifacts:
     paths:
       - $BUILD_DIR
-
 
 deploy:stage:
   stage: deploy
@@ -114,19 +112,18 @@ deploy:stage:
   cache: {}
   when: manual
   rules:
-    - if: $CI_COMMIT_TAG               # Never on tags pipelines
+    - if: $CI_COMMIT_TAG # Never on tags pipelines
       when: never
     - if: $CI_COMMIT_BRANCH == "stage" # Only on stage branch
-
 
 deploy:prod:
   stage: deploy
   environment:
     name: production
   image: instrumentisto/rsync-ssh
-#  tags:
-#    - web
-#    - node
+  #  tags:
+  #    - web
+  #    - node
   needs:
     - build
   dependencies:
@@ -149,6 +146,6 @@ deploy:prod:
   cache: {}
   when: manual
   rules:
-    - if: $CI_COMMIT_TAG              # Never on tags pipelines
+    - if: $CI_COMMIT_TAG # Never on tags pipelines
       when: never
     - if: $CI_COMMIT_BRANCH == "main" # Only on prod branch
