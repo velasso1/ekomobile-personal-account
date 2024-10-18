@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmitOnError && vite build",
+    "serve": "vite preview",
+    "test": "node -e \"console.log('no tests run')\"",
     "lint": "eslint .",
     "preview": "vite preview"
   },
