@@ -17,7 +17,7 @@ const CircleProgressBar: FC<ICircleBarProps> = ({
   remainderValue,
   valueInfinity = false,
 }) => {
-  const percent = (remainderValue / initialValue) * 100;
+  const percent = initialValue !== 0 ? (remainderValue / initialValue) * 100 : 0;
   const { textSize, textColor } = defaultStyles;
 
   return (
@@ -32,7 +32,7 @@ const CircleProgressBar: FC<ICircleBarProps> = ({
           strokeWidth="2"
         ></circle>
 
-        <circle
+        <circle 
           cx="18"
           cy="18"
           r="16"

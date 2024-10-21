@@ -3,7 +3,7 @@ import { FC } from "react";
 import { defaultStyles } from "../../../utils/default-styles";
 
 interface IButtonProps {
-  buttonType: "default" | "custom" | "services";
+  buttonType: "default" | "custom" | "services" | "grayBackgroundBlackText";
   title: string;
   onClickCb?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   customStyle?: string;
@@ -11,14 +11,14 @@ interface IButtonProps {
 }
 
 const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle, disabled = false }) => {
-  const { bgColor, textColor } = defaultStyles;
+  const { bgColor, textColor, textSize } = defaultStyles;
 
   return (
     <>
       {buttonType === "default" && (
         <button
           disabled={disabled}
-          className={`btn w-full justify-center ${textColor.white} ${bgColor.primary}`}
+          className={`btn w-full justify-center ${textColor.white} ${bgColor.primary} ${textSize.p13}`}
           onClick={(e) => onClickCb(e)}
         >
           {title}
@@ -27,6 +27,16 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle, d
 
       {buttonType === "custom" && (
         <button disabled={disabled} className={`btn justify-center ${customStyle}`} onClick={(e) => onClickCb(e)}>
+          {title}
+        </button>
+      )}
+
+      {buttonType === "grayBackgroundBlackText" && (
+        <button
+          disabled={disabled} 
+          className={`btn justify-center border-gray-200 bg-gray-100 ${textColor.greyBlue}`}
+          onClick={(e) => onClickCb(e)}
+        >
           {title}
         </button>
       )}
