@@ -1,7 +1,7 @@
 export interface IRegFormState {
-    sim: string;
-    phone: string;
-    email: string;
-    contactName: string;
-    contactPhone: string;
+  sim: string;
+  phone: string;
+  email: string;
+  contactName: string;
+  contactPhone: string;
 }

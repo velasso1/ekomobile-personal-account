@@ -2,7 +2,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_EXPENSES = gql`
-  query Me ($year: Int!, $month: Int!) {
+  query Me($year: Int!, $month: Int!) {
     me {
       account {
         number {

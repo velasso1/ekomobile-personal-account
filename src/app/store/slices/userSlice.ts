@@ -14,7 +14,7 @@ const initialState: IInitUserSlice = {
     dateOfBirth: "",
     sex: "NOTSELECTED",
   },
-  selectedNumber: ""
+  selectedNumber: "",
 };
 
 const userSlice = createSlice({
@@ -28,7 +28,7 @@ const userSlice = createSlice({
 
     changeSelectedNumber(state, action: PayloadAction<string>) {
       state.selectedNumber = action.payload;
-    }
+    },
   },
 });
 

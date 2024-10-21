@@ -1,3 +1,5 @@
-
-./src/metronic/*
-./*
+**/.git
+**/.svn
+**/.hg
+**/node_modules
+**/metronic/
