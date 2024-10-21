@@ -33,7 +33,7 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle, d
 
       {buttonType === "grayBackgroundBlackText" && (
         <button
-          disabled={disabled} 
+          disabled={disabled}
           className={`btn justify-center border-gray-200 bg-gray-100 ${textColor.greyBlue}`}
           onClick={(e) => onClickCb(e)}
         >

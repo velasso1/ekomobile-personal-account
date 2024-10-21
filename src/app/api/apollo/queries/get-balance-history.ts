@@ -2,26 +2,22 @@
 import { gql } from "@apollo/client";
 
 export const GET_BALANCE_HISTORY = gql`
-    query Me {
+  query Me {
     me {
-        account {
-            billingNumber {
-                balanceTopUpList(page: 1, pageSize: 1) {
-                    nodes {
-                        amount
-                        timestamp
-                        methodName 
-                    }
-                }
+      account {
+        billingNumber {
+          balanceTopUpList(page: 1, pageSize: 1) {
+            nodes {
+              amount
+              timestamp
+              methodName
             }
+          }
         }
+      }
     }
-} 
-`
-
-
-
-
+  }
+`;
 
 // mutation PaymentCreate {
 //     paymentCreate(

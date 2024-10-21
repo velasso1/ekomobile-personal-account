@@ -2,44 +2,44 @@
 // we don't receive a nodes data -------------------- <<<< CHECK THIS >>>>
 
 interface INodesItem {
-    amount: number;
-    timestamp: string;
-    methodName: string;
+  amount: number;
+  timestamp: string;
+  methodName: string;
 }
 
 interface INodes {
-    nodes: INodesItem[];
-} 
+  nodes: INodesItem[];
+}
 
 export interface IBalancePageResponse {
-    me: {
-        account: {
-            billingNumber: {
-                balanceTopUpList: INodes;
-            }
-        }
-    }
+  me: {
+    account: {
+      billingNumber: {
+        balanceTopUpList: INodes;
+      };
+    };
+  };
 }
 
 // balance page reponse for balance replenishment;
 
 interface IСorrelation {
-    actionId: string;
-    correlationId: string;
+  actionId: string;
+  correlationId: string;
 }
 
 interface IPaymentInfo {
-    id: string;
-    createdAt: string;
-    orderNumber: string;
-    amount: number;
-    paymentUrl: string;
-    correlation: IСorrelation;
+  id: string;
+  createdAt: string;
+  orderNumber: string;
+  amount: number;
+  paymentUrl: string;
+  correlation: IСorrelation;
 }
 
 export interface IBalanceReplenishment {
-    paymentSBPCreate: {
-        paymentId: string;
-        payment: IPaymentInfo;
-    }
-} 
+  paymentSBPCreate: {
+    paymentId: string;
+    payment: IPaymentInfo;
+  };
+}
