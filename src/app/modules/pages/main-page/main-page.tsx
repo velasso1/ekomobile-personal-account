@@ -1,9 +1,15 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { GET_FULL_DATA } from "../../../api/apollo/queries/get-full-data";
+import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
+import { GET_SERVICES } from "../../../api/apollo/queries/get-services";
 
 import { useNavigate } from "react-router-dom";
+
+import { IVerificationData } from "../../../types/mainpage-userinfo-types";
+import { IFullDataInfo } from "../../../types/response-full-userinfo-types";
+import { IServicesPageResponse } from "../../../types/servicespage-response-types";
 
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
@@ -12,103 +18,57 @@ import { Button } from "../../ui/button";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
+import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
+import { ExpensesNames } from "../../../utils/auxuliary-data/expenses-names";
+import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 
 import config from "../../../../../auxuliary.json";
 
 const MainPage: FC = () => {
   const navigate = useNavigate();
-  const { data, loading, error } = useQuery(GET_FULL_DATA, { variables: { year: 2024, month: 9 } });
 
-  const [userInfo, setUserInfo] = useState({
-    contactName: "",
-    contactPhone: "",
-    planName: "",
-    balance: "",
-    numberIsActive: false,
-    remainders: [
-      {
-        type: "",
-        size: 0,
-        total: 0,
-        isUnlimited: false,
-      },
-      {
-        type: "",
-        size: 0,
-        total: 0,
-        isUnlimited: false,
-      },
-      {
-        type: "",
-        size: 0,
-        total: 0,
-        isUnlimited: false,
-      },
-    ],
-    expenses: {
-      total: 0,
-      parts: [],
-    },
+  const date = new Date();
+
+  const { data, loading, error } = useQuery<IFullDataInfo>(GET_FULL_DATA, {
+    variables: { year: date.getFullYear(), month: date.getMonth() },
   });
+  const {
+    data: verificData,
+    loading: verificLoading,
+    error: verificError,
+  } = useQuery<IVerificationData>(CHECK_VERIFICATION);
 
-  useEffect(() => {
-    if (data) {
-      const { contactName, msisdn, number, expenses } = data.fullUserInfo.account;
-      console.log(data);
-
-      setUserInfo({
-        ...userInfo,
-        contactName: contactName,
-        contactPhone: msisdn,
-        planName: number.pricePlan.name,
-        balance: number.balance,
-        numberIsActive: number.isActive,
-        remainders: [
-          {
-            type: number.remains.full[0].measure,
-            size: number.remains.full[0].size,
-            total: number.remains.full[0].balance,
-            isUnlimited: number.remains.full[0].isUnlimited,
-          },
-          {
-            type: number.remains.full[1].measure,
-            size: number.remains.full[1].size,
-            total: number.remains.full[1].balance,
-            isUnlimited: number.remains.full[1].isUnlimited,
-          },
-          {
-            type: number.remains.full[2].measure,
-            size: number.remains.full[2].size,
-            total: number.remains.full[2].balance,
-            isUnlimited: number.remains.full[2].isUnlimited,
-          },
-        ],
-        expenses: {
-          total: number.expenses.month.amount.total,
-          parts: number.expenses.month.amount.parts,
-        },
-      });
-    }
-  }, [data]);
+  const {
+    data: servicesData,
+    loading: servicesLoading,
+    error: servicesError,
+  } = useQuery<IServicesPageResponse>(GET_SERVICES);
 
   const [visibleTab, setVisibleTab] = useState<boolean>(true);
   const { bgColor, textSize, textColor } = defaultStyles;
+  const formattedPhone = data ? formatPhoneNumber(data.fullUserInfo.account.contactPhone) : "";
 
-  if (loading) {
+  if (loading || servicesLoading || verificLoading) {
     return <Loader />;
+  }
+
+  if (error || servicesError || verificError) {
+    return <WarningBadge isError={true} />;
   }
 
   return (
     <div className="main-page mb-[40px] pt-[8px]">
-      <WarningBadge
-        title="Требуется подтверждение"
-        message="Требуется подтверждение номера на Госуслугах."
-        buttonText="Подтвердить"
-      />
+      {verificData && !verificData.me.account.isContactPhoneVerified && (
+        <WarningBadge
+          title="Требуется подтверждение"
+          message="Требуется подтверждение номера на Госуслугах."
+          buttonText="Подтвердить"
+        />
+      )}
 
       <div className="card grid grid-cols-2 flex-row xs:mx-[20px] xs:mb-[20px] md:mx-[45px] md:mb-[40px]">
         <div className="card-body">
-          <p className="font-semibold xs:text-[15px] md:text-[22px]">{userInfo.contactName}</p>
+          <p className="font-semibold xs:text-[15px] md:text-[22px]">{data.fullUserInfo.account.contactName}</p>
           <a
             className={`btn-link ${textSize.default} ${textColor.primary}`}
             href="#"
@@ -117,20 +77,24 @@ const MainPage: FC = () => {
             Профиль
           </a>
         </div>
-        <div className="card-body my-[20px] flex border-b-2 border-[#EAECEE] pt-[5px] xs:mr-[10px] xs:flex-col md:mr-[40px] md:flex-row">
+        <div className="card-body my-[20px] flex border-b-2 border-[#EAECEE] pl-[0px] pt-[5px] xs:mr-[10px] xs:flex-col xs:text-[13px] md:mr-[40px] md:flex-row md:text-[15px]">
           <div className={`font-semibold ${textColor.darkBlue} xs:${textSize.default} md:text-[18px]`}>
-            +7{userInfo.contactPhone}
+            {formattedPhone}
           </div>
           <div className="ml-[15px]">
-            <span className={`badge badge-outline ${userInfo.numberIsActive ? "badge-success" : null}`}>
-              {userInfo.numberIsActive ? "Активен" : "Заблокирован"}
+            <span
+              className={`badge badge-outline ${data.fullUserInfo.account.number.isActive ? "badge-success" : null}`}
+            >
+              {data.fullUserInfo.account.number.isActive ? "Активен" : "Заблокирован"}
             </span>
           </div>
         </div>
 
         <div className="card-body pt-[30px]">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой тариф</p>
-          <p className={`tarif mb-[5px] text-[16px] font-semibold ${textColor.darkBlue}`}>{userInfo.planName}</p>
+          <p className={`tarif mb-[5px] text-[16px] font-semibold ${textColor.darkBlue}`}>
+            {data.fullUserInfo.account.number.pricePlan.name}
+          </p>
           <a className={`btn-link ${textColor.primary}`} href="#">
             Подробнее
           </a>
@@ -139,7 +103,7 @@ const MainPage: FC = () => {
         <div className="card-body px-[0] xs:justify-self-end xs:pr-[40px] md:justify-self-start">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой баланс</p>
           <p className={`mb-[5px] font-semibold ${textColor.darkBlue} xs:text-[20px] md:text-[30px]`}>
-            {userInfo.balance} ₽
+            {data.fullUserInfo.account.number.balance} ₽
           </p>
           <Button buttonType="default" title="Пополнить" onClickCb={() => navigate(mainRoutes.balance)} />
         </div>
@@ -151,15 +115,15 @@ const MainPage: FC = () => {
             <h3 className="card-title">Остатки по пакетам</h3>
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
-            {userInfo.remainders.map((item, index) => {
+            {data.fullUserInfo.account.number.remains.full.map((item, index) => {
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
-
               return (
                 <CircleProgressBar
+                  key={crypto.randomUUID()}
                   color={textColor[`${getCircleColor[index]}`]}
-                  nameOfValue={item.type.slice(0, 3)}
+                  nameOfValue={item.measure.slice(0, 3)}
                   initialValue={item.size}
-                  remainderValue={item.total}
+                  remainderValue={item.balance}
                   valueInfinity={item.isUnlimited}
                 />
               );
@@ -183,24 +147,34 @@ const MainPage: FC = () => {
             <h3 className="card-title">Расходы текущего периода</h3>
           </div>
           <div className="card-body">
-            <div className="sum mb-[10px] text-[30px] font-semibold">{userInfo.expenses.total} ₽</div>
+            <div className="sum mb-[10px] text-[30px] font-semibold">
+              {data.fullUserInfo.account.number.expenses.month.amount.total} ₽
+            </div>
             <div className="progress py-[5px]">
-              {userInfo.expenses.parts.map((item) => {
+              {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
                 return (
                   <div
-                    className={`${bgColor.primary} progress-bar rounded-[3px] py-[5px]`}
-                    style={{ width: `${(item.amount * 100) / userInfo.expenses.total}%` }}
+                    key={crypto.randomUUID()}
+                    className={`${bgColor[`${getProgressColor[index]}`]} progress-bar rounded-[3px] py-[5px]`}
+                    style={{
+                      width: `${(item.amount * 100) / data.fullUserInfo.account.number.expenses.month.amount.total}%`,
+                    }}
                   ></div>
                 );
               })}
             </div>
 
             <div className="explanation mt-[20px] flex xs:flex-col">
-              {userInfo.expenses.parts.map((item) => {
+              {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
                 return (
-                  <div className={`information flex items-center ${textSize.default} font-medium md:mr-[15px]`}>
-                    <span className={`${bgColor.primary} badge badge-dot size-2.5 md:mr-[5px]`}></span>
-                    <span className="md:mr-[5px]">{item.type}</span>
+                  <div
+                    key={crypto.randomUUID()}
+                    className={`information flex items-center ${textSize.default} font-medium md:mr-[15px]`}
+                  >
+                    <span
+                      className={`${bgColor[`${getProgressColor[index]}`]} badge badge-dot size-2.5 md:mr-[5px]`}
+                    ></span>
+                    <span className="md:mr-[5px]">{ExpensesNames[item.type]}</span>
                     <span>{item.amount}₽</span>
                   </div>
                 );
@@ -245,13 +219,19 @@ const MainPage: FC = () => {
                 </div>
                 {visibleTab ? (
                   <div className="" id="tab_1_1">
-                    {config.buttons.map((item) => {
-                      return <Button key={item.id} buttonType="services" title={item.name} />;
+                    {servicesData.me.account.number.services.map((item) => {
+                      if (item.fee && item.fee.amount > 0) {
+                        return <Button key={item.id} buttonType="services" title={item.name} />;
+                      }
                     })}
                   </div>
                 ) : (
                   <div className="" id="tab_1_2">
-                    Пока что здесь нет тарифов
+                    {servicesData.me.account.number.services.map((item) => {
+                      if (item.fee && item.fee.amount === 0) {
+                        return <Button key={item.id} buttonType="services" title={item.name} />;
+                      }
+                    })}
                   </div>
                 )}
               </div>

@@ -1,12 +1,33 @@
 import { FC, useState } from "react";
 
+import { useQuery } from "@apollo/client";
+import { GET_SERVICES } from "../../../api/apollo/queries/get-services";
+import { IServicesPageResponse } from "../../../types/servicespage-response-types";
+
 import Accordion from "../../ui/accordion/accordion";
 import { PageTitle } from "../../ui/page-title";
+
+import Loader from "../../ui/loader/loader";
+import { WarningBadge } from "../../ui";
 
 import config from "../../../../../auxuliary.json";
 
 const ServicesPage: FC = () => {
+  const { data, loading, error } = useQuery<IServicesPageResponse>(GET_SERVICES);
+
   const [selectValue, setSelectValue] = useState<string>("1");
+
+  if (data) {
+    console.log(data.me.account.number.services);
+  }
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <WarningBadge isError={true} />;
+  }
 
   return (
     <div className="mb-[40px] pl-[45px] pt-[40px]">

@@ -9,7 +9,7 @@ import { Button } from "../../../../ui/button";
 import { defaultStyles } from "../../../../../utils/default-styles";
 import { authRoutes } from "../../../../../utils/routes-name/main-routes";
 
-const RegistrationStepThree: FC<IRegistrationStepsProps> = ({ userInfo, step, setStep }) => {
+const RegistrationStepThree: FC<IRegistrationStepsProps> = ({ step, setStep }) => {
   const navigate = useNavigate();
   const [code, setCode] = useState<number | "">("");
 
@@ -26,12 +26,12 @@ const RegistrationStepThree: FC<IRegistrationStepsProps> = ({ userInfo, step, se
       />
       <div className="mt-[15px] flex justify-between">
         <Button
+          disabled={code.toString().length < 4}
           buttonType="default"
           title="Отправить"
           onClickCb={() => {
             {
               setStep(step + 1);
-              console.log(userInfo);
             }
           }}
         />

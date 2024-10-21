@@ -2,38 +2,43 @@ import { FC } from "react";
 
 import DotForLineProgressBar from "../dot-line-progress-bar/dot-line-progress-bar";
 
+import { INodeItem } from "../../../types/expensespage-response-types";
+
 import { defaultStyles } from "../../../utils/default-styles";
+import { ExpensesNames } from "../../../utils/auxuliary-data/expenses-names";
+import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 
 interface ILineProgressBarProps {
-  firstValue: number;
-  firstbarName: string;
-  secondValue: number;
-  secondBarName: string;
+  progressItem: INodeItem[];
+  totalExpenses: number;
 }
 
-const LineProgressBar: FC<ILineProgressBarProps> = ({ firstValue, firstbarName, secondValue, secondBarName }) => {
+const LineProgressBar: FC<ILineProgressBarProps> = ({ progressItem, totalExpenses }) => {
   const { bgColor } = defaultStyles;
-
-  const sum = firstValue + secondValue;
-  const progressFirst = (firstValue / sum) * 100;
-  const progressSecond = (secondValue / sum) * 100;
 
   return (
     <div className="">
       <div className="progress mb-[20px]">
-        <div
-          className={`${bgColor.primary} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
-          style={{ width: `${progressFirst}%` }}
-        ></div>
-        <div
-          className={`${bgColor.yellow} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
-          style={{ width: `${progressSecond}%` }}
-        ></div>
+        {progressItem.map((item, index) => {
+          return (
+            <div
+              className={`${bgColor[`${getProgressColor[index]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+              style={{ width: `${(item.amount * 100) / totalExpenses}%` }}
+            ></div>
+          );
+        })}
       </div>
 
       <div className="flex">
-        <DotForLineProgressBar name={firstbarName} color={bgColor.primary} value={firstValue} />
-        <DotForLineProgressBar name={secondBarName} color={bgColor.yellow} value={secondValue} />
+        {progressItem.map((item, index) => {
+          return (
+            <DotForLineProgressBar
+              name={ExpensesNames[item.name]}
+              color={bgColor[`${getProgressColor[index]}`]}
+              value={item.amount}
+            />
+          );
+        })}
       </div>
     </div>
   );

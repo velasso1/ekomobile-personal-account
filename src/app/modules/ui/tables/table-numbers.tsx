@@ -2,13 +2,10 @@ import { FC } from "react";
 
 import { ITableNumbersProps } from "../../../types/table-types";
 
+import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { defaultStyles } from "../../../utils/default-styles";
 
-const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem }) => {
-  const fullBalance = tableItem.reduce((acc, item) => {
-    return acc + +item.balance;
-  }, 0);
-
+const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan }) => {
   const { textSize, textColor } = defaultStyles;
 
   return (
@@ -30,44 +27,65 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem }) => {
             </tr>
           </thead>
           <tbody>
-            {tableItem.map((item) => {
-              return (
-                <tr key={item.id}>
-                  <td>{item.number}</td>
-                  <td>{item.tarif}</td>
-                  <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{item.balance} ₽</td>
-                  <td>
-                    {item.status ? (
-                      <span className="badge badge-outline badge-success">Активен</span>
-                    ) : (
-                      <span className="badge badge-outline">Заблокирован</span>
-                    )}
-                  </td>
-                  <td>
-                    {item.fullAccess ? (
-                      <span className="badge badge-outline badge-success">Есть</span>
-                    ) : (
-                      <span className="badge badge-outline badge-danger">Нет</span>
-                    )}
-                  </td>
-                  <td>
-                    <a className={`btn-link ${textColor.primary}`} href="#">
-                      {item.description}
-                    </a>
-                  </td>
-                  <td>
-                    <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
-                  </td>
-                </tr>
-              );
-            })}
+            {tableItem.numbers ? (
+              tableItem.numbers.map((item) => {
+                const newPhoneForm = formatPhoneNumber(item.msisdn);
+                return (
+                  <tr key={item.msisdn}>
+                    <td>{newPhoneForm}</td>
+                    <td>{pricePlan.name}</td>
+                    <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{item.balance} ₽</td>
+                    <td>
+                      <span className={`badge badge-outline badge-${item.isActive ? "success" : ""}`}>
+                        {item.isActive ? "Активен" : "Заблокирован"}
+                      </span>
+                    </td>
+                    <td>
+                      <span className={`badge badge-outline badge-${item.hasFullAccess ? "success" : "danger"}`}>
+                        {item.hasFullAccess ? "Да" : "Нет"}
+                      </span>
+                    </td>
+                    <td>
+                      {item.description ? (
+                        <a className={`btn-link ${textColor.primary}`} href="#">
+                          {item.description}
+                        </a>
+                      ) : (
+                        "Отсутствует"
+                      )}
+                    </td>
+                    <td>
+                      <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td>{tableItem.msisdn}</td>
+                <td>{pricePlan.name}</td>
+                <td>{tableItem.balance}</td>
+                <td>
+                  <span className={`badge badge-outline badge-${tableItem.isActive ? "success" : ""}`}>
+                    {tableItem.isActive ? "Активен" : "Заблокирован"}
+                  </span>
+                </td>
+                <td>
+                  <span className="badge badge-outline badge-success">Да</span>
+                </td>
+                <td>Отсутствует</td>
+                <td>
+                  <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
         <div className="border-b border-b-gray-200"></div>
       </div>
       <p className={`mb-[10px] pl-[30px] ${textSize.default} font-medium`}>
         Баланс группы:
-        <span className={`ml-[5px] ${textSize.default} font-medium ${textColor.grey}`}>{`${fullBalance}`}</span>
+        <span className={`ml-[5px] ${textSize.default} font-medium ${textColor.grey}`}>{tableItem.balance}</span>
       </p>
     </div>
   );

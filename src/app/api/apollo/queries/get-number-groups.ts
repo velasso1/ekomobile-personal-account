@@ -1,0 +1,35 @@
+// получение данных о группах номера
+import { gql } from "@apollo/client";
+
+export const GET_NUMBERS_GROUP = gql`
+  query Me {
+    me {
+      account {
+        number {
+          groups {
+            id
+            balance
+            defaultName
+            isBalancerEnabled
+            numbers {
+              msisdn
+              isActive
+              balance
+              payMethodType
+              description
+              access
+              hasFullAccess
+            }
+          }
+          pricePlan {
+            id
+            name
+            description
+            monthFee
+            isArchive
+          }
+        }
+      }
+    }
+  }
+`;

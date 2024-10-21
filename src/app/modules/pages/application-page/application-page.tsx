@@ -1,27 +1,34 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 
+import { useQuery } from "@apollo/client";
+import { GET_APPLICATIONS } from "../../../api/apollo/queries/get-applications";
+
+import { IApplicationsResponse } from "../../../types/applications-types";
+
+import Loader from "../../ui/loader/loader";
 import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
 import Badge from "../../ui/badges/badge";
+import { WarningBadge } from "../../ui";
 
 import { renderSwitch } from "../../../utils/helpers/render-switch";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
 import { defaultStyles } from "../../../utils/default-styles";
 
-import config from "../../../../../auxuliary.json";
-
-interface IAppItem {
-  id: string;
-  date: string;
-  appName: string;
-  status: "completed" | "accepted" | "in progress" | "error" | "declined" | "canceled";
-  description: "string";
-  result: "string";
-}
-
 const ApplicationPage: FC = () => {
-  const [qtyApps, setQty] = useState<number>(2);
+  const [qtyApps, setQty] = useState<number>(5);
 
   const { textColor } = defaultStyles;
+
+  const { data, loading, error } = useQuery<IApplicationsResponse>(GET_APPLICATIONS);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <WarningBadge isError={true} />;
+  }
 
   return (
     <div className="h-full w-full px-[45px] pt-[40px]">
@@ -38,16 +45,22 @@ const ApplicationPage: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {config.applicTable.map((item: IAppItem, index) => {
+            {data.me.account.requestList.nodes.map((item, index) => {
               const renderType = renderSwitch(item.status);
+
               if (index > qtyApps) return;
+
+              const date = dateFormatter(item.createdAt);
+
               return (
                 <tr className="" key={item.id}>
-                  <td>{item.date}</td>
-                  <td>{item.appName}</td>
+                  <td>
+                    {date.date}, {date.fullHours}
+                  </td>
+                  <td>{item.name}</td>
                   <td>{<Badge type={renderType} />}</td>
-                  <td>{item.date}</td>
-                  <td>{item.result}</td>
+                  <td>{item.description}</td>
+                  <td>{item.resultMessage}</td>
                 </tr>
               );
             })}
@@ -58,7 +71,7 @@ const ApplicationPage: FC = () => {
             className={`btn btn-link ${textColor.primary}`}
             onClick={() =>
               setQty(() => {
-                return qtyApps + (config.applicTable.length - qtyApps);
+                return qtyApps + (data.me.account.requestList.nodes.length - qtyApps);
               })
             }
           >

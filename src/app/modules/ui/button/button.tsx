@@ -7,15 +7,17 @@ interface IButtonProps {
   title: string;
   onClickCb?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   customStyle?: string;
+  disabled?: boolean;
 }
 
-const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle }) => {
+const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle, disabled = false }) => {
   const { bgColor, textColor } = defaultStyles;
 
   return (
     <>
       {buttonType === "default" && (
         <button
+          disabled={disabled}
           className={`btn w-full justify-center ${textColor.white} ${bgColor.primary}`}
           onClick={(e) => onClickCb(e)}
         >
@@ -24,7 +26,7 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle })
       )}
 
       {buttonType === "custom" && (
-        <button className={`btn justify-center ${customStyle}`} onClick={(e) => onClickCb(e)}>
+        <button disabled={disabled} className={`btn justify-center ${customStyle}`} onClick={(e) => onClickCb(e)}>
           {title}
         </button>
       )}
@@ -32,7 +34,7 @@ const Button: FC<IButtonProps> = ({ buttonType, title, onClickCb, customStyle })
       {/* action when click on this btn ?? */}
       {buttonType === "services" && (
         <div className="m-[5px] my-[5px] inline-block">
-          <button className="">
+          <button disabled={disabled} className="">
             <span className={`badge ${textColor.greyBlue}`}>{title}</span>
           </button>
         </div>

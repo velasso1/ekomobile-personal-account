@@ -1,35 +1,33 @@
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { mainRoutes } from "../../../../utils/routes-name/main-routes";
-
-import { useAppDispatch } from "../../../../store";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 import { signIn } from "../../../../store/slices/auth-slice";
+
+import { TUserState } from "../../../../types/login-state-types";
 
 import { ModalHelp } from "../../../ui/index";
 import { Button } from "../../../ui/button";
 import NumberField from "../../../ui/fields/number-field";
 import Warning from "../../../ui/warning/warning";
+import { WarningBadge } from "../../../ui/index";
+import Loader from "../../../ui/loader/loader";
 
 import { defaultStyles } from "../../../../utils/default-styles";
-import { authRoutes } from "../../../../utils/routes-name/main-routes";
+import { authRoutes, mainRoutes } from "../../../../utils/routes-name/main-routes";
 import EyeIcon from "../../../../utils/icons/eye-icon";
-
-export type TUserState = {
-  username: string;
-  password: string;
-};
 
 const LoginForm: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  // const { accIsAuth } = useAppSelector((state) => state.routeSlice);
+
+  const { isLoading, isError } = useAppSelector((state) => state.routeSlice);
 
   const [hidePass, setHidePass] = useState<boolean>(true);
   const [emptyField, setEmptyFields] = useState<boolean>(false);
   const [userState, setUserState] = useState<TUserState>({
-    username: "",
-    password: "",
+    username: "9663740842",
+    password: "mIuBkrA8EnK8",
   });
 
   const { textSize, textColor } = defaultStyles;
@@ -38,7 +36,7 @@ const LoginForm: FC = () => {
     setEmptyFields(false);
     if (userState.username.length > 5 && userState.password.length > 5) {
       dispatch(signIn(userState));
-      setUserState({ username: "", password: "" });
+      setUserState({ username: "9663740842", password: "mIuBkrA8EnK8" });
       navigate(mainRoutes.main);
       return;
     }
@@ -47,8 +45,13 @@ const LoginForm: FC = () => {
   };
 
   return (
-    <>
-      <div className="flex w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-5 text-center">
+    <div className="flex flex-col items-center">
+      {isError && <WarningBadge isError={true} />}
+      <div
+        className={`${isLoading ? "opacity-[70%]" : null} flex w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-5 text-center`}
+      >
+        {isLoading && <Loader />}
+
         <p className={`text-lg font-semibold ${textColor.darkBlue}`}>Авторизация</p>
         <div className="mb-[15px]">
           <p className={`${textSize.default} font-medium ${textColor.grey}`}>
@@ -67,6 +70,7 @@ const LoginForm: FC = () => {
             <div className="flex w-full justify-center">
               <div className="flex min-w-[290px] flex-col">
                 <NumberField
+                  disabled={isLoading}
                   id="phone-field-log"
                   placeholder="телефон"
                   label="Телефон"
@@ -92,6 +96,7 @@ const LoginForm: FC = () => {
                 </label>
                 <div className={`input w-[290px]`}>
                   <input
+                    disabled={isLoading}
                     className=""
                     type={hidePass ? "password" : "text"}
                     id="pass-field-reg"
@@ -113,6 +118,7 @@ const LoginForm: FC = () => {
             </div>
             <div className="mt-[20px] flex w-[290px] flex-col justify-center">
               <Button
+                disabled={isLoading}
                 buttonType="default"
                 title="Продолжить"
                 onClickCb={(e) => {
@@ -135,7 +141,7 @@ const LoginForm: FC = () => {
         {emptyField && <Warning text="Заполните все поля корректно" />}
       </div>
       <ModalHelp />
-    </>
+    </div>
   );
 };
 

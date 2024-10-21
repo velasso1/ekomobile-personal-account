@@ -3,6 +3,6 @@ export interface IProfileInfo {
   phoneNumber: string;
   email: string;
   dateOfBirth: string;
-  sex: "0" | "MALE" | "FEMALE";
+  sex: "NOTSELECTED" | "MALE" | "FEMALE";
   password?: string;
 }
