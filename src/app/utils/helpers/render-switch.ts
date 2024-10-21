@@ -2,7 +2,7 @@ type RenderSwitchType = "primary" | "info" | "success" | "warning" | "danger";
 
 export const renderSwitch = (status: string): RenderSwitchType => {
   switch (status) {
-    case "completed":
+    case "OK":
       return "success";
 
     case "accepted":
@@ -11,7 +11,7 @@ export const renderSwitch = (status: string): RenderSwitchType => {
     case "in progress":
       return "info";
 
-    case "error":
+    case "ERROR":
       return "warning";
 
     case "declined":

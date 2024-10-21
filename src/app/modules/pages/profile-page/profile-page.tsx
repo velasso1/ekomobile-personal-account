@@ -1,5 +1,7 @@
 import { FC, useState, useEffect } from "react";
 
+import { useLocation } from "react-router-dom";
+
 import { useAppDispatch } from "../../../store";
 import { putUserInfo } from "../../../store/slices/userSlice";
 
@@ -7,16 +9,17 @@ import { useQuery, useMutation } from "@apollo/client";
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
 import { UPDATE_ACCOUNT_INFO } from "../../../api/apollo/mutations/update-account-info";
 
+import { IProfileInfo } from "../../../types/profile-info-types";
+
 import TextField from "../../ui/fields/text-field";
 import Loader from "../../ui/loader/loader";
-import { IProfileInfo } from "../../../types/profile-info-types";
 import { Card } from "../../ui/card";
 import { PageTitle } from "../../ui/page-title";
 import { Button } from "../../ui/button";
 import { WarningBadge } from "../../ui";
+import Warning from "../../ui/warning/warning";
 
 import { defaultStyles } from "../../../utils/default-styles";
-import { useLocation } from "react-router-dom";
 
 const ProfilePage: FC = () => {
   const location = useLocation();
@@ -33,9 +36,10 @@ const ProfilePage: FC = () => {
     phoneNumber: "",
     email: "",
     dateOfBirth: "",
-    sex: "0",
+    sex: "NOTSELECTED",
     password: "",
   });
+  const [fieldError, setFieldError] = useState<boolean>(false);
 
   useEffect(() => {
     if (data) {
@@ -47,7 +51,7 @@ const ProfilePage: FC = () => {
         phoneNumber: userInfo.account.msisdn,
         email: userInfo.account.email,
         dateOfBirth: userInfo.account.birthday,
-        sex: userInfo.account.gender,
+        sex: userInfo.account.gender ?? "NOTSELECTED",
       });
     }
   }, [data]);
@@ -55,6 +59,22 @@ const ProfilePage: FC = () => {
   useEffect(() => {
     dispatch(putUserInfo(profileInfo));
   }, [location.pathname, profileInfo, dispatch]);
+
+  const checkFields = (): void => {
+    setFieldError(false);
+    for (const key in profileInfo) {
+      if (key === "password") {
+        continue;
+      }
+
+      if (profileInfo[key] === "") {
+        setFieldError(true);
+        return;
+      }
+    }
+
+    changeUserInfo();
+  };
 
   const changeUserInfo = (): void => {
     updateProfileData({
@@ -72,121 +92,112 @@ const ProfilePage: FC = () => {
     return <Loader />;
   }
 
+  if (updateError || error) {
+    return <WarningBadge isError={true} />;
+  }
+
   return (
-    <>
-      {updateError ||
-        (error && (
-          <WarningBadge
-            title="Неизвестная ошибка"
-            message="Произошла ошибка при загрузке данных, попробуйте позже."
-            buttonText="Перезагрузить страницу"
-            danger={true}
-            onClickAction={() => window.location.reload()}
-          />
-        ))}
-
-      <div className="h-full w-full xs:p-[18px] md:p-[40px] md:px-[45px]">
-        <PageTitle title="Профиль" />
-        <Card cardTitle="Основное">
-          <>
-            <TextField
-              id="change-info-fullName"
-              type="text"
-              Label="ФИО"
-              placeholder="фамилия имя отчество"
-              value={profileInfo.fullName}
-              onChangeCb={(e) =>
-                setProfileInfo({
-                  ...profileInfo,
-                  fullName: e.target.value,
-                })
-              }
-              addStyle="mt-[15px]"
-            />
-            <TextField
-              id="change-info-phone"
-              type="text"
-              Label="Телефон"
-              placeholder="телефон"
-              value={profileInfo.phoneNumber}
-              onChangeCb={(e) =>
-                setProfileInfo({
-                  ...profileInfo,
-                  phoneNumber: e.target.value.trim(),
-                })
-              }
-              addStyle="mt-[15px]"
-            />
-            <TextField
-              id="change-info-email"
-              type="text"
-              Label="Email"
-              placeholder="email"
-              value={profileInfo.email}
-              onChangeCb={(e) =>
-                setProfileInfo({
-                  ...profileInfo,
-                  email: e.target.value.trim(),
-                })
-              }
-              addStyle="mt-[15px]"
-            />
-
-            <TextField
-              id="change-info-birth"
-              type="date"
-              Label="День рождения"
-              placeholder="день рождения"
-              value={profileInfo.dateOfBirth}
-              onChangeCb={(e) => {
-                setProfileInfo({
-                  ...profileInfo,
-                  dateOfBirth: e.target.value.trim(),
-                });
-                console.log(profileInfo.dateOfBirth);
-              }}
-              addStyle="mt-[15px]"
-            />
-            <div className="mb-[20px] mt-[15px] flex max-w-32 flex-col items-start">
-              <label className={`form-label text-sm font-medium ${textColor.darkGrey}`}>Пол</label>
-              <select
-                className="select w-[290px] rounded-[8px] hover:cursor-pointer"
-                name="select"
-                value={profileInfo.sex}
-                onChange={(e) => {
-                  if (e.target.value === "MALE" || e.target.value === "FEMALE") {
-                    setProfileInfo({ ...profileInfo, sex: e.target.value });
-                  }
-                }}
-              >
-                <option value="0" disabled>
-                  Выберите пол
-                </option>
-                <option value="MALE">Мужчина</option>
-                <option value="FEMALE">Женщина</option>
-              </select>
-            </div>
-            <div className="w-[290px]">
-              <Button buttonType="default" title="Сохранить" onClickCb={() => changeUserInfo()} />
-            </div>
-          </>
-        </Card>
-        <Card cardTitle="Смена пароля">
+    <div className="h-full w-full xs:p-[18px] md:p-[40px] md:px-[45px]">
+      <PageTitle title="Профиль" />
+      <Card cardTitle="Основное">
+        {fieldError && <Warning text="Заполните все поля" />}
+        <>
           <TextField
-            id="change-info-pass"
-            type="password"
-            Label="Пароль"
-            placeholder="пароль"
-            value={profileInfo.password}
-            onChangeCb={(e) => setProfileInfo({ ...profileInfo, password: e.target.value.trim() })}
-            addStyle="mb-[20px]"
+            id="change-info-fullName"
+            type="text"
+            Label="ФИО"
+            placeholder="фамилия имя отчество"
+            value={profileInfo.fullName}
+            onChangeCb={(e) =>
+              setProfileInfo({
+                ...profileInfo,
+                fullName: e.target.value,
+              })
+            }
+            addStyle="mt-[15px]"
           />
-          <div className="w-[290px]">
-            <Button buttonType="default" title="Сменить" />
+          <TextField
+            id="change-info-phone"
+            type="text"
+            Label="Телефон"
+            placeholder="телефон"
+            value={profileInfo.phoneNumber}
+            onChangeCb={(e) =>
+              setProfileInfo({
+                ...profileInfo,
+                phoneNumber: e.target.value.trim(),
+              })
+            }
+            addStyle="mt-[15px]"
+          />
+          <TextField
+            id="change-info-email"
+            type="text"
+            Label="Email"
+            placeholder="email"
+            value={profileInfo.email}
+            onChangeCb={(e) =>
+              setProfileInfo({
+                ...profileInfo,
+                email: e.target.value.trim(),
+              })
+            }
+            addStyle="mt-[15px]"
+          />
+
+          <TextField
+            id="change-info-birth"
+            type="date"
+            Label="День рождения"
+            placeholder="день рождения"
+            value={profileInfo.dateOfBirth}
+            onChangeCb={(e) => {
+              setProfileInfo({
+                ...profileInfo,
+                dateOfBirth: e.target.value.trim(),
+              });
+            }}
+            addStyle="mt-[15px]"
+          />
+          <div className="mb-[20px] mt-[15px] flex max-w-32 flex-col items-start">
+            <label className={`form-label text-sm font-medium ${textColor.darkGrey}`}>Пол</label>
+            <select
+              className="select w-[290px] rounded-[8px] hover:cursor-pointer"
+              name="select"
+              value={profileInfo.sex}
+              onChange={(e) => {
+                if (e.target.value === "MALE" || e.target.value === "FEMALE") {
+                  setProfileInfo({ ...profileInfo, sex: e.target.value });
+                }
+              }}
+            >
+              <option value="NOTSELECTED" disabled>
+                Выберите пол
+              </option>
+              <option value="MALE">Мужчина</option>
+              <option value="FEMALE">Женщина</option>
+            </select>
           </div>
-        </Card>
-      </div>
-    </>
+          <div className="w-[290px]">
+            <Button buttonType="default" title="Сохранить" onClickCb={() => checkFields()} />
+          </div>
+        </>
+      </Card>
+      <Card cardTitle="Смена пароля">
+        <TextField
+          id="change-info-pass"
+          type="password"
+          Label="Пароль"
+          placeholder="пароль"
+          value={profileInfo.password}
+          onChangeCb={(e) => setProfileInfo({ ...profileInfo, password: e.target.value.trim() })}
+          addStyle="mb-[20px]"
+        />
+        <div className="w-[290px]">
+          <Button buttonType="default" title="Сменить" />
+        </div>
+      </Card>
+    </div>
   );
 };
 

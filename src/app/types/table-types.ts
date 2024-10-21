@@ -1,16 +1,27 @@
+import { INumbersItem } from "./numbers-response-types";
+import { IPricePlan } from "./numbers-response-types";
+import { INodeItem } from "./expensespage-response-types";
+
 export interface IItemTableNumbersProps {
-  id: string;
-  number: string;
-  tarif: string;
-  balance: string | number;
-  status: boolean;
-  fullAccess: boolean;
-  description: string;
+  id?: string;
+  balance: number;
+  defaultName?: string;
+  isBalancerEnabled?: boolean;
+  numbers?: INumbersItem[];
+  msisdn?: string;
+  isActive?: boolean;
+  // id: string;
+  // msisdn: number;
+  // tarif: string;
+  // balance: number;
+  // hasFullAccess: boolean;
+  // description: string;
 }
 
 export interface ITableNumbersProps {
   tableName: string;
-  tableItem: IItemTableNumbersProps[];
+  tableItem: IItemTableNumbersProps;
+  pricePlan: IPricePlan;
 }
 
 ///////////////////////////////////////
@@ -31,16 +42,8 @@ export interface IServiceTableProps {
 
 ///////////////////////////////////////
 
-export interface ITableExpensesItem {
-  id: string;
-  date: string;
-  sum: string;
-  operationType: string;
-  description: string;
-}
-
 export interface ITableExpensesProps {
-  tableItem: ITableExpensesItem[];
+  tableItem: INodeItem[];
 }
 
 ///////////////////////////////////////

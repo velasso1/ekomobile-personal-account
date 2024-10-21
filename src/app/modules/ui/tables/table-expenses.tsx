@@ -1,6 +1,7 @@
 import { FC } from "react";
 
 import { ITableExpensesProps } from "../../../types/table-types";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
 
 const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
   return (
@@ -36,17 +37,26 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
             </tr>
           </thead>
           <tbody>
-            {tableItem.map((item) => {
-              return (
-                <tr key={item.id}>
-                  <td>{item.date}</td>
-                  <td>{item.sum} ₽</td>
-                  <td>{item.operationType}</td>
-
-                  <td>{item.description}</td>
-                </tr>
-              );
-            })}
+            {tableItem.length > 0 ? (
+              tableItem.map((item) => {
+                const newDate = dateFormatter(item.timestamp);
+                return (
+                  <tr key={crypto.randomUUID()}>
+                    <td>{newDate.date}</td>
+                    <td>{item.amount} ₽</td>
+                    <td>{item.type}</td>
+                    <td>{item.name}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td>Записей пока нет</td>
+                <td>-</td>
+                <td>-</td>
+                <td>-</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

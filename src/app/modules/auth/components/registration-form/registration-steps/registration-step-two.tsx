@@ -1,14 +1,24 @@
 import { FC, useState } from "react";
 
+import { useMutation } from "@apollo/client";
+import { CREATE_REGISTRATION } from "../../../../../api/apollo/mutations/registration";
+import { REGISTRATION_VERIFY } from "../../../../../api/apollo/mutations/registration";
+
 import { IRegistrationStepsProps } from "./registration-skelet";
 
 import TextField from "../../../../ui/fields/text-field";
 import NumberField from "../../../../ui/fields/number-field";
 import Warning from "../../../../ui/warning/warning";
 import { Button } from "../../../../ui/button";
+import { WarningBadge } from "../../../../ui";
+import Loader from "../../../../ui/loader/loader";
 
 const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ userInfo, setUserInfo, step, setStep }) => {
   const [correctInfo, setCorrectInfo] = useState<boolean>(true);
+
+  const [sendRegistrationData, { data, loading, error }] = useMutation(CREATE_REGISTRATION);
+  const [registrationVerify, { data: regVerify, loading: regLoading, error: regError }] =
+    useMutation(REGISTRATION_VERIFY);
 
   const checkUserInfo = () => {
     setCorrectInfo(true);
@@ -21,8 +31,50 @@ const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ userInfo, setUserInf
       }
     }
 
+    sendRegistrationRequest();
     setStep(step + 1);
   };
+
+  const sendRegistrationRequest = () => {
+    if (step === 3) {
+      const correlationId = crypto.randomUUID();
+      const actionId = crypto.randomUUID();
+      const registrationId = crypto.randomUUID();
+
+      sendRegistrationData({
+        variables: {
+          correlation: correlationId,
+          actionId: actionId,
+          registrationId: registrationId,
+          msisdn: userInfo.sim,
+          sim: userInfo.sim,
+          contactPhone: userInfo.contactPhone,
+          contactName: userInfo.contactName,
+          email: userInfo.email,
+        },
+      });
+
+      registrationVerify({
+        variables: {
+          correlation: correlationId,
+          actionId: actionId,
+          registrationId: registrationId,
+        },
+      });
+    }
+  };
+
+  if (data) {
+    console.log(data);
+  }
+
+  if (error || regError) {
+    return <WarningBadge isError={true} />;
+  }
+
+  if (loading || regLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="flex w-[290px] flex-col justify-center">

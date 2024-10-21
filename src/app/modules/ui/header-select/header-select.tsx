@@ -1,5 +1,20 @@
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
+
+import { useQuery } from "@apollo/client";
+import { GET_NUMBERS_GROUP } from "../../../api/apollo/queries/get-number-groups";
+import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
+
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { changeSelectedNumber } from "../../../store/slices/userSlice";
+
+import { INumbersResponse } from "../../../types/numbers-response-types";
+
+import Loader from "../loader/loader";
+import HeaderSelectOption from "./header-select-option";
+
 import { defaultStyles } from "../../../utils/default-styles";
+import WarningBadge from "../badges/warning-badge";
+import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 
 interface IHeaderSelectProps {
   label: string;
@@ -7,46 +22,62 @@ interface IHeaderSelectProps {
   selectStyle?: string;
 }
 
-type TempExampleForOption = {
-  id: string;
-  optionText: string;
-  disabled: boolean;
-  bold?: boolean;
-};
-
-const exampleArr: TempExampleForOption[] = [
-  { id: "0", optionText: "Группа 1", disabled: true, bold: true },
-  { id: "1", optionText: "+7 (900) 123-45-61", disabled: false },
-  { id: "2", optionText: "+7 (900) 123-45-62", disabled: false },
-  { id: "3", optionText: "+7 (900) 123-45-63", disabled: false },
-  { id: "4", optionText: "Группа 2", disabled: true, bold: true },
-  { id: "5", optionText: "+7 (900) 123-45-64", disabled: false },
-];
-
 const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) => {
+  const dispatch = useAppDispatch();
+
+  const { data, loading, error } = useQuery<INumbersResponse>(GET_NUMBERS_GROUP);
+  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE_DATA);
+  const { selectedNumber } = useAppSelector((state) => state.userSlice);
+
+  const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
+
+  useEffect(() => {
+    if (profileData) {
+      dispatch(changeSelectedNumber(profileData.userInfo.account.msisdn));
+    }
+  }, [profileData, dispatch]);
+
+  useEffect(() => {
+    setMsidn(formatPhoneNumber(selectedNumber));
+  }, [selectedNumber]);
+
   const { textColor } = defaultStyles;
 
+  if (loading || profileLoading) {
+    return <Loader />;
+  }
+
+  if (error || profileError) {
+    return <WarningBadge isError={true} />;
+  }
+
   return (
-    <div className={`flex flex-wrap items-baseline gap-2.5 rounded-[8px] lg:flex-nowrap ${addStyle}`}>
-      <label className={`form-label max-w-32 font-medium ${textColor.darkGrey} xs:hidden md:block`}>{label}</label>
-      <select
-        className={`select ml-[-30px] h-[32px] rounded-[8px] hover:cursor-pointer xs:w-[170px] md:w-[230px] ${selectStyle}`}
-        name="select"
-      >
-        {exampleArr.map((itm) => {
-          return (
-            <option
-              className={`${itm.bold ? "font-semibold" : null} hover:cursor-pointer`}
-              value={itm.optionText}
-              key={itm.id}
-              disabled={itm.disabled}
-            >
-              {itm.optionText}
-            </option>
-          );
-        })}
-      </select>
-    </div>
+    <>
+      <div className={`flex flex-wrap items-baseline gap-2.5 rounded-[8px] lg:flex-nowrap ${addStyle}`}>
+        <label className={`form-label max-w-32 font-medium ${textColor.darkGrey} xs:hidden md:block`}>{label}</label>
+        <select
+          className={`select ml-[-30px] h-[32px] rounded-[8px] hover:cursor-pointer xs:w-[170px] md:w-[230px] ${selectStyle}`}
+          name="select"
+          onChange={(e) => dispatch(changeSelectedNumber(e.target.value))}
+          value={selectedNumber}
+        >
+          {data.me.account.number.groups.length > 0 ? (
+            data.me.account.number.groups.map((item) => {
+              return (
+                <>
+                  <option key={crypto.randomUUID()} value="" disabled>
+                    {item.defaultName}
+                  </option>
+                  <HeaderSelectOption key={item.id} item={item} />;
+                </>
+              );
+            })
+          ) : (
+            <option>{accountMsisdn}</option>
+          )}
+        </select>
+      </div>
+    </>
   );
 };
 

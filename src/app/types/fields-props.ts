@@ -7,6 +7,7 @@ export interface ITextFieldProps {
   onChangeCb: (e: React.ChangeEvent<HTMLInputElement>) => void;
   addStyle?: string;
   width?: string;
+  disabled?: boolean;
 }
 
 export interface INumberFieldProps {
@@ -17,4 +18,5 @@ export interface INumberFieldProps {
   value: string | number;
   Icon?: React.ElementType;
   addStyle?: string;
+  disabled?: boolean;
 }

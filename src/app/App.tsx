@@ -13,6 +13,7 @@ import { useAppSelector, useAppDispatch } from "./store/index.ts";
 import { checkAccStatus } from "./store/slices/auth-slice.ts";
 
 import PrivateRoute from "./utils/private-route/private-route.tsx";
+import { mainRoutes } from "./utils/routes-name/main-routes.ts";
 
 const App: FC = () => {
   const location = useLocation();
@@ -33,9 +34,9 @@ const App: FC = () => {
     dispatch(checkAccStatus());
 
     if (accIsAuth) {
-      navigate(location.pathname);
+      navigate(location.pathname === "/auth/login" ? mainRoutes.main : location.pathname);
     }
-  }, [accIsAuth, dispatch, location.pathname, navigate]);
+  }, [accIsAuth]);
 
   return (
     <Routes>

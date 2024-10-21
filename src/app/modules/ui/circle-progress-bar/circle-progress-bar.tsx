@@ -40,7 +40,7 @@ const CircleProgressBar: FC<ICircleBarProps> = ({
           className={`stroke-current ${color}`}
           strokeWidth="2"
           strokeDasharray="100"
-          strokeDashoffset={100 - (!valueInfinity ? percent : 100)}
+          strokeDashoffset={`${100 - (!valueInfinity ? percent : 100)}`}
           strokeLinecap="round"
         ></circle>
       </svg>

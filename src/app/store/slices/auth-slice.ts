@@ -1,16 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch } from "..";
 
-import { TUserState } from "../../modules/auth/components/login-form/login-form";
+import { TUserState } from "../../types/login-state-types";
 
 interface IAuthSliceState {
   authData: string;
   accIsAuth: boolean;
+  isLoading: boolean;
+  isError: boolean;
 }
 
 const initialState: IAuthSliceState = {
   authData: "",
   accIsAuth: false,
+  isLoading: false,
+  isError: false,
 };
 
 const authSlice = createSlice({
@@ -21,18 +25,25 @@ const authSlice = createSlice({
       state.authData = action.payload;
     },
 
-    changeAccStatus(state, action: PayloadAction<boolean>) {
-      if (action.payload) {
-        localStorage.setItem("isAuth", "true");
-      } else {
-        localStorage.setItem("isAuth", "");
-      }
+    checkAccStatus(state) {
+      const token = localStorage.getItem("token");
 
-      state.accIsAuth = !!localStorage.getItem("isAuth");
+      // if (token === "null") {
+      //   state.isError = true;
+      //   return;
+      // }
+
+      state.accIsAuth = !!token && token !== "null";
+      state.isLoading = false;
+      state.isError = false;
     },
 
-    checkAccStatus(state) {
-      state.accIsAuth = !!localStorage.getItem("isAuth");
+    requestIsLoading(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload;
+    },
+
+    requestError(state, action: PayloadAction<boolean>) {
+      state.isError = action.payload;
     },
   },
 });
@@ -41,10 +52,7 @@ const authSlice = createSlice({
 
 export const signIn = (body: TUserState) => {
   return async (dispatch: AppDispatch): Promise<void> => {
-    // temp auth func
-    dispatch(changeAccStatus(true));
-    dispatch(checkAccStatus());
-    //
+    dispatch(requestIsLoading(true));
     try {
       await fetch(`${import.meta.env.VITE_AUTH_REST_URL}`, {
         method: "POST",
@@ -54,19 +62,18 @@ export const signIn = (body: TUserState) => {
         },
         body: new URLSearchParams(body).toString(),
       }).then((resp) => {
-        console.log(resp.headers.get("X-Auth-Token"));
         localStorage.setItem("token", resp.headers.get("X-Auth-Token"));
+        dispatch(checkAccStatus());
       });
     } catch (error) {
+      dispatch(requestError(true));
       console.error(error);
     }
   };
 };
 
 export const logOut = () => {
-  localStorage.removeItem("token");
   return async (dispatch: AppDispatch): Promise<void> => {
-    dispatch(changeAccStatus(false));
     try {
       await fetch(`${import.meta.env.VITE_LOGOUT_REST_URL}`, {
         method: "POST",
@@ -74,12 +81,15 @@ export const logOut = () => {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
-      }).then((resp) => console.log(resp));
+      }).then((resp) => {
+        localStorage.removeItem("token");
+        dispatch(checkAccStatus());
+      });
     } catch (error) {
       console.error(error);
     }
   };
 };
 
-export const { authDataReceived, changeAccStatus, checkAccStatus } = authSlice.actions;
+export const { authDataReceived, checkAccStatus, requestIsLoading, requestError } = authSlice.actions;
 export default authSlice.reducer;
