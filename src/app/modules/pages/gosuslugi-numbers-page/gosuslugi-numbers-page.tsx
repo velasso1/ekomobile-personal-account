@@ -4,10 +4,12 @@ import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
 import TableGosuslugi from "../../ui/tables/table-gosuslugi";
-import config from "../../../../../auxuliary.json";
 import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/table-types";
 import { useNavigate } from "react-router-dom";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
+import { useQuery } from "@apollo/client";
+import { GET_NUMBERS } from "../../../api/apollo/queries/get-numbers";
+import Loader from "../../ui/loader/loader";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -25,10 +27,12 @@ const getNumbersByStatus = (status: TGUConfimationStatusId, numbers: IGroupNumbe
 };
 
 const GosuslugiNumbersPage: FC = () => {
-  const groups = config.numbersWithGUStatus.data.me.account.number.groups;
+  const { data, loading, error } = useQuery(GET_NUMBERS);
   const navigate = useNavigate();
 
-  const allNumbers = groups.flatMap((group: IGroup): IGroupNumber[] => {
+  const groups = data?.me?.account?.number?.groups;
+
+  const allNumbers = groups?.flatMap((group: IGroup): IGroupNumber[] => {
     return group.numbers.map((number: IGroupNumber) => {
       return {
         msisdn: number.msisdn,
@@ -38,6 +42,9 @@ const GosuslugiNumbersPage: FC = () => {
     });
   });
 
+  if (loading || !data) {
+    return <Loader />;
+  }
   return (
     <div className="mb-[40px] h-full w-full px-[40px] pt-[40px]">
       <PageTitle title={staticTexts.title} />
