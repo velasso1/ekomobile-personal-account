@@ -7,6 +7,7 @@ const client = new ApolloClient({
     "X-Auth-Token": `${localStorage.getItem("token")}`,
   },
   cache: new InMemoryCache(),
+  credentials: "include",
 });
 
 export default client;
