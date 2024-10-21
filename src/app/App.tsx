@@ -10,7 +10,6 @@ import AuthModule from "./modules/auth/auth-module.tsx";
 import MainModule from "./modules/main/main-module.tsx";
 
 import { useAppSelector, useAppDispatch } from "./store/index.ts";
-import { checkAccStatus } from "./store/slices/auth-slice.ts";
 
 import PrivateRoute from "./utils/private-route/private-route.tsx";
 import { mainRoutes } from "./utils/routes-name/main-routes.ts";
@@ -31,7 +30,7 @@ const App: FC = () => {
   }, [location]);
 
   useEffect(() => {
-    dispatch(checkAccStatus());
+    // dispatch(checkAccStatusOnSignIn());
 
     if (accIsAuth) {
       navigate(location.pathname === "/auth/login" ? mainRoutes.main : location.pathname);

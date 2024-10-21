@@ -25,17 +25,18 @@ const authSlice = createSlice({
       state.authData = action.payload;
     },
 
-    checkAccStatus(state) {
-      const token = localStorage.getItem("token");
+    checkAccStatusOnSignIn(state, action: PayloadAction<number>) {
+      // const token = localStorage.getItem("token");
 
       // if (token === "null") {
       //   state.isError = true;
       //   return;
       // }
 
-      state.accIsAuth = !!token && token !== "null";
+      state.accIsAuth = action.payload === 200;
       state.isLoading = false;
       state.isError = false;
+      console.log(action.payload, state.accIsAuth);
     },
 
     requestIsLoading(state, action: PayloadAction<boolean>) {
@@ -62,8 +63,8 @@ export const signIn = (body: TUserState) => {
         },
         body: new URLSearchParams(body).toString(),
       }).then((resp) => {
-        localStorage.setItem("token", resp.headers.get("X-Auth-Token"));
-        dispatch(checkAccStatus());
+        // localStorage.setItem("token", resp.headers.get("X-Auth-Token"));
+        dispatch(checkAccStatusOnSignIn(resp.status));
       });
     } catch (error) {
       dispatch(requestError(true));
@@ -82,8 +83,8 @@ export const logOut = () => {
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
       }).then((resp) => {
-        localStorage.removeItem("token");
-        dispatch(checkAccStatus());
+        // localStorage.removeItem("token");
+        dispatch(checkAccStatusOnSignIn(401));
       });
     } catch (error) {
       console.error(error);
@@ -91,5 +92,5 @@ export const logOut = () => {
   };
 };
 
-export const { authDataReceived, checkAccStatus, requestIsLoading, requestError } = authSlice.actions;
+export const { authDataReceived, checkAccStatusOnSignIn, requestIsLoading, requestError } = authSlice.actions;
 export default authSlice.reducer;
