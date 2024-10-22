@@ -30,11 +30,12 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
             {tableItem.numbers ? (
               tableItem.numbers.map((item) => {
                 const newPhoneForm = formatPhoneNumber(item.msisdn);
+
                 return (
                   <tr key={item.msisdn}>
                     <td>{newPhoneForm}</td>
                     <td>{pricePlan.name}</td>
-                    <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{item.balance} ₽</td>
+                    <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{+item.balance / 100} ₽</td>
                     <td>
                       <span className={`badge badge-outline badge-${item.isActive ? "success" : ""}`}>
                         {item.isActive ? "Активен" : "Заблокирован"}

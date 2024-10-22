@@ -27,6 +27,7 @@ export interface IGroupItem {
 export interface INumbersResponse {
   me: {
     account: {
+      contactName: string;
       number: {
         groups: IGroupItem[];
         pricePlan: IPricePlan;

@@ -54,7 +54,7 @@ const ExpensesPage: FC = () => {
             })}
           </select>
           <div className="full-sum my-[20px] text-[30px] font-semibold">
-            {data.me.account.number.expenses.month.amount.total},00 ₽
+            {data.me.account.number.expenses.month.amount.total / 100} ₽
           </div>
           <div className="expenses flex w-full flex-col">
             <LineProgressBar

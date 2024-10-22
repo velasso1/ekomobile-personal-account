@@ -6,3 +6,9 @@ export enum ExpensesNames {
   PRICE_PLAN = "Тариф",
   OTHER = "Другое",
 }
+
+export enum CircleProgressName {
+  MB = "ГБ",
+  MIN = "МИН",
+  SMS = "СМС",
+}

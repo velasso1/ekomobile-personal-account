@@ -2,6 +2,7 @@ import { FC } from "react";
 
 import { ITableExpensesProps } from "../../../types/table-types";
 import { dateFormatter } from "../../../utils/helpers/date-formatter";
+import { ExpensesNames } from "../../../utils/auxuliary-data/expenses-names";
 
 const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
   return (
@@ -43,9 +44,9 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
                 return (
                   <tr key={crypto.randomUUID()}>
                     <td>{newDate.date}</td>
-                    <td>{item.amount} ₽</td>
+                    <td>{item.amount / 100} ₽</td>
                     <td>{item.type}</td>
-                    <td>{item.name}</td>
+                    <td>{ExpensesNames[item.name]}</td>
                   </tr>
                 );
               })

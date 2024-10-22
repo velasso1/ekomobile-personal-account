@@ -5,6 +5,7 @@ export const GET_NUMBERS_GROUP = gql`
   query Me {
     me {
       account {
+        contactName
         number {
           groups {
             id

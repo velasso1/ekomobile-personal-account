@@ -62,15 +62,13 @@ const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, conne
                         <tr key={item.id}>
                           <td className={`text-[14px] font-semibold ${textColor.darkBlue}`}>{item.name}</td>
                           <td>{item.description}</td>
-                          <td>{item.date} ₽</td>
+                          <td>{item.date}</td>
 
-                          <td>{item.price}</td>
+                          <td>{item.price} ₽</td>
+                          <td>{item.typePrice}</td>
                           <td>
-                            {item.typePrice}
                             <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
-                          </td>
-                          <td>
-                            <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                            {/* <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i> */}
                           </td>
                           <td>
                             {item.actions ? (
