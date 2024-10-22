@@ -11,6 +11,7 @@ import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
 
 import { defaultStyles } from "../../../utils/default-styles";
+import { CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 
 type TProgressBarColor = "primary" | "lightBlue" | "lightGrey";
 
@@ -45,9 +46,9 @@ const RemainderPage: FC = () => {
               const progressColor: TProgressBarColor[] = ["primary", "lightBlue", "lightGrey"];
 
               return (
-                <tr className="" key={item.measure}>
+                <tr className="" key={crypto.randomUUID()}>
                   <td className="flex items-center">
-                    <div className="w-[150px]">{item.measure}</div>
+                    <div className="w-[150px]">{CircleProgressName[item.measure.slice(0, 3)]}</div>
                     <div className="progress bg-[#eaeaea]">
                       <div
                         className={`progress-bar rounded-[0px] ${bgColor[`${progressColor[index]}`]} px-[10px] py-[5px] text-left`}
@@ -61,8 +62,8 @@ const RemainderPage: FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td>{+item.size < 0 ? "Безлимитно" : item.size}</td>
-                  <td>{+item.balance < 0 ? "Безлимитно" : item.balance}</td>
+                  <td>{item.isUnlimited ? "Безлимитно" : item.size}</td>
+                  <td>{item.isUnlimited ? "Безлимитно" : item.balance}</td>
                 </tr>
               );
             })}

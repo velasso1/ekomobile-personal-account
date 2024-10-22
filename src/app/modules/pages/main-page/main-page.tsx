@@ -19,10 +19,10 @@ import { Button } from "../../ui/button";
 import { defaultStyles } from "../../../utils/default-styles";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
-import { ExpensesNames } from "../../../utils/auxuliary-data/expenses-names";
+import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 
-import config from "../../../../../auxuliary.json";
+// import config from "../../../../../auxuliary.json";
 
 const MainPage: FC = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const MainPage: FC = () => {
   const date = new Date();
 
   const { data, loading, error } = useQuery<IFullDataInfo>(GET_FULL_DATA, {
-    variables: { year: date.getFullYear(), month: date.getMonth() },
+    variables: { year: date.getFullYear(), month: date.getMonth() + 1 },
   });
   const {
     data: verificData,
@@ -95,15 +95,15 @@ const MainPage: FC = () => {
           <p className={`tarif mb-[5px] text-[16px] font-semibold ${textColor.darkBlue}`}>
             {data.fullUserInfo.account.number.pricePlan.name}
           </p>
-          <a className={`btn-link ${textColor.primary}`} href="#">
+          {/* <a className={`btn-link ${textColor.primary}`} href="#">
             Подробнее
-          </a>
+          </a> */}
         </div>
 
         <div className="card-body px-[0] xs:justify-self-end xs:pr-[40px] md:justify-self-start">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой баланс</p>
           <p className={`mb-[5px] font-semibold ${textColor.darkBlue} xs:text-[20px] md:text-[30px]`}>
-            {data.fullUserInfo.account.number.balance} ₽
+            {data.fullUserInfo.account.number.balance / 100} ₽
           </p>
           <Button buttonType="default" title="Пополнить" onClickCb={() => navigate(mainRoutes.balance)} />
         </div>
@@ -116,14 +116,17 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
             {data.fullUserInfo.account.number.remains.full.map((item, index) => {
+              console.log(data.fullUserInfo.account.number.remains.full);
+
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
+
               return (
                 <CircleProgressBar
                   key={crypto.randomUUID()}
                   color={textColor[`${getCircleColor[index]}`]}
-                  nameOfValue={item.measure.slice(0, 3)}
-                  initialValue={item.size}
-                  remainderValue={item.balance}
+                  nameOfValue={CircleProgressName[item.measure.slice(0, 3)]}
+                  initialValue={item.measure === "MB" ? item.size / 1024 : item.size}
+                  remainderValue={item.measure === "MB" ? item.balance / 1024 : item.balance}
                   valueInfinity={item.isUnlimited}
                 />
               );
@@ -166,6 +169,9 @@ const MainPage: FC = () => {
 
             <div className="explanation mt-[20px] flex xs:flex-col">
               {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
+                if (item.amount <= 0) {
+                  return;
+                }
                 return (
                   <div
                     key={crypto.randomUUID()}
@@ -175,7 +181,7 @@ const MainPage: FC = () => {
                       className={`${bgColor[`${getProgressColor[index]}`]} badge badge-dot size-2.5 md:mr-[5px]`}
                     ></span>
                     <span className="md:mr-[5px]">{ExpensesNames[item.type]}</span>
-                    <span>{item.amount}₽</span>
+                    <span>{item.amount / 100}₽</span>
                   </div>
                 );
               })}
