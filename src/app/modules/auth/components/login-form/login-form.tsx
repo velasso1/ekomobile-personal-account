@@ -25,35 +25,36 @@ const LoginForm: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER, { fetchPolicy: "no-cache" });
+  const { data, loading, error, refetch } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER);
 
-  const { isLoading, isError } = useAppSelector((state) => state.routeSlice);
+  const { isLoading, isError, accIsAuth, loginRequestSend } = useAppSelector((state) => state.routeSlice);
 
   const [hidePass, setHidePass] = useState<boolean>(true);
   const [emptyField, setEmptyFields] = useState<boolean>(false);
   const [userState, setUserState] = useState<TUserState>({
-    username: "9663740842",
-    password: "mIuBkrA8EnK8",
+    username: "",
+    password: "",
   });
 
   const { textSize, textColor } = defaultStyles;
 
   useEffect(() => {
-    if (data && data.me !== null) {
-      dispatch(checkAccStatusOnSignIn(200));
+    if (data && data.me) {
+      localStorage.setItem("UDATA", `${data.me.account.email}`);
+      dispatch(checkAccStatusOnSignIn());
       return;
     }
-    dispatch(checkAccStatusOnSignIn(401));
-  }, [data, dispatch]);
+
+    refetch();
+  }, [data, loginRequestSend]);
 
   const handleSignIn = (): void => {
     setEmptyFields(false);
     if (userState.username.length > 5 && userState.password.length > 5) {
       dispatch(signIn(userState));
-      setUserState({ username: "9663740842", password: "mIuBkrA8EnK8" });
+      setUserState({ username: "", password: "" });
       return;
     }
-
     setEmptyFields(true);
   };
 
