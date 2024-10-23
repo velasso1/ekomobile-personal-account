@@ -4,12 +4,13 @@ import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
 import TableGosuslugi from "../../ui/tables/table-gosuslugi";
-import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/table-types";
+
 import { useNavigate } from "react-router-dom";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { useQuery } from "@apollo/client";
-import { GET_NUMBERS } from "../../../api/apollo/queries/get-numbers";
+import { GET_GU_DATA } from "../../../api/apollo/queries/get-numbers";
 import Loader from "../../ui/loader/loader";
+import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/gu-types";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -27,7 +28,7 @@ const getNumbersByStatus = (status: TGUConfimationStatusId, numbers: IGroupNumbe
 };
 
 const GosuslugiNumbersPage: FC = () => {
-  const { data, loading, error } = useQuery(GET_NUMBERS);
+  const { data, loading, error } = useQuery(GET_GU_DATA);
   const navigate = useNavigate();
 
   const groups = data?.me?.account?.number?.groups;
