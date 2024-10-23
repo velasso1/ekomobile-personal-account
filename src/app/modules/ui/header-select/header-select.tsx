@@ -5,7 +5,7 @@ import { GET_NUMBERS_GROUP } from "../../../api/apollo/queries/get-number-groups
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { useAppDispatch, useAppSelector } from "../../../store";
-import { changeSelectedNumber } from "../../../store/slices/userSlice";
+import { changeSelectedNumber } from "../../../store/slices/user-slice";
 
 import { INumbersResponse } from "../../../types/numbers-response-types";
 
@@ -27,8 +27,8 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
 
   const { data, loading, error } = useQuery<INumbersResponse>(GET_NUMBERS_GROUP);
   const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE_DATA);
-  const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
+  const { selectedNumber } = useAppSelector((state) => state.userSlice);
   const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
 
   useEffect(() => {

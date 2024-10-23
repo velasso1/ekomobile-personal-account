@@ -36,7 +36,6 @@ const authSlice = createSlice({
       state.accIsAuth = action.payload === 200;
       state.isLoading = false;
       state.isError = false;
-      console.log(action.payload, state.accIsAuth);
     },
 
     requestIsLoading(state, action: PayloadAction<boolean>) {
@@ -63,6 +62,8 @@ export const signIn = (body: TUserState) => {
         },
         body: new URLSearchParams(body).toString(),
       }).then((resp) => {
+        console.log(resp);
+
         // localStorage.setItem("token", resp.headers.get("X-Auth-Token"));
         dispatch(checkAccStatusOnSignIn(resp.status));
       });
@@ -83,7 +84,6 @@ export const logOut = () => {
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
       }).then((resp) => {
-        // localStorage.removeItem("token");
         dispatch(checkAccStatusOnSignIn(401));
       });
     } catch (error) {

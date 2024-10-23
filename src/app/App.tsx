@@ -12,13 +12,15 @@ import MainModule from "./modules/main/main-module.tsx";
 import { useAppSelector, useAppDispatch } from "./store/index.ts";
 
 import PrivateRoute from "./utils/private-route/private-route.tsx";
-import { mainRoutes } from "./utils/routes-name/main-routes.ts";
+import { authRoutes, mainRoutes } from "./utils/routes-name/main-routes.ts";
 
 const App: FC = () => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
   const { accIsAuth } = useAppSelector((state) => state.routeSlice);
+
   useEffect(() => {
     KTComponent.init();
     KTLayout.init();
@@ -30,11 +32,12 @@ const App: FC = () => {
   }, [location]);
 
   useEffect(() => {
-    // dispatch(checkAccStatusOnSignIn());
-
     if (accIsAuth) {
       navigate(location.pathname === "/auth/login" ? mainRoutes.main : location.pathname);
+      return;
     }
+
+    navigate(authRoutes.login);
   }, [accIsAuth]);
 
   return (

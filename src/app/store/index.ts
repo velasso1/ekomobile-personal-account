@@ -2,7 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 
 import authSlice from "./slices/auth-slice";
-import userSlice from "./slices/userSlice";
+import userSlice from "./slices/user-slice";
 
 const rootReducer = combineReducers({
   routeSlice: authSlice,

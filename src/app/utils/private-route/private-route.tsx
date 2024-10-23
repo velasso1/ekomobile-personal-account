@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { authRoutes } from "../routes-name/main-routes";
 
@@ -11,7 +11,6 @@ interface IPrivateRouteProps {
 }
 
 const PrivateRoute: FC<IPrivateRouteProps> = ({ children }) => {
-  const navigate = useNavigate();
   const { accIsAuth } = useAppSelector((state) => state.routeSlice);
 
   return accIsAuth ? children : <Navigate to={authRoutes.login} />;
