@@ -8,6 +8,7 @@ interface IAuthSliceState {
   accIsAuth: boolean;
   isLoading: boolean;
   isError: boolean;
+  loginRequestSend: boolean;
 }
 
 const initialState: IAuthSliceState = {
@@ -15,6 +16,7 @@ const initialState: IAuthSliceState = {
   accIsAuth: false,
   isLoading: false,
   isError: false,
+  loginRequestSend: false,
 };
 
 const authSlice = createSlice({
@@ -26,14 +28,9 @@ const authSlice = createSlice({
     },
 
     checkAccStatusOnSignIn(state, action: PayloadAction<number>) {
-      // const token = localStorage.getItem("token");
+      const email = localStorage.getItem("UDATA");
 
-      // if (token === "null") {
-      //   state.isError = true;
-      //   return;
-      // }
-
-      state.accIsAuth = action.payload === 200;
+      state.accIsAuth = email !== null;
       state.isLoading = false;
       state.isError = false;
     },
@@ -44,6 +41,9 @@ const authSlice = createSlice({
 
     requestError(state, action: PayloadAction<boolean>) {
       state.isError = action.payload;
+    },
+    changeLoginRequest(state, action: PayloadAction<boolean>) {
+      state.loginRequestSend = action.payload;
     },
   },
 });
@@ -62,10 +62,7 @@ export const signIn = (body: TUserState) => {
         },
         body: new URLSearchParams(body).toString(),
       }).then((resp) => {
-        console.log(resp);
-
-        // localStorage.setItem("token", resp.headers.get("X-Auth-Token"));
-        dispatch(checkAccStatusOnSignIn(resp.status));
+        dispatch(changeLoginRequest(true));
       });
     } catch (error) {
       dispatch(requestError(true));
@@ -76,6 +73,8 @@ export const signIn = (body: TUserState) => {
 
 export const logOut = () => {
   return async (dispatch: AppDispatch): Promise<void> => {
+    localStorage.removeItem("UDATA");
+    dispatch(checkAccStatusOnSignIn());
     try {
       await fetch(`${import.meta.env.VITE_LOGOUT_REST_URL}`, {
         method: "POST",
@@ -83,14 +82,13 @@ export const logOut = () => {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
-      }).then((resp) => {
-        dispatch(checkAccStatusOnSignIn(401));
-      });
+      }).then((resp) => {});
     } catch (error) {
       console.error(error);
     }
   };
 };
 
-export const { authDataReceived, checkAccStatusOnSignIn, requestIsLoading, requestError } = authSlice.actions;
+export const { authDataReceived, checkAccStatusOnSignIn, requestIsLoading, requestError, changeLoginRequest } =
+  authSlice.actions;
 export default authSlice.reducer;

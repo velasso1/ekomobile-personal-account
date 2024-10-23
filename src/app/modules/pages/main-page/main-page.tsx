@@ -151,7 +151,7 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body">
             <div className="sum mb-[10px] text-[30px] font-semibold">
-              {data.fullUserInfo.account.number.expenses.month.amount.total} ₽
+              {data.fullUserInfo.account.number.expenses.month.amount.total / 100} ₽
             </div>
             <div className="progress py-[5px]">
               {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
