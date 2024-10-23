@@ -19,6 +19,7 @@ export interface ITextColors extends IBgColorStyles {
 export interface ITextStyles {
   default: string;
   p13: string;
+  p14: string;
 }
 
 export interface IDefaultStyles {

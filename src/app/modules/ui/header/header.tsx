@@ -4,9 +4,10 @@ import HeaderSelect from "../header-select/header-select";
 
 import icongosu from "../../../assets/images/gosu.svg";
 import notifGreen from "../../../assets/images/notif-green.svg";
-import notifRed from "../../../assets/images/notif-red.svg";
 
 import { defaultStyles } from "../../../utils/default-styles";
+import { mainRoutes } from "../../../utils/routes-name/main-routes";
+import { useNavigate } from "react-router-dom";
 
 interface IHeaderProps {
   changeVis: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +15,7 @@ interface IHeaderProps {
 
 const Header: FC<IHeaderProps> = ({ changeVis }) => {
   const { bgColor, textColor } = defaultStyles;
-
+  const navigate = useNavigate();
   return (
     <header
       className={`flex h-full items-center ${bgColor.littleGrey} pt-5 xs:justify-center md:px-[45px] lg:justify-start`}
@@ -32,7 +33,10 @@ const Header: FC<IHeaderProps> = ({ changeVis }) => {
 
         <HeaderSelect label="Мои номера:" />
         <div className="icons flex items-center">
-          <div className={`relative mx-[10px] cursor-pointer items-center rounded-[8px] ${bgColor.white} p-[5px]`}>
+          <div
+            className={`relative mx-[10px] cursor-pointer items-center rounded-[8px] ${bgColor.white} p-[5px]`}
+            onClick={() => navigate(mainRoutes.gosuslugiNumbers)}
+          >
             <img className="w-[22px]" src={icongosu} alt="ГосУслуги" />
             <img className="absolute right-1 top-1" src={notifGreen} alt="notification" />
           </div>
