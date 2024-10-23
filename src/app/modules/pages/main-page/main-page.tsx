@@ -53,6 +53,8 @@ const MainPage: FC = () => {
   }
 
   if (error || servicesError || verificError) {
+    console.log(error);
+
     return <WarningBadge isError={true} />;
   }
 
@@ -116,8 +118,6 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
             {data.fullUserInfo.account.number.remains.full.map((item, index) => {
-              console.log(data.fullUserInfo.account.number.remains.full);
-
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
 
               return (

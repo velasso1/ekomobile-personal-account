@@ -1,8 +1,12 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useQuery } from "@apollo/client";
+import { CHECK_AUTH_USER } from "../../../../api/apollo/queries/refresh-session";
+import { ICheckUserAuth } from "../../../../api/apollo/queries/refresh-session";
+
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { signIn } from "../../../../store/slices/auth-slice";
+import { signIn, checkAccStatusOnSignIn } from "../../../../store/slices/auth-slice";
 
 import { TUserState } from "../../../../types/login-state-types";
 
@@ -21,6 +25,8 @@ const LoginForm: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const { data, loading, error } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER, { fetchPolicy: "no-cache" });
+
   const { isLoading, isError } = useAppSelector((state) => state.routeSlice);
 
   const [hidePass, setHidePass] = useState<boolean>(true);
@@ -32,12 +38,19 @@ const LoginForm: FC = () => {
 
   const { textSize, textColor } = defaultStyles;
 
+  useEffect(() => {
+    if (data && data.me !== null) {
+      dispatch(checkAccStatusOnSignIn(200));
+      return;
+    }
+    dispatch(checkAccStatusOnSignIn(401));
+  }, [data, dispatch]);
+
   const handleSignIn = (): void => {
     setEmptyFields(false);
     if (userState.username.length > 5 && userState.password.length > 5) {
       dispatch(signIn(userState));
       setUserState({ username: "9663740842", password: "mIuBkrA8EnK8" });
-      navigate(mainRoutes.main);
       return;
     }
 
@@ -46,11 +59,11 @@ const LoginForm: FC = () => {
 
   return (
     <div className="flex flex-col items-center">
-      {isError && <WarningBadge isError={true} />}
+      {(isError || error) && <WarningBadge isError={true} />}
       <div
         className={`${isLoading ? "opacity-[70%]" : null} flex w-[370px] flex-col items-center justify-center rounded-[12px] border-2 py-5 text-center`}
       >
-        {isLoading && <Loader />}
+        {(isLoading || loading) && <Loader />}
 
         <p className={`text-lg font-semibold ${textColor.darkBlue}`}>Авторизация</p>
         <div className="mb-[15px]">

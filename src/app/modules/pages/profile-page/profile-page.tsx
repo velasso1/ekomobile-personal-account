@@ -3,7 +3,7 @@ import { FC, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useAppDispatch } from "../../../store";
-import { putUserInfo } from "../../../store/slices/userSlice";
+import { putUserInfo } from "../../../store/slices/user-slice";
 
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";

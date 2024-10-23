@@ -154,7 +154,7 @@ const BalancePage: FC = () => {
               className={`btn btn-link ${textColor.primary}`}
               onClick={() =>
                 setQty(() => {
-                  return qtyApps + (data.me.account.billingNumber.balanceTopUpList.nodes.length - qtyApps);
+                  return data.me.account.billingNumber.balanceTopUpList.nodes.length;
                 })
               }
             >
