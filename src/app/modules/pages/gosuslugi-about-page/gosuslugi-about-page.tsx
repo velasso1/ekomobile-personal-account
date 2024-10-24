@@ -6,7 +6,7 @@ import ReactMarkdown from "react-markdown";
 import PrevNextButtons from "../../ui/prev-next-buttons/prev-next-buttons";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-numbers";
+import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
 import Loader from "../../ui/loader/loader";
 import { IGUConfrirmation } from "../../../types/gu-types";
 
@@ -47,7 +47,7 @@ const GosuslugiAboutPage: FC = () => {
             </div>
           </div>
           <div className="pt-8">
-            <PrevNextButtons nextRoute={mainRoutes.gosuslugiNumbers} nextDisabled={!isAgree} />
+            <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} nextDisabled={!isAgree} />
           </div>
         </div>
       </Card>

@@ -4,7 +4,7 @@ import beautifyNumber from "../../../utils/helpers/beautifyNumber";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { defaultStyles } from "../../../utils/default-styles";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-numbers";
+import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
 import Loader from "../loader/loader";
 import { IGroupNumber, IGUHints, TGUConfimationStatusId } from "../../../types/gu-types";
 import { ITableGosuslugiProps } from "../../../types/table-types";
