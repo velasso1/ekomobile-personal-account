@@ -56,6 +56,7 @@ export const signIn = (body: TUserState) => {
     try {
       await fetch(`${import.meta.env.VITE_AUTH_REST_URL}`, {
         method: "POST",
+        credentials: 'include',
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
