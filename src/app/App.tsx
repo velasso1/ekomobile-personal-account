@@ -30,15 +30,12 @@ const App: FC = () => {
 
   const { data, loading, error, refetch } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER);
 
-
-
   useEffect(() => {
     KTComponent.init();
     KTLayout.init();
   }, []);
 
   useEffect(() => {
-
     if (data && data.me) {
       dispatch(setChecking(true));
       localStorage.setItem("UDATA", `${data.me.account.email}`);
