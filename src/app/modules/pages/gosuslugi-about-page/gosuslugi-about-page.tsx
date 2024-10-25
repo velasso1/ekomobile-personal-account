@@ -27,8 +27,8 @@ const GosuslugiAboutPage: FC = () => {
     <div className="mb-[40px] h-full w-full px-[40px] pt-[40px]">
       <PageTitle title={staticTexts.title} />
 
-      <Card style="">
-        <div className="py-[20px]">
+      <Card>
+        <div className="pt-[10px]">
           <div className="w-[650px] text-[14px]">
             <ReactMarkdown children={aboutContent.aboutConfirmation} className={"markdown-gosuslugi-about"} />
           </div>

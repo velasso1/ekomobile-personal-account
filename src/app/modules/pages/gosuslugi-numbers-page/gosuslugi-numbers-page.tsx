@@ -56,7 +56,7 @@ const GosuslugiNumbersPage: FC = () => {
     <div className="mb-[40px] h-full w-full px-[40px] pt-[40px]">
       <PageTitle title={staticTexts.title} />
       {getNumbersByStatus("REQUIRED", allNumbers).length > 0 && (
-        <Card style="">
+        <Card>
           <div className="flex justify-between py-[10px]">
             <div className="w-[650px] text-[14px]">
               {staticTexts.getCard(getNumbersByStatus("REQUIRED", allNumbers).length)}
