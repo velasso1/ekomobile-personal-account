@@ -12,6 +12,7 @@ import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
 import LineProgressBar from "../../ui/line-progress-bar/line-progress-bar";
 import { month } from "../../../utils/auxuliary-data/month";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
 const ExpensesPage: FC = () => {
   const [selectState, setSelectState] = useState<number>(new Date().getMonth() + 1);
@@ -54,12 +55,12 @@ const ExpensesPage: FC = () => {
             })}
           </select>
           <div className="full-sum my-[20px] text-[30px] font-semibold">
-            {data.me.account.number.expenses.month.amount.total / 100} ₽
+            {moneyFormatter(data.me.account.number.expenses.month.amount.total)} ₽
           </div>
           <div className="expenses flex w-full flex-col">
             <LineProgressBar
               progressItem={data.me.account.number.expenses.month.transactionList.nodes}
-              totalExpenses={data.me.account.number.expenses.month.amount.total}
+              totalExpenses={+moneyFormatter(data.me.account.number.expenses.month.amount.total)}
             />
           </div>
         </div>

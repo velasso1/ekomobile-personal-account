@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { useQuery } from "@apollo/client";
 import { GET_FULL_DATA } from "../../../api/apollo/queries/get-full-data";
@@ -21,13 +21,21 @@ import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
+import { useAppDispatch } from "../../../store";
+import { setChecking } from "../../../store/slices/auth-slice";
 
 // import config from "../../../../../auxuliary.json";
 
 const MainPage: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const date = new Date();
+
+  useEffect(() => {
+    dispatch(setChecking(false));
+  }, []);
 
   const { data, loading, error } = useQuery<IFullDataInfo>(GET_FULL_DATA, {
     variables: { year: date.getFullYear(), month: date.getMonth() + 1 },
@@ -105,7 +113,7 @@ const MainPage: FC = () => {
         <div className="card-body px-[0] xs:justify-self-end xs:pr-[40px] md:justify-self-start">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой баланс</p>
           <p className={`mb-[5px] font-semibold ${textColor.darkBlue} xs:text-[20px] md:text-[30px]`}>
-            {data.fullUserInfo.account.number.balance / 100} ₽
+            {moneyFormatter(data.fullUserInfo.account.number.balance)} ₽
           </p>
           <Button buttonType="default" title="Пополнить" onClickCb={() => navigate(mainRoutes.balance)} />
         </div>
@@ -125,8 +133,8 @@ const MainPage: FC = () => {
                   key={crypto.randomUUID()}
                   color={textColor[`${getCircleColor[index]}`]}
                   nameOfValue={CircleProgressName[item.measure.slice(0, 3)]}
-                  initialValue={item.measure === "MB" ? item.size / 1024 : item.size}
-                  remainderValue={item.measure === "MB" ? item.balance / 1024 : item.balance}
+                  initialValue={item.measure === "MB" ? Math.floor(item.size / 1024) : item.size}
+                  remainderValue={item.measure === "MB" ? Math.floor(item.balance / 1024) : item.balance}
                   valueInfinity={item.isUnlimited}
                 />
               );
@@ -151,7 +159,7 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body">
             <div className="sum mb-[10px] text-[30px] font-semibold">
-              {data.fullUserInfo.account.number.expenses.month.amount.total / 100} ₽
+              {moneyFormatter(data.fullUserInfo.account.number.expenses.month.amount.total)} ₽
             </div>
             <div className="progress py-[5px]">
               {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
@@ -181,7 +189,7 @@ const MainPage: FC = () => {
                       className={`${bgColor[`${getProgressColor[index]}`]} badge badge-dot size-2.5 md:mr-[5px]`}
                     ></span>
                     <span className="md:mr-[5px]">{ExpensesNames[item.type]}</span>
-                    <span>{item.amount / 100}₽</span>
+                    <span>{moneyFormatter(item.amount)}₽</span>
                   </div>
                 );
               })}
