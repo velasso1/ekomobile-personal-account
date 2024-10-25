@@ -67,16 +67,18 @@ const ApplicationPage: FC = () => {
           </tbody>
         </table>
         <div className="w-full border-t-2 py-[10px] text-center">
-          <a
-            className={`btn btn-link ${textColor.primary}`}
-            onClick={() =>
-              setQty(() => {
-                return qtyApps + (data.me.account.requestList.nodes.length - qtyApps);
-              })
-            }
-          >
-            Смотреть все
-          </a>
+          {qtyApps <= 20 && (
+            <a
+              className={`btn btn-link ${textColor.primary}`}
+              onClick={() =>
+                setQty(() => {
+                  return qtyApps + (data.me.account.requestList.nodes.length - qtyApps);
+                })
+              }
+            >
+              Смотреть все
+            </a>
+          )}
         </div>
       </Card>
     </div>

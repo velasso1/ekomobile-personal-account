@@ -17,10 +17,6 @@ const ServicesPage: FC = () => {
 
   const [selectValue, setSelectValue] = useState<string>("1");
 
-  if (data) {
-    console.log(data.me.account.number.services);
-  }
-
   if (loading) {
     return <Loader />;
   }

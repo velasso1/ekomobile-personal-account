@@ -3,10 +3,17 @@ import { FC, useState, useEffect } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_BALANCE_HISTORY } from "../../../api/apollo/queries/get-balance-history";
 import { GENERATE_SBP_PAYMENT } from "../../../api/apollo/mutations/generate-sbp-payment";
+import {
+  GET_RECOMMENDED_PAYMENT,
+  IRecommendedPaymentResponse,
+} from "../../../api/apollo/queries/get-recommended-payment";
 
 import { IBalancePageResponse, IBalanceReplenishment } from "../../../types/balancepage-response-types";
 
+import { useAppSelector } from "../../../store";
+
 import { PageTitle } from "../../ui/page-title";
+import Warning from "../../ui/warning/warning";
 import { Card } from "../../ui/card";
 import { WarningBadge } from "../../ui";
 import Loader from "../../ui/loader/loader";
@@ -18,8 +25,7 @@ import QrCode from "../../ui/qrcode/qrcode";
 import button from "../../../assets/images/button.svg";
 
 import { defaultStyles } from "../../../utils/default-styles";
-import { useAppSelector } from "../../../store";
-import Warning from "../../ui/warning/warning";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
 
 interface IPaymentState {
   value: string;
@@ -30,6 +36,12 @@ const BalancePage: FC = () => {
   const { data, loading, error } = useQuery<IBalancePageResponse>(GET_BALANCE_HISTORY);
   const [generateSBPPayment, { data: paymentData, loading: paymentLoading, error: paymentError }] =
     useMutation<IBalanceReplenishment>(GENERATE_SBP_PAYMENT);
+
+  const {
+    data: recomPayData,
+    loading: recomLoading,
+    error: recomError,
+  } = useQuery<IRecommendedPaymentResponse>(GET_RECOMMENDED_PAYMENT);
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
@@ -43,6 +55,15 @@ const BalancePage: FC = () => {
   useEffect(() => {
     setPaymentState({ ...paymentState, msisdn: selectedNumber });
   }, [selectedNumber]);
+
+  useEffect(() => {
+    if (recomPayData) {
+      setPaymentState({
+        ...paymentState,
+        value: (recomPayData.me.account.number.recommendedPayment.amount / 100).toString(),
+      });
+    }
+  }, [recomPayData]);
 
   const { textSize, textColor } = defaultStyles;
 
@@ -133,6 +154,7 @@ const BalancePage: FC = () => {
               <tr>
                 <th>Дата операции</th>
                 <th>Способ оплаты</th>
+                <th></th>
                 <th>Сумма</th>
               </tr>
             </thead>
@@ -141,8 +163,11 @@ const BalancePage: FC = () => {
                 if (index > qtyApps) return;
                 return (
                   <tr className="" key={crypto.randomUUID()}>
-                    <td>{item.timestamp}</td>
+                    <td>{dateFormatter(item.timestamp).date}</td>
                     <td>{item.methodName}</td>
+                    <td>
+                      <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
+                    </td>
                     <td>{item.amount / 100}</td>
                   </tr>
                 );

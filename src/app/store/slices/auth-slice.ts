@@ -9,6 +9,7 @@ interface IAuthSliceState {
   isLoading: boolean;
   isError: boolean;
   loginRequestSend: boolean;
+  checking: boolean;
 }
 
 const initialState: IAuthSliceState = {
@@ -17,6 +18,7 @@ const initialState: IAuthSliceState = {
   isLoading: false,
   isError: false,
   loginRequestSend: false,
+  checking: false,
 };
 
 const authSlice = createSlice({
@@ -45,6 +47,10 @@ const authSlice = createSlice({
     changeLoginRequest(state, action: PayloadAction<boolean>) {
       state.loginRequestSend = action.payload;
     },
+
+    setChecking(state, action: PayloadAction<boolean>) {
+      state.checking = action.payload;
+    },
   },
 });
 
@@ -56,7 +62,7 @@ export const signIn = (body: TUserState) => {
     try {
       await fetch(`${import.meta.env.VITE_AUTH_REST_URL}`, {
         method: "POST",
-        credentials: 'include',
+        credentials:"include",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
@@ -90,6 +96,12 @@ export const logOut = () => {
   };
 };
 
-export const { authDataReceived, checkAccStatusOnSignIn, requestIsLoading, requestError, changeLoginRequest } =
-  authSlice.actions;
+export const {
+  authDataReceived,
+  checkAccStatusOnSignIn,
+  requestIsLoading,
+  requestError,
+  changeLoginRequest,
+  setChecking,
+} = authSlice.actions;
 export default authSlice.reducer;

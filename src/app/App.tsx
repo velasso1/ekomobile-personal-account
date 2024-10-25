@@ -1,15 +1,22 @@
-import { FC, useEffect } from "react";
+import { FC, useEffect, useLayoutEffect, Suspense } from "react";
 import KTComponent from "../metronic/core/index.ts";
 import KTLayout from "../metronic/app/layouts/demo1.js";
 import "../index.css";
 
 import { useLocation, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 
+import { useQuery } from "@apollo/client";
+import { CHECK_AUTH_USER } from "./api/apollo/queries/refresh-session.ts";
+import { ICheckUserAuth } from "./api/apollo/queries/refresh-session.ts";
+
+import Loader from "./modules/ui/loader/loader.tsx";
+
 // import modules
 import AuthModule from "./modules/auth/auth-module.tsx";
 import MainModule from "./modules/main/main-module.tsx";
 
 import { useAppSelector, useAppDispatch } from "./store/index.ts";
+import { requestIsLoading, checkAccStatusOnSignIn, setChecking } from "./store/slices/auth-slice.ts";
 
 import PrivateRoute from "./utils/private-route/private-route.tsx";
 import { authRoutes, mainRoutes } from "./utils/routes-name/main-routes.ts";
@@ -19,7 +26,11 @@ const App: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { accIsAuth } = useAppSelector((state) => state.routeSlice);
+  const { accIsAuth, isLoading, loginRequestSend, checking } = useAppSelector((state) => state.routeSlice);
+
+  const { data, loading, error, refetch } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER);
+
+
 
   useEffect(() => {
     KTComponent.init();
@@ -27,18 +38,21 @@ const App: FC = () => {
   }, []);
 
   useEffect(() => {
-    KTComponent.init();
-    KTLayout.init();
-  }, [location]);
 
-  useEffect(() => {
-    if (accIsAuth) {
-      navigate(location.pathname === "/auth/login" ? mainRoutes.main : location.pathname);
+    if (data && data.me) {
+      dispatch(setChecking(true));
+      localStorage.setItem("UDATA", `${data.me.account.email}`);
+      dispatch(checkAccStatusOnSignIn());
       return;
     }
 
-    navigate(authRoutes.login);
-  }, [accIsAuth]);
+    refetch();
+  }, [data, loginRequestSend]);
+
+  useEffect(() => {
+    KTComponent.init();
+    KTLayout.init();
+  }, [location]);
 
   return (
     <Routes>

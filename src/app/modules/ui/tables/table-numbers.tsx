@@ -4,6 +4,7 @@ import { ITableNumbersProps } from "../../../types/table-types";
 
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { defaultStyles } from "../../../utils/default-styles";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
 const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan }) => {
   const { textSize, textColor } = defaultStyles;
@@ -65,7 +66,7 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
               <tr>
                 <td>{tableItem.msisdn}</td>
                 <td>{pricePlan.name}</td>
-                <td>{tableItem.balance}</td>
+                <td>{moneyFormatter(tableItem.balance)}</td>
                 <td>
                   <span className={`badge badge-outline badge-${tableItem.isActive ? "success" : ""}`}>
                     {tableItem.isActive ? "Активен" : "Заблокирован"}
@@ -86,7 +87,9 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
       </div>
       <p className={`mb-[10px] pl-[30px] ${textSize.default} font-medium`}>
         Баланс группы:
-        <span className={`ml-[5px] ${textSize.default} font-medium ${textColor.grey}`}>{tableItem.balance}</span>
+        <span className={`ml-[5px] ${textSize.default} font-medium ${textColor.grey}`}>
+          {moneyFormatter(tableItem.balance)}
+        </span>
       </p>
     </div>
   );
