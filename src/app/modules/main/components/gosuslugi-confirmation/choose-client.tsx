@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { ICLient, IGroup, IGroupNumber } from "../../../../types/gu-types";
+import { ICLient, TGUConfirmationCards } from "../../../../types/gu-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import { mainRoutes } from "../../../../utils/routes-name/main-routes";
 
 interface IProps {
-  groups: IGroup[];
+  clients: ICLient[];
+  setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
 const staticTexts = {
@@ -16,26 +16,8 @@ const staticTexts = {
   },
 };
 
-const ChooseClient = ({ groups }: IProps) => {
+const ChooseClient = ({ clients, setGUCard }: IProps) => {
   const [clientId, setClientId] = useState("");
-  const allClients = groups?.flatMap((group: IGroup): ICLient[] => {
-    return group.numbers
-      .map((number: IGroupNumber) => {
-        const client = number.guConfirmationInfo.client;
-        if (client) {
-          return {
-            id: client.id,
-            nameFamily: client.nameFamily,
-            nameGiven: client.nameGiven,
-            namePatronymic: client.namePatronymic,
-            guConfirmationCount: client.guConfirmationCount,
-            guConfirmationLimit: client.guConfirmationLimit,
-          };
-        }
-        return null;
-      })
-      .filter((client: ICLient) => client !== null);
-  });
 
   return (
     <>
@@ -43,26 +25,35 @@ const ChooseClient = ({ groups }: IProps) => {
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
 
         <div className="radio-list flex flex-col pt-2">
-          {allClients.map((client: ICLient) => (
+          {clients.map((client: ICLient) => (
             <RadioInput
               key={client.id}
-              id={client.id}
+              name={client.id}
+              value={client.id}
               isChecked={clientId === client.id}
               label={`${client.nameFamily} ${client.nameGiven} ${client.namePatronymic}`}
               onChange={() => setClientId(client.id)}
             />
           ))}
           <RadioInput
-            id={staticTexts.newClient.id}
+            name={staticTexts.newClient.id}
+            value={staticTexts.newClient.id}
             isChecked={clientId === staticTexts.newClient.id}
             label={staticTexts.newClient.label}
             onChange={() => setClientId(staticTexts.newClient.id)}
           />
         </div>
-      </div>
 
-      <div className="pt-8">
-        <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} />
+        <div className="pt-8">
+          <PrevNextButtons
+            nextDisabled={clientId === ""}
+            nextClick={() => {
+              if (clientId === staticTexts.newClient.id) {
+                setGUCard("create-client-fio");
+              }
+            }}
+          />
+        </div>
       </div>
     </>
   );

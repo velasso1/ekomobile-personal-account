@@ -1,68 +1,133 @@
-import { useState } from "react";
-import { ICLient, IGroup, IGroupNumber } from "../../../../types/gu-types";
+import { IGroup, TGUConfirmationCards } from "../../../../types/gu-types";
+import TextField from "../../../ui/fields/text-field";
+import { useFormik } from "formik";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import { mainRoutes } from "../../../../utils/routes-name/main-routes";
 
 interface IProps {
   groups: IGroup[];
+  setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
 const staticTexts = {
   card: "Личные данные:",
-  newClient: {
-    id: "createNewClient",
-    label: "Создать нового контрагента",
+  fields: {
+    nameFamily: {
+      label: "Фамилия",
+      placeholder: "Иванов",
+    },
+    nameGiven: {
+      label: "Имя",
+      placeholder: "Иван",
+    },
+    namePatronymic: {
+      label: "Отчество",
+      placeholder: "Иванович",
+    },
+    birthDate: {
+      label: "Дата рождения",
+      placeholder: "01.01.1990",
+    },
+    birthPlace: {
+      label: "Место рождения",
+      placeholder: "Москва",
+    },
+    gender: {
+      label: "Пол",
+      options: [
+        {
+          text: "Мужской",
+          value: "MALE",
+        },
+        {
+          text: "Женский",
+          value: "FEMALE",
+        },
+      ],
+    },
   },
 };
 
-const CreateClientFio = ({ groups }: IProps) => {
-  const [clientId, setClientId] = useState("");
-  const allClients = groups?.flatMap((group: IGroup): ICLient[] => {
-    return group.numbers
-      .map((number: IGroupNumber) => {
-        const client = number.guConfirmationInfo.client;
-        if (client) {
-          return {
-            id: client.id,
-            nameFamily: client.nameFamily,
-            nameGiven: client.nameGiven,
-            namePatronymic: client.namePatronymic,
-            guConfirmationCount: client.guConfirmationCount,
-            guConfirmationLimit: client.guConfirmationLimit,
-          };
-        }
-        return null;
-      })
-      .filter((client: ICLient) => client !== null);
+const CreateClientFio = ({ groups, setGUCard }: IProps) => {
+  const formik = useFormik({
+    initialValues: {
+      nameFamily: "",
+      nameGiven: "",
+      namePatronymic: "",
+      birthDate: "",
+      birthPlace: "",
+      gender: "",
+    },
+    onSubmit: (values) => {},
   });
-
   return (
     <>
-      <div>
-        <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
+      <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
+      <TextField
+        Label={staticTexts.fields.nameFamily.label}
+        id={"nameFamily"}
+        placeholder={staticTexts.fields.nameFamily.placeholder}
+        onChangeCb={formik.handleChange}
+        type="text"
+        value={formik.values.nameFamily}
+        addStyle="pt-[30px]"
+      />
 
-        <div className="radio-list flex flex-col pt-2">
-          {allClients.map((client: ICLient) => (
-            <RadioInput
-              key={client.id}
-              id={client.id}
-              isChecked={clientId === client.id}
-              label={`${client.nameFamily} ${client.nameGiven} ${client.namePatronymic}`}
-              onChange={() => setClientId(client.id)}
-            />
-          ))}
+      <TextField
+        Label={staticTexts.fields.nameGiven.label}
+        id={"nameGiven"}
+        placeholder={staticTexts.fields.nameGiven.placeholder}
+        onChangeCb={formik.handleChange}
+        type="text"
+        value={formik.values.nameGiven}
+        addStyle="pt-[20px]"
+      />
+
+      <TextField
+        Label={staticTexts.fields.namePatronymic.label}
+        id={"namePatronymic"}
+        placeholder={staticTexts.fields.namePatronymic.placeholder}
+        onChangeCb={formik.handleChange}
+        type="text"
+        value={formik.values.namePatronymic}
+        addStyle="pt-[20px]"
+      />
+
+      <TextField
+        Label={staticTexts.fields.birthDate.label}
+        id={"birthDate"}
+        placeholder={staticTexts.fields.birthDate.placeholder}
+        onChangeCb={formik.handleChange}
+        type="date"
+        value={formik.values.birthDate}
+        addStyle="pt-[20px]"
+      />
+
+      <TextField
+        Label={staticTexts.fields.birthPlace.label}
+        id={"birthPlace"}
+        placeholder={staticTexts.fields.birthPlace.placeholder}
+        onChangeCb={formik.handleChange}
+        type="text"
+        value={formik.values.birthPlace}
+        addStyle="pt-[20px]"
+      />
+
+      <div className="radio-list flex flex-col pt-[20px]">
+        {staticTexts.fields.gender.options.map((option: { text: string; value: string }) => (
           <RadioInput
-            id={staticTexts.newClient.id}
-            isChecked={clientId === staticTexts.newClient.id}
-            label={staticTexts.newClient.label}
-            onChange={() => setClientId(staticTexts.newClient.id)}
+            key={option.value}
+            name="gender"
+            value={option.value}
+            isChecked={formik.values.gender === option.value}
+            label={option.text}
+            onChange={formik.handleChange}
           />
-        </div>
+        ))}
       </div>
 
       <div className="pt-8">
-        <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} />
+        <PrevNextButtons nextDisabled={false} prevClick={() => setGUCard("choose-client")} />
       </div>
     </>
   );

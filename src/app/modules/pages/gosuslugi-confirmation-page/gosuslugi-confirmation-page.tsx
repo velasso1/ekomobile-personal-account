@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
@@ -7,7 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
 import Loader from "../../ui/loader/loader";
-import { IGroup } from "../../../types/gu-types";
+import { ICLient, IGroup, IGroupNumber, TGUConfirmationCards } from "../../../types/gu-types";
+import ChooseClient from "../../main/components/gosuslugi-confirmation/choose-client";
+import ChooseNumbers from "../../main/components/gosuslugi-confirmation/choose-numbers";
+import CreateClientFio from "../../main/components/gosuslugi-confirmation/create-client-fio";
+import CreateClientPassport from "../../main/components/gosuslugi-confirmation/create-client-passport";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -16,8 +20,43 @@ const staticTexts = {
 const GosuslugiConfirmationPage: FC = () => {
   const { data, loading, error } = useQuery(GET_GU_DATA);
   const navigate = useNavigate();
+  const [GUCard, setGUCard] = useState<TGUConfirmationCards>("choose-client");
 
   const groups: IGroup[] = data?.me?.account?.number?.groups;
+  const allClients = groups?.flatMap((group: IGroup): ICLient[] => {
+    return group.numbers
+      .map((number: IGroupNumber) => {
+        const client = number.guConfirmationInfo.client;
+        if (client) {
+          return {
+            id: client.id,
+            nameFamily: client.nameFamily,
+            nameGiven: client.nameGiven,
+            namePatronymic: client.namePatronymic,
+            guConfirmationCount: client.guConfirmationCount,
+            guConfirmationLimit: client.guConfirmationLimit,
+          };
+        }
+        return null;
+      })
+      .filter((client: ICLient) => client !== null);
+  });
+
+  const showCard = (cardNow: TGUConfirmationCards) => {
+    switch (cardNow) {
+      case "choose-client":
+        return <ChooseClient clients={allClients} setGUCard={setGUCard} />;
+
+      case "choose-numbers":
+        return <ChooseNumbers groups={groups} />;
+
+      case "create-client-fio":
+        return <CreateClientFio groups={groups} setGUCard={setGUCard} />;
+
+      case "create-client-passport":
+        return <CreateClientPassport groups={groups} />;
+    }
+  };
 
   if (loading || !data) {
     return <Loader />;
@@ -29,7 +68,12 @@ const GosuslugiConfirmationPage: FC = () => {
         <Card>
           <div
           // className="px-[10px] py-[20px]"
-          ></div>
+          >
+            {showCard(GUCard)}
+          </div>
+          {/* <div className="pt-8">
+            <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} />
+          </div> */}
         </Card>
       )}
     </div>

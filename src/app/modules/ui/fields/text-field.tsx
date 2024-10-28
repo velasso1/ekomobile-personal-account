@@ -22,6 +22,7 @@ const TextField: FC<ITextFieldProps> = ({
           className=""
           type={type}
           id={id}
+          name={id}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChangeCb(e)}

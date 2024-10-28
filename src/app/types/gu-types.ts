@@ -1,4 +1,7 @@
 export type TGUConfimationStatusId = "REQUIRED" | "NOT_REQUIRED" | "REQUESTED";
+// названия компонентов, которые используются для управления состоянием отображения нужного компонента для подтверждения ГУ
+export type TGUConfirmationCards = "choose-client" | "choose-numbers" | "create-client-fio" | "create-client-passport";
+export type TGUConfirmationClientGender = "MALE" | "FEMALE";
 
 export interface IGUConfirmationStatus {
   name: string;
@@ -47,4 +50,25 @@ export interface IGUConfrirmation {
   pdAgreement: string;
   requestReady: string;
   requestSent: string;
+}
+
+export interface IGURequestConfirmationPassportRFParams {
+  // Номер телефона в формате 10 цифр
+  targetMsisdn: string;
+  passportRF: {
+    series: string;
+    registrationAddress: string;
+    number: string;
+    namePatronymic: string;
+    nameGiven: string;
+    nameFamily: string;
+    issuePlaceCode: string;
+    issuePlace: string;
+    //Локальная дата в формате 2021-09-26
+    issueDate: string;
+    gender: TGUConfirmationClientGender | "";
+    birthplace: string;
+    // Локальная дата в формате 2021-09-26
+    birthdate: string;
+  };
 }

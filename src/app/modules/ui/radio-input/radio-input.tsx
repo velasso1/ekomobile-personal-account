@@ -1,14 +1,24 @@
+import { ChangeEvent } from "react";
+
 interface IProps {
-  id: string;
-  onChange: () => void;
+  name: string;
+  value: string;
+  onChange: (e: ChangeEvent<any>) => void;
   label: string;
   isChecked: boolean;
 }
 
-const RadioInput = ({ id, isChecked, label, onChange }: IProps) => {
+const RadioInput = ({ name, isChecked, label, onChange, value }: IProps) => {
   return (
     <label className="radio pt-5">
-      <input type="radio" className="mr-1.5" name={id} onChange={() => onChange()} checked={isChecked} />
+      <input
+        type="radio"
+        className="mr-1.5"
+        name={name}
+        onChange={(e) => onChange(e)}
+        checked={isChecked}
+        value={value}
+      />
       {label}
     </label>
   );
