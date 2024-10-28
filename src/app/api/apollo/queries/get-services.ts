@@ -1,6 +1,7 @@
 // get services
 import { gql } from "@apollo/client";
 
+// query for getting enbaled servieces
 export const GET_SERVICES = gql`
   query Me {
     me {
@@ -19,6 +20,35 @@ export const GET_SERVICES = gql`
               state
               isReadonly
               enabledAt
+              fee {
+                amount
+                type
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+// query for getting disabled services
+
+export const GET_AVAILABLE_SERVICES = gql`
+  query Me {
+    me {
+      account {
+        number {
+          services {
+            ... on BillingNumberServiceAvailable {
+              serviceId
+              name
+              description
+              feeToEnable
+              category {
+                id
+                name
+              }
               fee {
                 amount
                 type

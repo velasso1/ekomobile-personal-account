@@ -21,6 +21,7 @@ import HeaderSelect from "../../ui/header-select/header-select";
 import ModalBalance from "../../ui/modals/modal-balance";
 import TextField from "../../ui/fields/text-field";
 import QrCode from "../../ui/qrcode/qrcode";
+import ModalServices from "../../ui/modals/modal-services";
 
 import button from "../../../assets/images/button.svg";
 
@@ -94,6 +95,8 @@ const BalancePage: FC = () => {
   }
   return (
     <>
+      <ModalServices />
+      <ModalBalance />
       <div className="h-full px-[45px] xs:mx-[18px] xs:p-[0] md:mx-[auto] md:px-[45px] md:pt-[40px]">
         <PageTitle title="Пополнение баланса" />
         <Card>
@@ -118,7 +121,7 @@ const BalancePage: FC = () => {
               <div className="">
                 <button
                   className={`btn btn-link my-[40px] ${textColor.primary} no-underline`}
-                  data-modal-toggle="#modal_5"
+                  data-modal-toggle="#modal_25"
                 >
                   Как сформирован рекомендованный платеж?
                 </button>
@@ -166,7 +169,7 @@ const BalancePage: FC = () => {
                     <td>{dateFormatter(item.timestamp).date}</td>
                     <td>{item.methodName}</td>
                     <td>
-                      <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
+                      <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_27"></i>
                     </td>
                     <td>{item.amount / 100}</td>
                   </tr>
@@ -188,7 +191,6 @@ const BalancePage: FC = () => {
           </div>
         </Card>
       </div>
-      <ModalBalance />
     </>
   );
 };

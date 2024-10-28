@@ -1,11 +1,13 @@
 import { FC, useState, useEffect } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_NUMBERS_GROUP } from "../../../api/apollo/queries/get-number-groups";
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
+import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { changeSelectedNumber } from "../../../store/slices/user-slice";
+import { newDataReceived } from "../../../store/slices/user-slice";
 
 import { INumbersResponse } from "../../../types/numbers-response-types";
 
@@ -25,6 +27,9 @@ interface IHeaderSelectProps {
 const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) => {
   const dispatch = useAppDispatch();
 
+  const [getAnotherNumberData, { data: anotherData, loading: anotherLoading, error: adnotherError }] =
+    useLazyQuery(GET_CURRENT_USER_DATA);
+
   const { data, loading, error } = useQuery<INumbersResponse>(GET_NUMBERS_GROUP);
   const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE_DATA);
 
@@ -41,13 +46,17 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
     setMsidn(formatPhoneNumber(selectedNumber));
   }, [selectedNumber]);
 
+  useEffect(() => {
+    dispatch(newDataReceived(anotherData));
+  }, [anotherData]);
+
   const { textColor } = defaultStyles;
 
-  if (loading || profileLoading) {
+  if (loading || profileLoading || anotherLoading) {
     return <Loader />;
   }
 
-  if (error || profileError) {
+  if (error || profileError || adnotherError) {
     return <WarningBadge isError={true} />;
   }
 
@@ -58,7 +67,10 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
         <select
           className={`select ml-[-30px] h-[32px] rounded-[8px] hover:cursor-pointer xs:w-[170px] md:w-[230px] ${selectStyle}`}
           name="select"
-          onChange={(e) => dispatch(changeSelectedNumber(e.target.value))}
+          onChange={(e) => {
+            dispatch(changeSelectedNumber(e.target.value));
+            getAnotherNumberData();
+          }}
           value={selectedNumber}
         >
           {data.me.account.number.groups.length > 0 ? (

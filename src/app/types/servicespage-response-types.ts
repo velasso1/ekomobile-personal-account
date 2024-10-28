@@ -8,7 +8,7 @@ interface IFeeItem {
   type: string;
 }
 
-interface IServicesItem {
+export interface IServicesItem {
   category: ICategoryItem;
   id: string;
   serviceId: string;
@@ -16,7 +16,7 @@ interface IServicesItem {
   description: string;
   state: string;
   isReadonly: boolean;
-  enableAt: string;
+  enabledAt: string;
   fee: IFeeItem;
 }
 
@@ -25,6 +25,33 @@ export interface IServicesPageResponse {
     account: {
       number: {
         services: IServicesItem[];
+      };
+    };
+  };
+}
+
+// available services types
+
+export interface IAvailableServiceItem {
+  serviceId: string;
+  name: string;
+  description: string;
+  feeToEnable: number;
+  category: {
+    id: string;
+    name: string;
+  };
+  fee: {
+    amount: number;
+    type: string;
+  };
+}
+
+export interface IAvailableServicesResponse {
+  me: {
+    account: {
+      number: {
+        services: IAvailableServiceItem[];
       };
     };
   };

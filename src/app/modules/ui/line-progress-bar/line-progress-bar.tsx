@@ -7,6 +7,7 @@ import { INodeItem } from "../../../types/expensespage-response-types";
 import { defaultStyles } from "../../../utils/default-styles";
 import { ExpensesNames } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
 interface ILineProgressBarProps {
   progressItem: INodeItem[];
@@ -16,29 +17,39 @@ interface ILineProgressBarProps {
 const LineProgressBar: FC<ILineProgressBarProps> = ({ progressItem, totalExpenses }) => {
   const { bgColor } = defaultStyles;
 
+  const totalForServices: number = progressItem.reduce((acc, value) => {
+    return acc + (value.type === "PRICE_PLAN" ? 0 : value.amount) * -1;
+  }, 0);
+
+  const totalForPricePlan: number = progressItem.reduce((acc, value) => {
+    return acc + (value.type === "PRICE_PLAN" ? value.amount : 0) * -1;
+  }, 0);
+
   return (
     <div className="">
       <div className="progress mb-[20px]">
-        {progressItem.map((item, index) => {
-          return (
-            <div
-              className={`${bgColor[`${getProgressColor[index]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
-              style={{ width: `${(item.amount * 100) / totalExpenses}%` }}
-            ></div>
-          );
-        })}
+        <div
+          className={`${bgColor[`${getProgressColor[2]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          style={{ width: `${totalForServices / totalExpenses}%` }}
+        ></div>
+        <div
+          className={`${bgColor[`${getProgressColor[1]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          style={{ width: `${totalForPricePlan / totalExpenses}%` }}
+        ></div>
       </div>
 
       <div className="flex">
-        {progressItem.map((item, index) => {
-          return (
-            <DotForLineProgressBar
-              name={ExpensesNames[item.name]}
-              color={bgColor[`${getProgressColor[index]}`]}
-              value={item.amount}
-            />
-          );
-        })}
+        <DotForLineProgressBar
+          name={ExpensesNames["SERVICES"]}
+          color={bgColor[`${getProgressColor[2]}`]}
+          value={moneyFormatter(totalForServices)}
+        />
+
+        <DotForLineProgressBar
+          name={ExpensesNames["PRICE_PLAN"]}
+          color={bgColor[`${getProgressColor[1]}`]}
+          value={moneyFormatter(totalForPricePlan)}
+        />
       </div>
     </div>
   );

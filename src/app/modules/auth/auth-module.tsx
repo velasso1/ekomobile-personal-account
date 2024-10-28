@@ -10,7 +10,7 @@ import PrivateRoute from "../../utils/private-route/private-route";
 import { useAppSelector } from "../../store";
 
 const AuthModule: FC = () => {
-  const { checking } = useAppSelector((state) => state.routeSlice);
+  // const { checking } = useAppSelector((state) => state.routeSlice);
 
   return (
     <div className="flex w-full items-center justify-center pt-[30vh]">

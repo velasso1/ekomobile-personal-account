@@ -67,7 +67,7 @@ const ApplicationPage: FC = () => {
           </tbody>
         </table>
         <div className="w-full border-t-2 py-[10px] text-center">
-          {qtyApps <= 20 && (
+          {qtyApps < 20 && (
             <a
               className={`btn btn-link ${textColor.primary}`}
               onClick={() =>
