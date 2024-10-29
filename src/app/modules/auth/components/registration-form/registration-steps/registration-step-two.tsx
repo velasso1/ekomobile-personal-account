@@ -64,10 +64,6 @@ const RegistrationStepTwo: FC<IRegistrationStepsProps> = ({ userInfo, setUserInf
     }
   };
 
-  if (data) {
-    console.log(data);
-  }
-
   if (error || regError) {
     return <WarningBadge isError={true} />;
   }

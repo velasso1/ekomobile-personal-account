@@ -4,6 +4,8 @@ import { IProfileInfo } from "../../types/profile-info-types";
 interface IInitUserSlice {
   userInfo: IProfileInfo;
   selectedNumber: string;
+  // change this types later
+  newCurrentData: object;
 }
 
 const initialState: IInitUserSlice = {
@@ -15,6 +17,7 @@ const initialState: IInitUserSlice = {
     sex: "NOTSELECTED",
   },
   selectedNumber: "",
+  newCurrentData: {},
 };
 
 const userSlice = createSlice({
@@ -29,8 +32,12 @@ const userSlice = createSlice({
     changeSelectedNumber(state, action: PayloadAction<string>) {
       state.selectedNumber = action.payload;
     },
+
+    newDataReceived(state, action: PayloadAction<object>) {
+      state.newCurrentData = action.payload;
+    },
   },
 });
 
-export const { putUserInfo, changeSelectedNumber } = userSlice.actions;
+export const { putUserInfo, changeSelectedNumber, newDataReceived } = userSlice.actions;
 export default userSlice.reducer;

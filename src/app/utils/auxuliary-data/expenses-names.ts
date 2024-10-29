@@ -5,6 +5,7 @@ export enum ExpensesNames {
   SERVICE = "Сервисы",
   PRICE_PLAN = "Тариф",
   OTHER = "Другое",
+  SERVICES = "Услуги",
 }
 
 export enum CircleProgressName {

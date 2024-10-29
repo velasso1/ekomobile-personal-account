@@ -4,15 +4,28 @@ import ModalServices from "../modals/modal-services";
 
 import { defaultStyles } from "../../../utils/default-styles";
 
-import config from "../../../../../auxuliary.json";
+import { IServicesItem } from "../../../types/servicespage-response-types";
+import { IAvailableServiceItem } from "../../../types/servicespage-response-types";
+
+import { PriceTypes } from "../../../utils/auxuliary-data/services-categories";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
 interface IAccordionProps {
   accordionNumber: number;
   accordionTitle: string;
+  accrodionItems: IServicesItem[] | IAvailableServiceItem[];
+  servicesQuantity: number;
   connect?: boolean;
 }
 
-const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, connect }) => {
+const Accordion: FC<IAccordionProps> = ({
+  accordionNumber,
+  accordionTitle,
+  accrodionItems,
+  servicesQuantity,
+  connect,
+}) => {
   const [accordionOpen, setAccOpen] = useState<boolean>(false);
   const { bgColor, textSize, textColor } = defaultStyles;
   return (
@@ -33,7 +46,7 @@ const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, conne
           >
             <p className={`text-base font-semibold sm:${textSize.default} md:text-[16px]`}>
               {accordionTitle}
-              <span className={`ml-[5px] font-semibold ${textColor.grey}`}>4</span>
+              <span className={`ml-[5px] font-semibold ${textColor.grey}`}>{servicesQuantity}</span>
             </p>
             <i className="ki-outline ki-plus block text-2sm text-gray-600 accordion-active:hidden"></i>
             <i className="ki-outline ki-minus hidden text-2sm text-gray-600 accordion-active:block"></i>
@@ -57,21 +70,21 @@ const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, conne
                     </tr>
                   </thead>
                   <tbody className={`${textColor.grey}`}>
-                    {config.servTableInfo.map((item) => {
+                    {accrodionItems.map((item) => {
                       return (
                         <tr key={item.id}>
                           <td className={`text-[14px] font-semibold ${textColor.darkBlue}`}>{item.name}</td>
                           <td>{item.description}</td>
-                          <td>{item.date}</td>
+                          <td> {item.enabledat ? dateFormatter(item.enabledAt).date : "Не подключено"}</td>
 
-                          <td>{item.price} ₽</td>
-                          <td>{item.typePrice}</td>
+                          <td>{moneyFormatter(item.fee.amount)} ₽</td>
+                          <td>{PriceTypes[item.fee.type]}</td>
                           <td>
                             <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
                             {/* <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i> */}
                           </td>
                           <td>
-                            {item.actions ? (
+                            {item.isReadonly ? (
                               <span className="">Для уточнения обратитесь в поддержку</span>
                             ) : !connect ? (
                               <span className="badge badge-danger hover:cursor-pointer">Отключить</span>

@@ -10,9 +10,14 @@ import { signIn, checkAccStatusOnSignIn, requestIsLoading } from "../../../../st
 
 import { TUserState } from "../../../../types/login-state-types";
 
+//
+import ModalBalance from "../../../ui/modals/modal-balance";
+//
+
 import { ModalHelp } from "../../../ui/index";
 import { Button } from "../../../ui/button";
 import NumberField from "../../../ui/fields/number-field";
+import TextField from "../../../ui/fields/text-field";
 import Warning from "../../../ui/warning/warning";
 import { WarningBadge } from "../../../ui/index";
 import Loader from "../../../ui/loader/loader";
@@ -22,6 +27,7 @@ import { authRoutes, mainRoutes } from "../../../../utils/routes-name/main-route
 import EyeIcon from "../../../../utils/icons/eye-icon";
 
 import { setChecking } from "../../../../store/slices/auth-slice";
+import { formatPhoneNumber } from "../../../../utils/helpers/phone-formatter";
 
 const LoginForm: FC = () => {
   const dispatch = useAppDispatch();
@@ -77,12 +83,13 @@ const LoginForm: FC = () => {
           <form className="" action="">
             <div className="flex w-full justify-center">
               <div className="flex min-w-[290px] flex-col">
-                <NumberField
+                <TextField
                   disabled={isLoading}
                   id="phone-field-log"
-                  placeholder="телефон"
-                  label="Телефон"
-                  value={userState.username}
+                  type="text"
+                  placeholder="+7 (900) 000-00-00"
+                  Label="Телефон"
+                  value={formatPhoneNumber(userState.username)}
                   onChangeCb={(e) =>
                     setUserState({
                       ...userState,

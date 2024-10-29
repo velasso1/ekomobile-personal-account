@@ -60,7 +60,7 @@ const ExpensesPage: FC = () => {
           <div className="expenses flex w-full flex-col">
             <LineProgressBar
               progressItem={data.me.account.number.expenses.month.transactionList.nodes}
-              totalExpenses={+moneyFormatter(data.me.account.number.expenses.month.amount.total)}
+              totalExpenses={data.me.account.number.expenses.month.amount.total / 100}
             />
           </div>
         </div>

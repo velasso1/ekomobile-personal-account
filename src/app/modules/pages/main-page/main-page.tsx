@@ -1,9 +1,13 @@
 import { FC, useEffect, useState } from "react";
 
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_FULL_DATA } from "../../../api/apollo/queries/get-full-data";
 import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
 import { GET_SERVICES } from "../../../api/apollo/queries/get-services";
+// import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
+
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { setChecking } from "../../../store/slices/auth-slice";
 
 import { useNavigate } from "react-router-dom";
 
@@ -22,8 +26,6 @@ import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 import { moneyFormatter } from "../../../utils/helpers/money-formatter";
-import { useAppDispatch } from "../../../store";
-import { setChecking } from "../../../store/slices/auth-slice";
 
 // import config from "../../../../../auxuliary.json";
 
@@ -32,6 +34,10 @@ const MainPage: FC = () => {
   const dispatch = useAppDispatch();
 
   const date = new Date();
+
+  const { newCurrentData } = useAppSelector((state) => state.userSlice);
+
+  console.log(newCurrentData);
 
   useEffect(() => {
     dispatch(setChecking(false));
@@ -54,15 +60,12 @@ const MainPage: FC = () => {
 
   const [visibleTab, setVisibleTab] = useState<boolean>(true);
   const { bgColor, textSize, textColor } = defaultStyles;
-  const formattedPhone = data ? formatPhoneNumber(data.fullUserInfo.account.contactPhone) : "";
 
   if (loading || servicesLoading || verificLoading) {
     return <Loader />;
   }
 
   if (error || servicesError || verificError) {
-    console.log(error);
-
     return <WarningBadge isError={true} />;
   }
 
@@ -89,7 +92,7 @@ const MainPage: FC = () => {
         </div>
         <div className="card-body my-[20px] flex border-b-2 border-[#EAECEE] pl-[0px] pt-[5px] xs:mr-[10px] xs:flex-col xs:text-[13px] md:mr-[40px] md:flex-row md:text-[15px]">
           <div className={`font-semibold ${textColor.darkBlue} xs:${textSize.default} md:text-[18px]`}>
-            {formattedPhone}
+            {formatPhoneNumber(data.fullUserInfo.account.msisdn)}
           </div>
           <div className="ml-[15px]">
             <span

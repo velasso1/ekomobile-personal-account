@@ -29,7 +29,7 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
                   <span className="sort-icon"></span>
                 </span>
               </th>
-              <th>
+              <th className="w-[400px]">
                 <span className="sort asc">
                   <span className="sort-label">Описание</span>
                   <span className="sort-icon"></span>
@@ -45,8 +45,8 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
                   <tr key={crypto.randomUUID()}>
                     <td>{newDate.date}</td>
                     <td>{item.amount / 100} ₽</td>
-                    <td>{item.type}</td>
-                    <td>{ExpensesNames[item.name]}</td>
+                    <td>{ExpensesNames[item.type]}</td>
+                    <td>{item.name}</td>
                   </tr>
                 );
               })

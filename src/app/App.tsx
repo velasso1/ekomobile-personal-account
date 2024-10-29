@@ -36,6 +36,11 @@ const App: FC = () => {
   }, []);
 
   useEffect(() => {
+    KTComponent.init();
+    KTLayout.init();
+  }, [location]);
+
+  useEffect(() => {
     if (data && data.me) {
       dispatch(setChecking(true));
       localStorage.setItem("UDATA", `${data.me.account.email}`);
@@ -45,11 +50,6 @@ const App: FC = () => {
 
     refetch();
   }, [data, loginRequestSend]);
-
-  useEffect(() => {
-    KTComponent.init();
-    KTLayout.init();
-  }, [location]);
 
   return (
     <Routes>

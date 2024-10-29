@@ -4,6 +4,6 @@ export interface Ivalue {
 
 export interface IDotForLineProgressBarProps {
   color: string;
-  value: Ivalue | number;
+  value: Ivalue | string;
   name: string;
 }
