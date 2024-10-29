@@ -1,39 +1,72 @@
-import { IGroup, TGUConfirmationCards } from "../../../../types/gu-types";
+import {
+  IGroup,
+  IGUConfirmationPassportField,
+  TGUConfirmationCards,
+  TGUConfirmationClientGender,
+} from "../../../../types/gu-types";
 import TextField from "../../../ui/fields/text-field";
 import { useFormik } from "formik";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
+import * as Yup from "yup";
 
 interface IProps {
   groups: IGroup[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
-const staticTexts = {
+interface IStaticTexts {
+  card: string;
+  fields: IGUConfirmationPassportField[];
+}
+
+type TAllowedFormKeys = IGUConfirmationPassportField["id"];
+type TFormikPassport = {
+  [K in TAllowedFormKeys]: string;
+};
+type TFormikClientFio = Pick<
+  TFormikPassport,
+  "birthdate" | "birthplace" | "gender" | "nameFamily" | "nameGiven" | "namePatronymic"
+>;
+
+const staticTexts: IStaticTexts = {
   card: "Личные данные:",
-  fields: {
-    nameFamily: {
+  fields: [
+    {
       label: "Фамилия",
       placeholder: "Иванов",
+      id: "nameFamily",
+      type: "text",
     },
-    nameGiven: {
+    {
       label: "Имя",
       placeholder: "Иван",
+      id: "nameGiven",
+      type: "text",
     },
-    namePatronymic: {
+    {
       label: "Отчество",
       placeholder: "Иванович",
+      id: "namePatronymic",
+      type: "text",
     },
-    birthDate: {
+    {
       label: "Дата рождения",
       placeholder: "01.01.1990",
+      id: "birthdate",
+      type: "date",
     },
-    birthPlace: {
+    {
       label: "Место рождения",
       placeholder: "Москва",
+      id: "birthplace",
+      type: "text",
     },
-    gender: {
+    {
       label: "Пол",
+      id: "gender",
+      type: "radio",
+
       options: [
         {
           text: "Мужской",
@@ -45,85 +78,94 @@ const staticTexts = {
         },
       ],
     },
-  },
+  ],
 };
 
+const genders: TGUConfirmationClientGender[] = ["MALE", "FEMALE"];
+
+const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().shape({
+  nameFamily: Yup.string()
+    .matches(/^[\u0400-\u04FF]+$/, "Только кириллица")
+    .required("Поле обязательно к заполнению"),
+  nameGiven: Yup.string()
+    .matches(/^[\u0400-\u04FF]+$/, "Только кириллица")
+    .required("Поле обязательно к заполнению"),
+  namePatronymic: Yup.string()
+    .matches(/^[\u0400-\u04FF]+$/, "Только кириллица")
+    .required("Поле обязательно к заполнению"),
+  birthdate: Yup.string()
+    .matches(/^\d{4}-\d{2}-\d{2}$/, "Неверный формат даты")
+    .test("is-18", "Абонент не может быть младше 18 лет", (value) => {
+      const today = new Date();
+      const birthDate = new Date(value || "");
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDifference = today.getMonth() - birthDate.getMonth();
+      const dayDifference = today.getDate() - birthDate.getDate();
+      return age > 18 || (age === 18 && (monthDifference > 0 || (monthDifference === 0 && dayDifference >= 0)));
+    })
+    .required("Поле обязательно к заполнению"),
+  birthplace: Yup.string()
+    .matches(/^[\u0400-\u04FF]+$/, "Только кириллица")
+    .required("Поле обязательно к заполнению"),
+  gender: Yup.string().oneOf(genders, "Нужно выбрать один из двух полов").required("Поле обязательно к заполнению"),
+});
+
 const CreateClientFio = ({ groups, setGUCard }: IProps) => {
-  const formik = useFormik({
+  const formik = useFormik<TFormikClientFio>({
     initialValues: {
       nameFamily: "",
       nameGiven: "",
       namePatronymic: "",
-      birthDate: "",
-      birthPlace: "",
+      birthdate: "",
+      birthplace: "",
       gender: "",
     },
     onSubmit: (values) => {},
+    validateOnChange: true,
+    validateOnBlur: true,
+    validationSchema: CreateClientFioSchema,
   });
   return (
     <>
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
-      <TextField
-        Label={staticTexts.fields.nameFamily.label}
-        id={"nameFamily"}
-        placeholder={staticTexts.fields.nameFamily.placeholder}
-        onChangeCb={formik.handleChange}
-        type="text"
-        value={formik.values.nameFamily}
-        addStyle="pt-[30px]"
-      />
-
-      <TextField
-        Label={staticTexts.fields.nameGiven.label}
-        id={"nameGiven"}
-        placeholder={staticTexts.fields.nameGiven.placeholder}
-        onChangeCb={formik.handleChange}
-        type="text"
-        value={formik.values.nameGiven}
-        addStyle="pt-[20px]"
-      />
-
-      <TextField
-        Label={staticTexts.fields.namePatronymic.label}
-        id={"namePatronymic"}
-        placeholder={staticTexts.fields.namePatronymic.placeholder}
-        onChangeCb={formik.handleChange}
-        type="text"
-        value={formik.values.namePatronymic}
-        addStyle="pt-[20px]"
-      />
-
-      <TextField
-        Label={staticTexts.fields.birthDate.label}
-        id={"birthDate"}
-        placeholder={staticTexts.fields.birthDate.placeholder}
-        onChangeCb={formik.handleChange}
-        type="date"
-        value={formik.values.birthDate}
-        addStyle="pt-[20px]"
-      />
-
-      <TextField
-        Label={staticTexts.fields.birthPlace.label}
-        id={"birthPlace"}
-        placeholder={staticTexts.fields.birthPlace.placeholder}
-        onChangeCb={formik.handleChange}
-        type="text"
-        value={formik.values.birthPlace}
-        addStyle="pt-[20px]"
-      />
+      <div className="form-group">
+        {staticTexts.fields.map((field) => {
+          if (field.type !== "radio") {
+            return (
+              <TextField
+                key={field.id}
+                Label={field.label}
+                id={field.id}
+                placeholder={field?.placeholder}
+                onChangeCb={(e) => {
+                  formik.handleChange(e);
+                  formik.setFieldTouched(field.id, true, false);
+                }}
+                type={field.type}
+                value={formik.values[field.id]}
+                addStyle="pt-[20px]"
+                error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+              />
+            );
+          }
+        })}
+      </div>
 
       <div className="radio-list flex flex-col pt-[20px]">
-        {staticTexts.fields.gender.options.map((option: { text: string; value: string }) => (
-          <RadioInput
-            key={option.value}
-            name="gender"
-            value={option.value}
-            isChecked={formik.values.gender === option.value}
-            label={option.text}
-            onChange={formik.handleChange}
-          />
-        ))}
+        {staticTexts.fields.map((field) => {
+          if (field.type === "radio") {
+            return field.options.map((option: { text: string; value: string }) => (
+              <RadioInput
+                key={option.value}
+                name={field.id}
+                value={option.value}
+                isChecked={formik.values.gender === option.value}
+                label={option.text}
+                onChange={formik.handleChange}
+              />
+            ));
+          }
+        })}
       </div>
 
       <div className="pt-8">

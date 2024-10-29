@@ -72,3 +72,14 @@ export interface IGURequestConfirmationPassportRFParams {
     birthdate: string;
   };
 }
+
+export interface IGUConfirmationPassportField {
+  label: string;
+  placeholder?: string;
+  id: keyof IGURequestConfirmationPassportRFParams["passportRF"];
+  type: "text" | "date" | "radio";
+  options?: {
+    text: string;
+    value: string;
+  }[];
+}
