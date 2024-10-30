@@ -13,6 +13,12 @@ interface ITransactionList {
 }
 
 interface IExpensesMonthItem {
+  month: {
+    month: {
+      year: number;
+      month: number;
+    }
+  };
   amount: {
     total: number;
   };
@@ -27,7 +33,7 @@ interface IExpensesInfo {
 export interface IExpensesResponse {
   me: {
     account: {
-      number: {
+      billingNumber: {
         expenses: IExpensesInfo;
       };
     };

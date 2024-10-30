@@ -1,11 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import { IProfileInfo } from "../../types/profile-info-types";
+import { ICurrentDataResponse } from "../../types/new-current-data-types";
 
 interface IInitUserSlice {
   userInfo: IProfileInfo;
   selectedNumber: string;
   // change this types later
-  newCurrentData: object;
+  newCurrentData: ICurrentDataResponse | "";
+  servicesChecked: "ENABLED" | "DISABLED";
 }
 
 const initialState: IInitUserSlice = {
@@ -17,7 +20,8 @@ const initialState: IInitUserSlice = {
     sex: "NOTSELECTED",
   },
   selectedNumber: "",
-  newCurrentData: {},
+  newCurrentData: "",
+  servicesChecked: "ENABLED",
 };
 
 const userSlice = createSlice({
@@ -33,11 +37,14 @@ const userSlice = createSlice({
       state.selectedNumber = action.payload;
     },
 
-    newDataReceived(state, action: PayloadAction<object>) {
+    newDataReceived(state, action: PayloadAction<ICurrentDataResponse>) {
       state.newCurrentData = action.payload;
+    },
+    changeSelectOption(state, action: PayloadAction<"ENABLED" | "DISABLED">) {
+      state.servicesChecked = action.payload;
     },
   },
 });
 
-export const { putUserInfo, changeSelectedNumber, newDataReceived } = userSlice.actions;
+export const { putUserInfo, changeSelectedNumber, newDataReceived, changeSelectOption } = userSlice.actions;
 export default userSlice.reducer;

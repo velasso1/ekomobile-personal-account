@@ -34,7 +34,7 @@ interface IPricePlan {
   __typename: string;
 }
 
-interface INumberInfo {
+export interface INumberInfo {
   msisdn: string;
   role: string;
   isActive: boolean;
@@ -45,7 +45,7 @@ interface INumberInfo {
   expenses: IExpenses;
 }
 
-interface IAccountInfo {
+export interface IAccountInfo {
   account: {
     msisdn: string;
     email: string;

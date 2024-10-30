@@ -7,7 +7,6 @@ import { CHECK_DETAILS_FORMAT } from "../../../api/apollo/queries/check-details-
 import { useAppSelector } from "../../../store";
 
 import { IOrderDetailsResponse, ICheckResponse } from "../../../types/detailspage-response-types";
-import { IReturnFormatDate } from "../../../utils/helpers/date-formatter";
 
 import TextField from "../../ui/fields/text-field";
 import { PageTitle } from "../../ui/page-title";
@@ -15,11 +14,12 @@ import { Card } from "../../ui/card";
 import { Button } from "../../ui/button";
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
+import Warning from "../../ui/warning/warning";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { month } from "../../../utils/auxuliary-data/month";
 import { dateFormatter } from "../../../utils/helpers/date-formatter";
-import Warning from "../../ui/warning/warning";
+import { IReturnFormatDate } from "../../../utils/helpers/date-formatter";
 
 interface IOrderState {
   lastOrder: IReturnFormatDate;
@@ -30,8 +30,11 @@ const DetailsPage: FC = () => {
   const [orderDetails, { data, loading, error }] = useMutation<IOrderDetailsResponse>(ORDER_DETAILS);
   const { data: checkData, loading: checkLoading, error: checkError } = useQuery<ICheckResponse>(CHECK_DETAILS_FORMAT);
 
+  const { selectedNumber, userInfo } = useAppSelector((state) => state.userSlice);
+
+  const [fieldsEmpty, setFieldsEmpty] = useState<boolean>(false);
   const [detailsInfo, setDetailsInfo] = useState({
-    email: "",
+    email: userInfo.email,
     formatId: "0",
     month: "0",
     orderIsBlocked: false,
@@ -47,10 +50,6 @@ const DetailsPage: FC = () => {
       fullHours: "",
     },
   });
-
-  const [fieldsEmpty, setFieldsEmpty] = useState<boolean>(false);
-
-  const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
   const { textColor } = defaultStyles;
 
@@ -157,7 +156,7 @@ const DetailsPage: FC = () => {
                 id="detail-mail"
                 type="email"
                 placeholder="e-mail"
-                value={detailsInfo.email}
+                value={detailsInfo.email ? detailsInfo.email : userInfo.email}
                 onChangeCb={(e) => setDetailsInfo({ ...detailsInfo, email: e.target.value.trim() })}
                 Label="Почта"
                 width=""

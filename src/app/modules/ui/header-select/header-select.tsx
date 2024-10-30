@@ -17,6 +17,7 @@ import HeaderSelectOption from "./header-select-option";
 import { defaultStyles } from "../../../utils/default-styles";
 import WarningBadge from "../badges/warning-badge";
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
 
 interface IHeaderSelectProps {
   label: string;
@@ -27,6 +28,8 @@ interface IHeaderSelectProps {
 const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) => {
   const dispatch = useAppDispatch();
 
+  const date = new Date();
+
   const [getAnotherNumberData, { data: anotherData, loading: anotherLoading, error: adnotherError }] =
     useLazyQuery(GET_CURRENT_USER_DATA);
 
@@ -34,7 +37,18 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
   const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE_DATA);
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
+
   const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
+
+  useEffect(() => {
+    if (selectedNumber) {
+      getAnotherNumberData({fetchPolicy: 'no-cache', variables: {
+        msisdn: selectedNumber,
+        year: date.getFullYear(), month: date.getMonth() + 1,
+      }});
+    }
+
+  }, [selectedNumber])
 
   useEffect(() => {
     if (profileData) {
@@ -69,7 +83,10 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
           name="select"
           onChange={(e) => {
             dispatch(changeSelectedNumber(e.target.value));
-            getAnotherNumberData();
+            getAnotherNumberData({fetchPolicy: 'no-cache', variables: {
+              msisdn: e.target.value,
+              year: date.getFullYear(), month: date.getMonth() + 1,
+            }});
           }}
           value={selectedNumber}
         >
