@@ -46,7 +46,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
       />
 
       <TextField
-        id="change-info-pass"
+        id="change-info-new-pass"
         type="password"
         Label="Новый пароль"
         placeholder="Введите новый пароль"
@@ -58,7 +58,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
       />
 
       <TextField
-        id="change-info-pass"
+        id="change-info-repeat-new-pass"
         type="password"
         Label="Повторите новый пароль"
         placeholder="Повторите новый пароль"

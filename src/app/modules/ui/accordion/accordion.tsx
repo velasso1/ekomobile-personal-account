@@ -28,6 +28,7 @@ const Accordion: FC<IAccordionProps> = ({
 }) => {
   const [accordionOpen, setAccOpen] = useState<boolean>(false);
   const { bgColor, textSize, textColor } = defaultStyles;
+
   return (
     <>
       <div className="my-[20px] flex flex-col gap-5 pr-[45px] xs:w-[283px] md:w-auto" data-accordion="true">
@@ -70,12 +71,12 @@ const Accordion: FC<IAccordionProps> = ({
                     </tr>
                   </thead>
                   <tbody className={`${textColor.grey}`}>
-                    {accrodionItems.map((item) => {
+                    {accrodionItems.map((item) => {                      
                       return (
-                        <tr key={item.id}>
+                        <tr key={crypto.randomUUID()}>
                           <td className={`text-[14px] font-semibold ${textColor.darkBlue}`}>{item.name}</td>
-                          <td>{item.description}</td>
-                          <td> {item.enabledat ? dateFormatter(item.enabledAt).date : "Не подключено"}</td>
+                          <td>{item.description ? item.description : "Отсутствует"}</td>
+                          <td> {item.enabledAt ? dateFormatter(item.enabledAt).date : "Не подключено"}</td>
 
                           <td>{moneyFormatter(item.fee.amount)} ₽</td>
                           <td>{PriceTypes[item.fee.type]}</td>

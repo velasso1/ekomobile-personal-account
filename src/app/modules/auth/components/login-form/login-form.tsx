@@ -39,6 +39,7 @@ const LoginForm: FC = () => {
   const [emptyField, setEmptyFields] = useState<boolean>(false);
   const [userState, setUserState] = useState<TUserState>({
     username: "",
+    formattedUsername: "",
     password: "",
   });
 
@@ -52,7 +53,7 @@ const LoginForm: FC = () => {
     setEmptyFields(false);
     if (userState.username.length > 5 && userState.password.length > 5) {
       dispatch(signIn(userState));
-      setUserState({ username: "", password: "" });
+      setUserState({ username: "", formattedUsername: "", password: "" });
       return;
     }
     setEmptyFields(true);
@@ -89,10 +90,11 @@ const LoginForm: FC = () => {
                   type="text"
                   placeholder="+7 (900) 000-00-00"
                   Label="Телефон"
-                  value={formatPhoneNumber(userState.username)}
+                  value={userState.formattedUsername}
                   onChangeCb={(e) =>
                     setUserState({
                       ...userState,
+                      formattedUsername: formatPhoneNumber(e.target.value.trim()),
                       username: e.target.value.trim(),
                     })
                   }

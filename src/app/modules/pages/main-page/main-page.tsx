@@ -1,19 +1,14 @@
 import { FC, useEffect, useState } from "react";
 
-import { useLazyQuery, useQuery } from "@apollo/client";
-import { GET_FULL_DATA } from "../../../api/apollo/queries/get-full-data";
+import { useNavigate } from "react-router-dom";
+
+import { useQuery } from "@apollo/client";
 import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
-import { GET_SERVICES } from "../../../api/apollo/queries/get-services";
-// import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { setChecking } from "../../../store/slices/auth-slice";
 
-import { useNavigate } from "react-router-dom";
-
 import { IVerificationData } from "../../../types/mainpage-userinfo-types";
-import { IFullDataInfo } from "../../../types/response-full-userinfo-types";
-import { IServicesPageResponse } from "../../../types/servicespage-response-types";
 
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
@@ -27,45 +22,30 @@ import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
-// import config from "../../../../../auxuliary.json";
-
 const MainPage: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const date = new Date();
-
-  const { newCurrentData } = useAppSelector((state) => state.userSlice);
-
-  console.log(newCurrentData);
-
-  useEffect(() => {
-    dispatch(setChecking(false));
-  }, []);
-
-  const { data, loading, error } = useQuery<IFullDataInfo>(GET_FULL_DATA, {
-    variables: { year: date.getFullYear(), month: date.getMonth() + 1 },
-  });
   const {
     data: verificData,
     loading: verificLoading,
     error: verificError,
   } = useQuery<IVerificationData>(CHECK_VERIFICATION);
 
-  const {
-    data: servicesData,
-    loading: servicesLoading,
-    error: servicesError,
-  } = useQuery<IServicesPageResponse>(GET_SERVICES);
+  const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const [visibleTab, setVisibleTab] = useState<boolean>(true);
   const { bgColor, textSize, textColor } = defaultStyles;
 
-  if (loading || servicesLoading || verificLoading) {
+  useEffect(() => {
+    dispatch(setChecking(false));
+  }, []);
+
+  if (verificLoading || !newCurrentData) {
     return <Loader />;
   }
 
-  if (error || servicesError || verificError) {
+  if (verificError) {
     return <WarningBadge isError={true} />;
   }
 
@@ -81,7 +61,7 @@ const MainPage: FC = () => {
 
       <div className="card grid grid-cols-2 flex-row xs:mx-[20px] xs:mb-[20px] md:mx-[45px] md:mb-[40px]">
         <div className="card-body">
-          <p className="font-semibold xs:text-[15px] md:text-[22px]">{data.fullUserInfo.account.contactName}</p>
+          <p className="font-semibold xs:text-[15px] md:text-[22px]">{newCurrentData.me.account.contactName}</p>
           <a
             className={`btn-link ${textSize.default} ${textColor.primary}`}
             href="#"
@@ -92,13 +72,13 @@ const MainPage: FC = () => {
         </div>
         <div className="card-body my-[20px] flex border-b-2 border-[#EAECEE] pl-[0px] pt-[5px] xs:mr-[10px] xs:flex-col xs:text-[13px] md:mr-[40px] md:flex-row md:text-[15px]">
           <div className={`font-semibold ${textColor.darkBlue} xs:${textSize.default} md:text-[18px]`}>
-            {formatPhoneNumber(data.fullUserInfo.account.msisdn)}
+            {formatPhoneNumber(newCurrentData.me.account.billingNumber.msisdn)}
           </div>
           <div className="ml-[15px]">
             <span
-              className={`badge badge-outline ${data.fullUserInfo.account.number.isActive ? "badge-success" : null}`}
+              className={`badge badge-outline ${newCurrentData.me.account.billingNumber.isActive ? "badge-success" : null}`}
             >
-              {data.fullUserInfo.account.number.isActive ? "Активен" : "Заблокирован"}
+              {newCurrentData.me.account.billingNumber.isActive ? "Активен" : "Заблокирован"}
             </span>
           </div>
         </div>
@@ -106,7 +86,7 @@ const MainPage: FC = () => {
         <div className="card-body pt-[30px]">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой тариф</p>
           <p className={`tarif mb-[5px] text-[16px] font-semibold ${textColor.darkBlue}`}>
-            {data.fullUserInfo.account.number.pricePlan.name}
+            {newCurrentData.me.account.billingNumber.pricePlan.name}
           </p>
           {/* <a className={`btn-link ${textColor.primary}`} href="#">
             Подробнее
@@ -116,7 +96,7 @@ const MainPage: FC = () => {
         <div className="card-body px-[0] xs:justify-self-end xs:pr-[40px] md:justify-self-start">
           <p className={`mb-[5px] ${textSize.default} ${textColor.grey}`}>Мой баланс</p>
           <p className={`mb-[5px] font-semibold ${textColor.darkBlue} xs:text-[20px] md:text-[30px]`}>
-            {moneyFormatter(data.fullUserInfo.account.number.balance)} ₽
+            {moneyFormatter(newCurrentData.me.account.billingNumber.balance)} ₽
           </p>
           <Button buttonType="default" title="Пополнить" onClickCb={() => navigate(mainRoutes.balance)} />
         </div>
@@ -128,7 +108,7 @@ const MainPage: FC = () => {
             <h3 className="card-title">Остатки по пакетам</h3>
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
-            {data.fullUserInfo.account.number.remains.full.map((item, index) => {
+            {newCurrentData.me.account.billingNumber.remains.full.map((item, index) => {
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
 
               return (
@@ -162,16 +142,16 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body">
             <div className="sum mb-[10px] text-[30px] font-semibold">
-              {moneyFormatter(data.fullUserInfo.account.number.expenses.month.amount.total)} ₽
+              {moneyFormatter(newCurrentData.me.account.number.expenses.month.amount.total)} ₽
             </div>
             <div className="progress py-[5px]">
-              {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
+              {newCurrentData.me.account.number.expenses.month.amount.parts.map((item, index) => {
                 return (
                   <div
                     key={crypto.randomUUID()}
                     className={`${bgColor[`${getProgressColor[index]}`]} progress-bar rounded-[3px] py-[5px]`}
                     style={{
-                      width: `${(item.amount * 100) / data.fullUserInfo.account.number.expenses.month.amount.total}%`,
+                      width: `${(item.amount * 100) / newCurrentData.me.account.number.expenses.month.amount.total}%`,
                     }}
                   ></div>
                 );
@@ -179,7 +159,7 @@ const MainPage: FC = () => {
             </div>
 
             <div className="explanation mt-[20px] flex xs:flex-col">
-              {data.fullUserInfo.account.number.expenses.month.amount.parts.map((item, index) => {
+              {newCurrentData.me.account.number.expenses.month.amount.parts.map((item, index) => {
                 if (item.amount <= 0) {
                   return;
                 }
@@ -236,16 +216,16 @@ const MainPage: FC = () => {
                 </div>
                 {visibleTab ? (
                   <div className="" id="tab_1_1">
-                    {servicesData.me.account.number.services.map((item) => {
-                      if (item.fee && item.fee.amount > 0) {
+                    {newCurrentData.me.account.number.services.map((item) => {
+                      if (item.fee && item.fee.amount === 0) {
                         return <Button key={item.id} buttonType="services" title={item.name} />;
                       }
                     })}
                   </div>
                 ) : (
                   <div className="" id="tab_1_2">
-                    {servicesData.me.account.number.services.map((item) => {
-                      if (item.fee && item.fee.amount === 0) {
+                    {newCurrentData.me.account.number.services.map((item) => {
+                      if (item.fee && item.fee.amount > 0) {
                         return <Button key={item.id} buttonType="services" title={item.name} />;
                       }
                     })}

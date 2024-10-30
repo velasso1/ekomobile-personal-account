@@ -35,3 +35,24 @@ export const servicesConverter = (
 
   return serviceData;
 };
+
+export const filterFreeItems = (
+  filterItem: IServicesPageResponse | IAvailableServicesResponse,
+  free: boolean
+): IServicesPageResponse | IAvailableServicesResponse => {
+  const newFilteredItems: IServicesPageResponse | IAvailableServicesResponse = {
+    me: {
+      account: {
+        number: {
+          services: filterItem.me.account.number.services.filter((item) => {
+            if (item.fee) {
+              return free ? item.fee.amount === 0 : item.fee.amount > 0;
+            }
+          }),
+        },
+      },
+    },
+  };
+
+  return newFilteredItems;
+};
