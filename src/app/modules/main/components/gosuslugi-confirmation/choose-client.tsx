@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ICLient, TGUConfirmationCards } from "../../../../types/gu-types";
+import { ICLient, TGUConfirmationCards } from "../../../../types/gosuslugi-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 
@@ -24,10 +24,11 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
       <div>
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
 
-        <div className="radio-list flex flex-col pt-2">
-          {clients.map((client: ICLient) => (
+        <div className="radio-list flex flex-col pt-7">
+          {clients.map((client: ICLient, index: number) => (
             <RadioInput
               key={client.id}
+              isFirst={index === 0}
               name={client.id}
               value={client.id}
               isChecked={clientId === client.id}

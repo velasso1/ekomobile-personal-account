@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IGURequestConfirmationPassportRFParams } from "../../types/gu-types";
+import { IGURequestConfirmationPassportRFParams } from "../../types/gosuslugi-types";
 
 interface IInitGUSlice {
   confirmationPassportRF: IGURequestConfirmationPassportRFParams;

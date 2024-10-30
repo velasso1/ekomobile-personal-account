@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const GET_GU_DATA = gql(/* GraphQL */
+export const GET_GOSUSLUGI_DATA = gql(/* GraphQL */
 `
   query getGroupsWithClientAndConfirmationInfoAndHints {
     me {

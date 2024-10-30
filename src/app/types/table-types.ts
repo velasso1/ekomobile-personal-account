@@ -1,7 +1,7 @@
 import { INumbersItem } from "./numbers-response-types";
 import { IPricePlan } from "./numbers-response-types";
 import { INodeItem } from "./expensespage-response-types";
-import { IGroupNumber } from "./gu-types";
+import { IGroupNumber } from "./gosuslugi-types";
 
 export interface IItemTableNumbersProps {
   id?: string;

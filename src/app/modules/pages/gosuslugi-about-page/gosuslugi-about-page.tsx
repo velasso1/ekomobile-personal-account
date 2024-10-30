@@ -6,16 +6,17 @@ import ReactMarkdown from "react-markdown";
 import PrevNextButtons from "../../ui/prev-next-buttons/prev-next-buttons";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
+
 import Loader from "../../ui/loader/loader";
-import { IGUConfrirmation } from "../../../types/gu-types";
+import { IGUConfrirmation } from "../../../types/gosuslugi-types";
+import { GET_GOSUSLUGI_DATA } from "../../../api/apollo/queries/get-gosuslugi-data";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
 };
 
 const GosuslugiAboutPage: FC = () => {
-  const { data, loading, error } = useQuery(GET_GU_DATA);
+  const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
   const aboutContent: IGUConfrirmation = data.info.guConfirmation;
   const [isAgree, setIsAgree] = useState(false);
 

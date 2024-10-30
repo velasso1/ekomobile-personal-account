@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ICLient, IGroup, IGroupNumber } from "../../../../types/gu-types";
+import { ICLient, IGroup, IGroupNumber } from "../../../../types/gosuslugi-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import { mainRoutes } from "../../../../utils/routes-name/main-routes";

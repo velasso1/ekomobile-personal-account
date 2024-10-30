@@ -83,3 +83,8 @@ export interface IGUConfirmationPassportField {
     value: string;
   }[];
 }
+
+export type TFormikClientFio = Pick<
+  IGURequestConfirmationPassportRFParams["passportRF"],
+  "birthdate" | "birthplace" | "gender" | "nameFamily" | "nameGiven" | "namePatronymic"
+>;

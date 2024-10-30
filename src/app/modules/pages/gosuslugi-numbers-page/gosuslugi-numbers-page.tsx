@@ -8,9 +8,10 @@ import TableGosuslugi from "../../ui/tables/table-gosuslugi";
 import { useNavigate } from "react-router-dom";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
+
 import Loader from "../../ui/loader/loader";
-import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/gu-types";
+import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
+import { GET_GOSUSLUGI_DATA } from "../../../api/apollo/queries/get-gosuslugi-data";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -34,7 +35,7 @@ const getNumbersByStatus = (status: TGUConfimationStatusId, numbers: IGroupNumbe
 };
 
 const GosuslugiNumbersPage: FC = () => {
-  const { data, loading, error } = useQuery(GET_GU_DATA);
+  const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
   const navigate = useNavigate();
 
   const groups = data?.me?.account?.number?.groups;

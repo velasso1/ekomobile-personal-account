@@ -4,10 +4,11 @@ import beautifyNumber from "../../../utils/helpers/beautifyNumber";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { defaultStyles } from "../../../utils/default-styles";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
+
 import Loader from "../loader/loader";
-import { IGroupNumber, IGUHints, TGUConfimationStatusId } from "../../../types/gu-types";
+import { IGroupNumber, IGUHints, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
 import { ITableGosuslugiProps } from "../../../types/table-types";
+import { GET_GOSUSLUGI_DATA } from "../../../api/apollo/queries/get-gosuslugi-data";
 
 const getStatusBageClass = (status: TGUConfimationStatusId) => {
   const bageBase = "badge badge-outline badge-";
@@ -56,7 +57,7 @@ const TableGosuslugi: FC<ITableGosuslugiProps> = ({ tableName, tableItem }) => {
     return null;
   }
 
-  const { data, loading, error } = useQuery(GET_GU_DATA);
+  const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
   const hints: IGUHints = data?.info?.guConfirmation?.hints;
 
   if (loading || !data) {

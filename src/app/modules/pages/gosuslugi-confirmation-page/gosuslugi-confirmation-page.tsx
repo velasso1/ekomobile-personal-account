@@ -5,20 +5,21 @@ import { Card } from "../../ui/card";
 
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { GET_GU_DATA } from "../../../api/apollo/queries/get-gu_data";
+
 import Loader from "../../ui/loader/loader";
-import { ICLient, IGroup, IGroupNumber, TGUConfirmationCards } from "../../../types/gu-types";
+import { ICLient, IGroup, IGroupNumber, TGUConfirmationCards } from "../../../types/gosuslugi-types";
 import ChooseClient from "../../main/components/gosuslugi-confirmation/choose-client";
 import ChooseNumbers from "../../main/components/gosuslugi-confirmation/choose-numbers";
 import CreateClientFio from "../../main/components/gosuslugi-confirmation/create-client-fio";
 import CreateClientPassport from "../../main/components/gosuslugi-confirmation/create-client-passport";
+import { GET_GOSUSLUGI_DATA } from "../../../api/apollo/queries/get-gosuslugi-data";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
 };
 
 const GosuslugiConfirmationPage: FC = () => {
-  const { data, loading, error } = useQuery(GET_GU_DATA);
+  const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
   const navigate = useNavigate();
   const [GUCard, setGUCard] = useState<TGUConfirmationCards>("choose-client");
 
