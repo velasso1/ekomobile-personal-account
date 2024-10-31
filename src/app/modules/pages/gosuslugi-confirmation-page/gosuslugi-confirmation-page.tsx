@@ -55,7 +55,7 @@ const GosuslugiConfirmationPage: FC = () => {
         return <CreateClientFio groups={groups} setGUCard={setGUCard} />;
 
       case "create-client-passport":
-        return <CreateClientPassport groups={groups} />;
+        return <CreateClientPassport groups={groups} setGUCard={setGUCard} />;
     }
   };
 
@@ -72,9 +72,6 @@ const GosuslugiConfirmationPage: FC = () => {
           >
             {showCard(GUCard)}
           </div>
-          {/* <div className="pt-8">
-            <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} />
-          </div> */}
         </Card>
       )}
     </div>

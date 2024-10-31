@@ -73,18 +73,31 @@ export interface IGURequestConfirmationPassportRFParams {
   };
 }
 
-export interface IGUConfirmationPassportField {
+interface IGUConfirmationPassportFieldBase {
   label: string;
   placeholder?: string;
   id: keyof IGURequestConfirmationPassportRFParams["passportRF"];
-  type: "text" | "date" | "radio";
-  options?: {
-    text: string;
-    value: string;
-  }[];
 }
+
+interface IGUConfirmationPassportFieldWithOptions extends IGUConfirmationPassportFieldBase {
+  type: "radio";
+  options: { text: string; value: string }[];
+}
+
+interface IGUConfirmationPassportFieldWithoutOptions extends IGUConfirmationPassportFieldBase {
+  type: "text" | "date";
+}
+
+export type IGUConfirmationPassportField =
+  | IGUConfirmationPassportFieldWithOptions
+  | IGUConfirmationPassportFieldWithoutOptions;
 
 export type TFormikClientFio = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],
   "birthdate" | "birthplace" | "gender" | "nameFamily" | "nameGiven" | "namePatronymic"
+>;
+
+export type TFormikClientPassport = Pick<
+  IGURequestConfirmationPassportRFParams["passportRF"],
+  "series" | "number" | "issueDate" | "issuePlace" | "issuePlaceCode" | "registrationAddress"
 >;

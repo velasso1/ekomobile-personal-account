@@ -177,7 +177,7 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
         </div>
         <div className="radio-list flex flex-col pt-4">
           {staticTexts.fields.map((field) => {
-            if (field.id === "gender") {
+            if (field.id === "gender" && field.type === "radio") {
               return field.options.map((option: { text: string; value: string }, index: number) => (
                 <RadioInput
                   key={option.value}
@@ -204,7 +204,7 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
           nextClick={async () => {
             const errors = await formik.validateForm();
             if (Object.keys(errors).length === 0) {
-              // go create client passportRF
+              setGUCard("create-client-passport");
             } else {
               formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
             }

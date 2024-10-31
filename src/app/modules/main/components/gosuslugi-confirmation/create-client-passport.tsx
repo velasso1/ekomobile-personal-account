@@ -1,68 +1,151 @@
-import { useState } from "react";
-import { ICLient, IGroup, IGroupNumber } from "../../../../types/gosuslugi-types";
-import { RadioInput } from "../../../ui/radio-input";
+import {
+  IGroup,
+  IGUConfirmationPassportField,
+  TFormikClientPassport,
+  TGUConfirmationCards,
+} from "../../../../types/gosuslugi-types";
+import TextField from "../../../ui/fields/text-field";
+import { FormikTouched, FormikValues, setNestedObjectValues, useFormik } from "formik";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import { mainRoutes } from "../../../../utils/routes-name/main-routes";
+import * as Yup from "yup";
+import { useEffect, useState } from "react";
 
 interface IProps {
   groups: IGroup[];
+  setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
-const staticTexts = {
+interface IStaticTexts {
+  card: string;
+  fields: IGUConfirmationPassportField[];
+  errors: {
+    isTooYoung: string;
+    isRequired: string;
+    isNotAllowedChar: string;
+    isNotAllowedGender: string;
+    isWrongDateFormat: string;
+  };
+  regex: {
+    allowedChars: RegExp;
+  };
+}
+
+const staticTexts: IStaticTexts = {
   card: "Паспортные данные:",
-  newClient: {
-    id: "createNewClient",
-    label: "Создать нового контрагента",
+  fields: [
+    {
+      label: "Серия",
+      placeholder: "",
+      id: "series",
+      type: "text",
+    },
+    {
+      label: "Номер",
+      placeholder: "",
+      id: "number",
+      type: "text",
+    },
+    {
+      label: "Дата выдачи",
+      placeholder: "",
+      id: "issueDate",
+      type: "date",
+    },
+    {
+      label: "Код подразделения",
+      placeholder: "",
+      id: "issuePlaceCode",
+      type: "text",
+    },
+    {
+      label: "Кем выдан",
+      id: "issuePlace",
+      type: "text",
+    },
+  ],
+  errors: {
+    isTooYoung: "Абонент не может быть младше 18 лет",
+    isRequired: "Поле обязательно к заполнению",
+    isNotAllowedChar: "Только кириллица",
+    isNotAllowedGender: "Нужно выбрать один из двух полов",
+    isWrongDateFormat: "Неверный формат даты",
+  },
+  regex: {
+    allowedChars: /^[\u0400-\u04FF-\s.]+$/,
   },
 };
 
-const CreateClientPassport = ({ groups }: IProps) => {
-  const [clientId, setClientId] = useState("");
-  const allClients = groups?.flatMap((group: IGroup): ICLient[] => {
-    return group.numbers
-      .map((number: IGroupNumber) => {
-        const client = number.guConfirmationInfo.client;
-        if (client) {
-          return {
-            id: client.id,
-            nameFamily: client.nameFamily,
-            nameGiven: client.nameGiven,
-            namePatronymic: client.namePatronymic,
-            guConfirmationCount: client.guConfirmationCount,
-            guConfirmationLimit: client.guConfirmationLimit,
-          };
-        }
-        return null;
-      })
-      .filter((client: ICLient) => client !== null);
+const CreateClientPassportSchema: Yup.ObjectSchema<TFormikClientPassport> = Yup.object().shape({
+  number: Yup.string(),
+  series: Yup.string(),
+  issuePlace: Yup.string(),
+  issueDate: Yup.string(),
+  issuePlaceCode: Yup.string(),
+  registrationAddress: Yup.string(),
+});
+
+const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
+  const formik = useFormik<TFormikClientPassport>({
+    initialValues: {
+      issueDate: "",
+      issuePlace: "",
+      issuePlaceCode: "",
+      number: "",
+      registrationAddress: "",
+      series: "",
+    },
+    onSubmit: (values) => {},
+    validateOnChange: true,
+    validateOnBlur: true,
+    validationSchema: CreateClientPassportSchema,
   });
+
+  const [isNextDisabled, setIsNextDisabled] = useState(false);
+
+  useEffect(() => {
+    const hasErrors = Object.keys(formik.errors).some((key) => formik.errors[key] && formik.touched[key]);
+    setIsNextDisabled(hasErrors);
+  }, [formik.errors, formik.touched]);
 
   return (
     <>
-      <div>
-        <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
-
-        <div className="radio-list flex flex-col pt-2">
-          {allClients.map((client: ICLient) => (
-            <RadioInput
-              key={client.id}
-              id={client.id}
-              isChecked={clientId === client.id}
-              label={`${client.nameFamily} ${client.nameGiven} ${client.namePatronymic}`}
-              onChange={() => setClientId(client.id)}
-            />
-          ))}
-          <RadioInput
-            id={staticTexts.newClient.id}
-            isChecked={clientId === staticTexts.newClient.id}
-            label={staticTexts.newClient.label}
-            onChange={() => setClientId(staticTexts.newClient.id)}
-          />
-        </div>
+      <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
+      <div className="form-group">
+        {staticTexts.fields.map((field) => {
+          if (field.id !== "gender") {
+            return (
+              <TextField
+                key={field.id}
+                Label={field.label}
+                id={field.id}
+                placeholder={field?.placeholder}
+                onChangeCb={async (e) => {
+                  await formik.handleChange(e);
+                  await formik.setFieldTouched(field.id, true);
+                }}
+                type={field.type}
+                value={formik.values[field.id]}
+                addStyle="pt-[20px]"
+                error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+              />
+            );
+          }
+        })}
       </div>
 
       <div className="pt-8">
-        <PrevNextButtons nextRoute={mainRoutes.gosuslugiConfirmation} />
+        <PrevNextButtons
+          nextDisabled={isNextDisabled}
+          prevClick={() => setGUCard("create-client-fio")}
+          nextClick={async () => {
+            const errors = await formik.validateForm();
+            if (Object.keys(errors).length === 0) {
+              // go create client passportRF
+            } else {
+              formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
+            }
+          }}
+        />
       </div>
     </>
   );
