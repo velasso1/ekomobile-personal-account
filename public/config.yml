@@ -1,0 +1,13 @@
+api:
+  url: "https://api-lk2.ekomobile.ru"
+  authKey: "JmPAwjXYY3ufKAC7TFDJXZFhcsXZkqVN"
+
+indexPage:
+  favicon: "/favicon.ico"
+  title: "ЛК клиента"
+
+logo:
+  url: "/media/logos/eko-logo-new.png"
+  style:
+    width: 110 # px only!
+    height: 25 # px only!
