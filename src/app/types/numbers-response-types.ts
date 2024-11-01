@@ -14,6 +14,9 @@ export interface INumbersItem {
   description: null | string;
   access: ["ALL"];
   hasFullAccess: boolean;
+  mark: {
+    name: string;
+  };
 }
 
 export interface IGroupItem {

@@ -12,7 +12,11 @@ export const GET_NUMBERS_GROUP = gql`
             balance
             defaultName
             isBalancerEnabled
+
             numbers {
+              mark {
+                name
+              }
               msisdn
               isActive
               balance

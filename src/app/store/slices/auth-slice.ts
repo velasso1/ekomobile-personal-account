@@ -58,6 +58,8 @@ const authSlice = createSlice({
 
 export const signIn = (body: TUserState) => {
   return async (dispatch: AppDispatch): Promise<void> => {
+    console.log(new URLSearchParams({ username: body.username, password: body.password }).toString());
+
     dispatch(requestIsLoading(true));
     try {
       await fetch(`${import.meta.env.VITE_AUTH_REST_URL}`, {
@@ -67,7 +69,7 @@ export const signIn = (body: TUserState) => {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
-        body: new URLSearchParams(body).toString(),
+        body: new URLSearchParams({ username: body.username, password: body.password }).toString(),
       }).then((resp) => {
         dispatch(changeLoginRequest(true));
       });

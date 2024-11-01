@@ -18,8 +18,8 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
         <table className="table flex align-middle font-medium text-gray-700 sm:text-[10px] md:text-sm">
           <thead>
             <tr className="">
-              <th className="w-[200px]">Номер</th>
-              <th className="w-[350px]">Тариф</th>
+              <th className="w-[300px]">Номер</th>
+              <th className="w-[200px]">Тариф</th>
               <th className="w-[180px]">Баланс</th>
               <th className="w-[200px]">Статус</th>
               <th className="">Полный доступ в ЛК</th>
@@ -30,13 +30,11 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
           <tbody>
             {tableItem.numbers ? (
               tableItem.numbers.map((item) => {
-                const newPhoneForm = formatPhoneNumber(item.msisdn);
-
                 return (
                   <tr key={item.msisdn}>
-                    <td>{newPhoneForm}</td>
+                    <td>{formatPhoneNumber(item.msisdn)}</td>
                     <td>{pricePlan.name}</td>
-                    <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{+item.balance / 100} ₽</td>
+                    <td className={`${+item.balance < 0 ? "text-[red]" : null}`}>{moneyFormatter(+item.balance)} ₽</td>
                     <td>
                       <span className={`badge badge-outline badge-${item.isActive ? "success" : ""}`}>
                         {item.isActive ? "Активен" : "Заблокирован"}
@@ -48,9 +46,9 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                       </span>
                     </td>
                     <td>
-                      {item.description ? (
+                      {item.mark.name ? (
                         <a className={`btn-link ${textColor.primary}`} href="#">
-                          {item.description}
+                          {item.mark.name}
                         </a>
                       ) : (
                         "Отсутствует"

@@ -66,12 +66,12 @@ const Accordion: FC<IAccordionProps> = ({
                       <th className="">Дата подключения</th>
                       <th className="">Стоимость</th>
                       <th className="">Тип стоимости</th>
-                      <th className="">Описание</th>
+                      {/* <th className="">Описание</th> */}
                       <th className="">Действия</th>
                     </tr>
                   </thead>
                   <tbody className={`${textColor.grey}`}>
-                    {accrodionItems.map((item) => {                      
+                    {accrodionItems.map((item) => {
                       return (
                         <tr key={crypto.randomUUID()}>
                           <td className={`text-[14px] font-semibold ${textColor.darkBlue}`}>{item.name}</td>
@@ -80,10 +80,10 @@ const Accordion: FC<IAccordionProps> = ({
 
                           <td>{moneyFormatter(item.fee.amount)} ₽</td>
                           <td>{PriceTypes[item.fee.type]}</td>
-                          <td>
+                          {/* <td>
                             <i className="ki-outline ki-information-2 cursor-pointer" data-modal-toggle="#modal_1"></i>
-                            {/* <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i> */}
-                          </td>
+                            <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                          </td> */}
                           <td>
                             {item.isReadonly ? (
                               <span className="">Для уточнения обратитесь в поддержку</span>
