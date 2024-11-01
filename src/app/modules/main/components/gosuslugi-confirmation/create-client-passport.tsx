@@ -10,6 +10,7 @@ import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import * as Yup from "yup";
 import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
 import { useEffect } from "react";
+import maskIssuePlaceCode from "../../../../utils/helpers/maskIssuePlaceCode";
 
 interface IProps {
   groups: IGroup[];
@@ -23,13 +24,15 @@ interface IStaticTexts {
     isNotFourCharsLong: string;
     isNotSixCharsLong: string;
     isRequired: string;
-    isNotAllowedChar: string;
+    isWrongSeriesFormat: string;
+    isWrongNumberFormat: string;
     isWrongCodeFormat: string;
     isWrongDateFormat: string;
   };
   regex: {
-    allowedOnlyDigits: RegExp;
-    allowedDigitsAndMinus: RegExp;
+    allowedInSeries: RegExp;
+    allowedInNumber: RegExp;
+    allowedInIssuePlaceCode: RegExp;
   };
 }
 
@@ -59,7 +62,6 @@ const staticTexts: IStaticTexts = {
       placeholder: "",
       id: "issuePlaceCode",
       type: "text",
-      mask: "999-999",
     },
     {
       label: "Кем выдан",
@@ -76,30 +78,32 @@ const staticTexts: IStaticTexts = {
     isNotFourCharsLong: "Должно быть ровно 4 символа",
     isNotSixCharsLong: "Должно быть ровно 6 символов",
     isRequired: "Поле обязательно к заполнению",
-    isNotAllowedChar: "Только цифры",
-    isWrongCodeFormat: "Требуемый формат: 999-999",
+    isWrongCodeFormat: 'Требуемый формат: 123-456. "-" добавляется автоматически ',
+    isWrongSeriesFormat: "Требуемый формат: 1234. 4 цифры без пробелов",
+    isWrongNumberFormat: "Требуемый формат: 123456. 6 цифр без пробелов",
     isWrongDateFormat: "Неверный формат даты",
   },
   regex: {
-    allowedOnlyDigits: /^\d+$/,
-    allowedDigitsAndMinus: /^\d{3}-\d{3}$/,
+    allowedInNumber: /^\d{6}$/,
+    allowedInSeries: /^\d{4}$/,
+    allowedInIssuePlaceCode: /^\d{3}-\d{3}$/,
   },
 };
 
 const CreateClientPassportSchema: Yup.ObjectSchema<TFormikClientPassport> = Yup.object().shape({
   number: Yup.string()
     .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedOnlyDigits, staticTexts.errors.isNotAllowedChar)
+    .matches(staticTexts.regex.allowedInNumber, staticTexts.errors.isWrongNumberFormat)
     .length(6, staticTexts.errors.isNotSixCharsLong),
   series: Yup.string()
     .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedOnlyDigits, staticTexts.errors.isNotAllowedChar)
+    .matches(staticTexts.regex.allowedInSeries, staticTexts.errors.isWrongSeriesFormat)
     .length(4, staticTexts.errors.isNotFourCharsLong),
   issuePlace: Yup.string(),
   issueDate: Yup.string(),
   issuePlaceCode: Yup.string()
     .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedDigitsAndMinus, staticTexts.errors.isWrongCodeFormat),
+    .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat),
   registrationAddress: Yup.string(),
 });
 
@@ -137,7 +141,14 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                 id={field.id}
                 placeholder={field?.placeholder}
                 onChangeCb={async (e) => {
-                  await formik.handleChange(e);
+                  if (field.id === "issuePlaceCode") {
+                    let value = e.target.value;
+                    value = maskIssuePlaceCode(value);
+                    await formik.setFieldValue(field.id, value);
+                  } else {
+                    await formik.handleChange(e);
+                  }
+
                   if (formik.touched[field.id]) {
                     await formik.validateField(field.id);
                   }

@@ -155,6 +155,7 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
                   await formik.handleChange(e);
                   await formik.setFieldTouched(field.id, true);
                 }}
+                onBlurCb={async (e) => await formik.handleBlur(e)}
                 type={field.type}
                 value={formik.values[field.id]}
                 addStyle="pt-[20px]"
