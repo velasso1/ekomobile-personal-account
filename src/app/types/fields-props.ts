@@ -8,7 +8,9 @@ export interface ITextFieldProps {
   addStyle?: string;
   width?: string;
   disabled?: boolean;
-  error?: string
+  error?: string;
+  mask?: string;
+  required?: boolean;
 }
 
 export interface INumberFieldProps {

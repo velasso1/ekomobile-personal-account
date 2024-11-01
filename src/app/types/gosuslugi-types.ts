@@ -79,18 +79,24 @@ interface IGUConfirmationPassportFieldBase {
   id: keyof IGURequestConfirmationPassportRFParams["passportRF"];
 }
 
-interface IGUConfirmationPassportFieldWithOptions extends IGUConfirmationPassportFieldBase {
+interface IGUConfirmationPassportFieldRadio extends IGUConfirmationPassportFieldBase {
   type: "radio";
   options: { text: string; value: string }[];
 }
 
-interface IGUConfirmationPassportFieldWithoutOptions extends IGUConfirmationPassportFieldBase {
-  type: "text" | "date";
+interface IGUConfirmationPassportFieldDate extends IGUConfirmationPassportFieldBase {
+  type: "date";
+}
+
+interface IGUConfirmationPassportFieldText extends IGUConfirmationPassportFieldBase {
+  type: "text";
+  mask?: string;
 }
 
 export type IGUConfirmationPassportField =
-  | IGUConfirmationPassportFieldWithOptions
-  | IGUConfirmationPassportFieldWithoutOptions;
+  | IGUConfirmationPassportFieldRadio
+  | IGUConfirmationPassportFieldDate
+  | IGUConfirmationPassportFieldText;
 
 export type TFormikClientFio = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],

@@ -29,11 +29,17 @@ const gosuslugiSlice = createSlice({
   name: "gosuslugiSlice",
   initialState,
   reducers: {
-    updateConfirmationPassportRG(state, action: PayloadAction<IGURequestConfirmationPassportRFParams>) {
-      state.confirmationPassportRF = action.payload;
+    updateConfirmationPassportRF(
+      state,
+      action: PayloadAction<Partial<Pick<IGURequestConfirmationPassportRFParams, "passportRF">>>
+    ) {
+      state.confirmationPassportRF.passportRF = {
+        ...state.confirmationPassportRF.passportRF,
+        ...action.payload.passportRF,
+      };
     },
   },
 });
 
-export const { updateConfirmationPassportRG } = gosuslugiSlice.actions;
+export const { updateConfirmationPassportRF } = gosuslugiSlice.actions;
 export default gosuslugiSlice.reducer;

@@ -127,6 +127,7 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                 value={formik.values[field.id]}
                 addStyle="pt-[20px]"
                 error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+                mask={""}
               />
             );
           }
