@@ -8,7 +8,8 @@ import TextField from "../../../ui/fields/text-field";
 import { FormikTouched, FormikValues, setNestedObjectValues, useFormik } from "formik";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import * as Yup from "yup";
-import { useEffect, useState } from "react";
+import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
+import { useEffect } from "react";
 
 interface IProps {
   groups: IGroup[];
@@ -19,14 +20,16 @@ interface IStaticTexts {
   card: string;
   fields: IGUConfirmationPassportField[];
   errors: {
-    isTooYoung: string;
+    isNotFourCharsLong: string;
+    isNotSixCharsLong: string;
     isRequired: string;
     isNotAllowedChar: string;
-    isNotAllowedGender: string;
+    isWrongCodeFormat: string;
     isWrongDateFormat: string;
   };
   regex: {
-    allowedChars: RegExp;
+    allowedOnlyDigits: RegExp;
+    allowedDigitsAndMinus: RegExp;
   };
 }
 
@@ -56,31 +59,47 @@ const staticTexts: IStaticTexts = {
       placeholder: "",
       id: "issuePlaceCode",
       type: "text",
+      mask: "999-999",
     },
     {
       label: "Кем выдан",
       id: "issuePlace",
       type: "text",
     },
+    {
+      label: "Адрес регистрации (прописка)",
+      id: "registrationAddress",
+      type: "text",
+    },
   ],
   errors: {
-    isTooYoung: "Абонент не может быть младше 18 лет",
+    isNotFourCharsLong: "Должно быть ровно 4 символа",
+    isNotSixCharsLong: "Должно быть ровно 6 символов",
     isRequired: "Поле обязательно к заполнению",
-    isNotAllowedChar: "Только кириллица",
-    isNotAllowedGender: "Нужно выбрать один из двух полов",
+    isNotAllowedChar: "Только цифры",
+    isWrongCodeFormat: "Требуемый формат: 999-999",
     isWrongDateFormat: "Неверный формат даты",
   },
   regex: {
-    allowedChars: /^[\u0400-\u04FF-\s.]+$/,
+    allowedOnlyDigits: /^\d+$/,
+    allowedDigitsAndMinus: /^\d{3}-\d{3}$/,
   },
 };
 
 const CreateClientPassportSchema: Yup.ObjectSchema<TFormikClientPassport> = Yup.object().shape({
-  number: Yup.string(),
-  series: Yup.string(),
+  number: Yup.string()
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedOnlyDigits, staticTexts.errors.isNotAllowedChar)
+    .length(6, staticTexts.errors.isNotSixCharsLong),
+  series: Yup.string()
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedOnlyDigits, staticTexts.errors.isNotAllowedChar)
+    .length(4, staticTexts.errors.isNotFourCharsLong),
   issuePlace: Yup.string(),
   issueDate: Yup.string(),
-  issuePlaceCode: Yup.string(),
+  issuePlaceCode: Yup.string()
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedDigitsAndMinus, staticTexts.errors.isWrongCodeFormat),
   registrationAddress: Yup.string(),
 });
 
@@ -95,18 +114,16 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
       series: "",
     },
     onSubmit: (values) => {},
-    validateOnChange: true,
+    validateOnChange: false,
     validateOnBlur: true,
     validationSchema: CreateClientPassportSchema,
   });
 
-  const [isNextDisabled, setIsNextDisabled] = useState(false);
-
   useEffect(() => {
-    const hasErrors = Object.keys(formik.errors).some((key) => formik.errors[key] && formik.touched[key]);
-    setIsNextDisabled(hasErrors);
-  }, [formik.errors, formik.touched]);
+    console.log(formik.touched);
+  }, [formik.touched]);
 
+  const { isNextDisabled } = useCreateClientFormSync(formik);
   return (
     <>
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
@@ -121,13 +138,16 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                 placeholder={field?.placeholder}
                 onChangeCb={async (e) => {
                   await formik.handleChange(e);
-                  await formik.setFieldTouched(field.id, true);
+                  if (formik.touched[field.id]) {
+                    await formik.validateField(field.id);
+                  }
+                  // await formik.setFieldTouched(field.id, false);
                 }}
+                onBlurCb={async (e) => await formik.handleBlur(e)}
                 type={field.type}
                 value={formik.values[field.id]}
                 addStyle="pt-[20px]"
                 error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
-                mask={""}
               />
             );
           }

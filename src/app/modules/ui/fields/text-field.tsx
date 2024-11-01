@@ -1,5 +1,4 @@
 import { FC } from "react";
-import InputMask from "react-input-mask";
 
 import { ITextFieldProps } from "../../../types/fields-props";
 
@@ -14,8 +13,8 @@ const TextField: FC<ITextFieldProps> = ({
   width = "290px",
   error,
   disabled,
-  mask,
   required = true,
+  onBlurCb = (e: React.FocusEvent<HTMLInputElement, Element>) => {},
 }) => {
   return (
     <div className={`${addStyle}`}>
@@ -23,7 +22,7 @@ const TextField: FC<ITextFieldProps> = ({
         {typeof Label === "string" ? <p>{Label}</p> : <Label />}
       </label>
       <div className={`input w-[${width}] ${error ? "border-red-600" : ""} `}>
-        <InputMask
+        <input
           className=""
           type={type}
           id={id}
@@ -31,9 +30,9 @@ const TextField: FC<ITextFieldProps> = ({
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChangeCb(e)}
+          onBlur={(e) => onBlurCb(e)}
           required={required}
           disabled={disabled}
-          mask={mask}
         />
       </div>
       {error && <div className="text-[12px] text-red-600">{error}</div>}

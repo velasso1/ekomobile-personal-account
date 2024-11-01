@@ -11,9 +11,7 @@ import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import * as Yup from "yup";
 import { defaultStyles } from "../../../../utils/default-styles";
-import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../../store";
-import { updateConfirmationPassportRF } from "../../../../store/slices/gosuslugi-slice";
+import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
 
 interface IProps {
   groups: IGroup[];
@@ -100,14 +98,14 @@ const genders: TGUConfirmationClientGender[] = ["MALE", "FEMALE"];
 
 const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().shape({
   nameFamily: Yup.string()
-    .trim()
-    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar)
-    .required(staticTexts.errors.isRequired),
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar),
   nameGiven: Yup.string()
-    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar)
-    .required(staticTexts.errors.isRequired),
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar),
   namePatronymic: Yup.string().matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar),
   birthdate: Yup.string()
+    .required(staticTexts.errors.isRequired)
     .matches(/^\d{4}-\d{2}-\d{2}$/, staticTexts.errors.isWrongDateFormat)
     .test("is-18", staticTexts.errors.isTooYoung, (value) => {
       const today = new Date();
@@ -116,12 +114,11 @@ const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().s
       const monthDifference = today.getMonth() - birthDate.getMonth();
       const dayDifference = today.getDate() - birthDate.getDate();
       return age > 18 || (age === 18 && (monthDifference > 0 || (monthDifference === 0 && dayDifference >= 0)));
-    })
-    .required(staticTexts.errors.isRequired),
+    }),
   birthplace: Yup.string()
-    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar)
-    .required(staticTexts.errors.isRequired),
-  gender: Yup.string().oneOf(genders, staticTexts.errors.isNotAllowedGender).required(staticTexts.errors.isRequired),
+    .required(staticTexts.errors.isRequired)
+    .matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar),
+  gender: Yup.string().required(staticTexts.errors.isRequired).oneOf(genders, staticTexts.errors.isNotAllowedGender),
 });
 
 const CreateClientFio = ({ groups, setGUCard }: IProps) => {
@@ -140,37 +137,7 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
     validationSchema: CreateClientFioSchema,
   });
 
-  const [isNextDisabled, setIsNextDisabled] = useState(false);
-  const dispatch = useAppDispatch();
-  const {
-    confirmationPassportRF: { passportRF },
-  } = useAppSelector((state) => state.gosuslugiSlice);
-
-  useEffect(() => {
-    const hasErrors = Object.keys(formik.errors).some((key) => formik.errors[key] && formik.touched[key]);
-    setIsNextDisabled(hasErrors);
-  }, [formik.errors, formik.touched]);
-
-  useEffect(() => {
-    // async - вынужденная мера из-за особенностей работы Reac и Formik
-    // если оставить синхронный код, тогда setFieldTouched() пройдёт по
-    // всем полям до применения изменений и они, даже имея данные
-    // будут отмечены ошибкой как тронутые и пустые
-    Object.keys(passportRF).forEach(async (key) => {
-      if (passportRF[key] && formik.values.hasOwnProperty(key)) {
-        await formik.setFieldValue(key, passportRF[key]);
-        await formik.setFieldTouched(key, true);
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    Object.keys(formik.values).forEach((key) => {
-      if (formik.values[key] !== undefined && formik.values[key] !== null) {
-        dispatch(updateConfirmationPassportRF({ passportRF: { [key]: formik.values[key] } }));
-      }
-    });
-  }, [formik.values]);
+  const { isNextDisabled } = useCreateClientFormSync(formik);
 
   return (
     <>

@@ -31,11 +31,11 @@ const gosuslugiSlice = createSlice({
   reducers: {
     updateConfirmationPassportRF(
       state,
-      action: PayloadAction<Partial<Pick<IGURequestConfirmationPassportRFParams, "passportRF">>>
+      action: PayloadAction<Partial<IGURequestConfirmationPassportRFParams["passportRF"]>>
     ) {
       state.confirmationPassportRF.passportRF = {
         ...state.confirmationPassportRF.passportRF,
-        ...action.payload.passportRF,
+        ...action.payload,
       };
     },
   },
