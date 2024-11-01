@@ -42,13 +42,16 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
 
   useEffect(() => {
     if (selectedNumber) {
-      getAnotherNumberData({fetchPolicy: 'no-cache', variables: {
-        msisdn: selectedNumber,
-        year: date.getFullYear(), month: date.getMonth() + 1,
-      }});
+      getAnotherNumberData({
+        fetchPolicy: "no-cache",
+        variables: {
+          msisdn: selectedNumber,
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+        },
+      });
     }
-
-  }, [selectedNumber])
+  }, [selectedNumber]);
 
   useEffect(() => {
     if (profileData) {
@@ -83,10 +86,14 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
           name="select"
           onChange={(e) => {
             dispatch(changeSelectedNumber(e.target.value));
-            getAnotherNumberData({fetchPolicy: 'no-cache', variables: {
-              msisdn: e.target.value,
-              year: date.getFullYear(), month: date.getMonth() + 1,
-            }});
+            getAnotherNumberData({
+              fetchPolicy: "no-cache",
+              variables: {
+                msisdn: e.target.value,
+                year: date.getFullYear(),
+                month: date.getMonth() + 1,
+              },
+            });
           }}
           value={selectedNumber}
         >

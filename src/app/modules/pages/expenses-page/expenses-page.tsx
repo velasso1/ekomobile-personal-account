@@ -21,14 +21,20 @@ const ExpensesPage: FC = () => {
 
   const date = new Date();
 
-  const {newCurrentData, selectedNumber } = useAppSelector((state) => state.userSlice);
+  const { newCurrentData, selectedNumber } = useAppSelector((state) => state.userSlice);
 
-  const [getExpenses, {data: currentData, loading: currentLoading, error: currentError, refetch}] = useLazyQuery<IExpensesResponse>(GET_CURRENT_EXPENSES)
+  const [getExpenses, { data: currentData, loading: currentLoading, error: currentError, refetch }] =
+    useLazyQuery<IExpensesResponse>(GET_CURRENT_EXPENSES);
 
   useEffect(() => {
-    getExpenses({variables: {
-    msisdn: selectedNumber, year: date.getFullYear(), month: selectState,  
-  }})}, [selectedNumber])
+    getExpenses({
+      variables: {
+        msisdn: selectedNumber,
+        year: date.getFullYear(),
+        month: selectState,
+      },
+    });
+  }, [selectedNumber]);
 
   if (!currentData || !newCurrentData || currentLoading) {
     return <Loader />;
@@ -51,15 +57,19 @@ const ExpensesPage: FC = () => {
             onChange={(e) => {
               setSelectState(+e.target.value);
               console.log(e.target.value);
-              
-              getExpenses({variables: {
-                msisdn: selectedNumber, year: date.getFullYear(), month: +e.target.value,  
-              }})
+
+              getExpenses({
+                variables: {
+                  msisdn: selectedNumber,
+                  year: date.getFullYear(),
+                  month: +e.target.value,
+                },
+              });
               // refetch({ year: new Date().getFullYear(), month: +e.target.value });
             }}
             value={selectState}
           >
-            {currentData.me.account.billingNumber.expenses.availableMonths.map((item) => {             
+            {currentData.me.account.billingNumber.expenses.availableMonths.map((item) => {
               return (
                 <option className="cursor-pointer" key={item.month} value={item.month}>
                   {month[item.month - 1]}
