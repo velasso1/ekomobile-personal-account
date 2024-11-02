@@ -12,6 +12,7 @@ import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import * as Yup from "yup";
 import { defaultStyles } from "../../../../utils/default-styles";
 import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
+import getAge from "../../../../utils/helpers/getAge";
 
 interface IProps {
   groups: IGroup[];
@@ -30,6 +31,7 @@ interface IStaticTexts {
   };
   regex: {
     allowedChars: RegExp;
+    dateFormat: RegExp;
   };
 }
 
@@ -91,6 +93,7 @@ const staticTexts: IStaticTexts = {
   },
   regex: {
     allowedChars: /^[\u0400-\u04FF-\s.]+$/,
+    dateFormat: /^\d{4}-\d{2}-\d{2}$/,
   },
 };
 
@@ -106,14 +109,11 @@ const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().s
   namePatronymic: Yup.string().matches(staticTexts.regex.allowedChars, staticTexts.errors.isNotAllowedChar),
   birthdate: Yup.string()
     .required(staticTexts.errors.isRequired)
-    .matches(/^\d{4}-\d{2}-\d{2}$/, staticTexts.errors.isWrongDateFormat)
+    .matches(staticTexts.regex.dateFormat, staticTexts.errors.isWrongDateFormat)
     .test("is-18", staticTexts.errors.isTooYoung, (value) => {
-      const today = new Date();
-      const birthDate = new Date(value || "");
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthDifference = today.getMonth() - birthDate.getMonth();
-      const dayDifference = today.getDate() - birthDate.getDate();
-      return age > 18 || (age === 18 && (monthDifference > 0 || (monthDifference === 0 && dayDifference >= 0)));
+      const birthdate = new Date(value || "");
+      const age = getAge(birthdate);
+      return age >= 18;
     }),
   birthplace: Yup.string()
     .required(staticTexts.errors.isRequired)

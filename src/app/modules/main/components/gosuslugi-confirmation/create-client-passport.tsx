@@ -11,6 +11,9 @@ import * as Yup from "yup";
 import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
 import { useEffect } from "react";
 import maskIssuePlaceCode from "../../../../utils/helpers/maskIssuePlaceCode";
+import { useAppSelector } from "../../../../store";
+import getIsIssueDateIsValid from "../../../../utils/helpers/getIsIssueDateValid";
+import getAge from "../../../../utils/helpers/getAge";
 
 interface IProps {
   groups: IGroup[];
@@ -28,11 +31,16 @@ interface IStaticTexts {
     isWrongNumberFormat: string;
     isWrongCodeFormat: string;
     isWrongDateFormat: string;
+    isBeforeFourteenOrAfterTwenty: string;
+    isBeforeTwentyOrAfterFortyFive: string;
+    isBeforeOrEqualFortyFive: string;
+    isNoFuture: string;
   };
   regex: {
     allowedInSeries: RegExp;
     allowedInNumber: RegExp;
     allowedInIssuePlaceCode: RegExp;
+    dateFormat: RegExp;
   };
 }
 
@@ -82,32 +90,75 @@ const staticTexts: IStaticTexts = {
     isWrongSeriesFormat: "Требуемый формат: 1234. 4 цифры без пробелов",
     isWrongNumberFormat: "Требуемый формат: 123456. 6 цифр без пробелов",
     isWrongDateFormat: "Неверный формат даты",
+    isBeforeFourteenOrAfterTwenty: "Дата выдачи не может быть ранньше достижения 14 лет и позднее 20 лет",
+    isBeforeTwentyOrAfterFortyFive: "Дата выдачи не может быть раньше или равна достижения 20 лет и поздее 45 лет",
+    isBeforeOrEqualFortyFive: "Дата выдачи не может раньше или равна достижения 45 лет",
+    isNoFuture: "Дата выдачи не может быть в будущем",
   },
   regex: {
     allowedInNumber: /^\d{6}$/,
     allowedInSeries: /^\d{4}$/,
     allowedInIssuePlaceCode: /^\d{3}-\d{3}$/,
+    dateFormat: /^\d{4}-\d{2}-\d{2}$/,
   },
 };
 
-const CreateClientPassportSchema: Yup.ObjectSchema<TFormikClientPassport> = Yup.object().shape({
-  number: Yup.string()
-    .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedInNumber, staticTexts.errors.isWrongNumberFormat)
-    .length(6, staticTexts.errors.isNotSixCharsLong),
-  series: Yup.string()
-    .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedInSeries, staticTexts.errors.isWrongSeriesFormat)
-    .length(4, staticTexts.errors.isNotFourCharsLong),
-  issuePlace: Yup.string(),
-  issueDate: Yup.string(),
-  issuePlaceCode: Yup.string()
-    .required(staticTexts.errors.isRequired)
-    .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat),
-  registrationAddress: Yup.string(),
-});
+const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikClientPassport> =>
+  Yup.object().shape({
+    number: Yup.string()
+      .required(staticTexts.errors.isRequired)
+      .matches(staticTexts.regex.allowedInNumber, staticTexts.errors.isWrongNumberFormat)
+      .length(6, staticTexts.errors.isNotSixCharsLong),
+    series: Yup.string()
+      .required(staticTexts.errors.isRequired)
+      .matches(staticTexts.regex.allowedInSeries, staticTexts.errors.isWrongSeriesFormat)
+      .length(4, staticTexts.errors.isNotFourCharsLong),
+    issuePlace: Yup.string(),
+    issueDate: Yup.string()
+      .required(staticTexts.errors.isRequired)
+      .matches(staticTexts.regex.dateFormat, staticTexts.errors.isWrongDateFormat)
+      .test("is-before-20", staticTexts.errors.isBeforeFourteenOrAfterTwenty, (value) => {
+        const age = getAge(birthdate);
+        if (age < 20) {
+          const issueDate = new Date(value || "");
+          return getIsIssueDateIsValid(birthdate, issueDate);
+        }
+        return true;
+      })
+      .test("is-before-45", staticTexts.errors.isBeforeTwentyOrAfterFortyFive, (value) => {
+        const age = getAge(birthdate);
+        if (age >= 20 && age < 45) {
+          const issueDate = new Date(value || "");
+          return getIsIssueDateIsValid(birthdate, issueDate);
+        }
+        return true;
+      })
+
+      .test("is-after-45", staticTexts.errors.isBeforeOrEqualFortyFive, (value) => {
+        const age = getAge(birthdate);
+        if (age > 45) {
+          const issueDate = new Date(value || "");
+          return getIsIssueDateIsValid(birthdate, issueDate);
+        }
+        return true;
+      })
+      .test("is-no-future", staticTexts.errors.isNoFuture, (value) => {
+        const today = new Date();
+        const issueDate = new Date(value || "");
+        return today >= issueDate;
+      }),
+    issuePlaceCode: Yup.string()
+      .required(staticTexts.errors.isRequired)
+      .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat),
+    registrationAddress: Yup.string(),
+  });
 
 const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
+  const {
+    confirmationPassportRF: {
+      passportRF: { birthdate },
+    },
+  } = useAppSelector((state) => state.gosuslugiSlice);
   const formik = useFormik<TFormikClientPassport>({
     initialValues: {
       issueDate: "",
@@ -120,7 +171,7 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
     onSubmit: (values) => {},
     validateOnChange: false,
     validateOnBlur: true,
-    validationSchema: CreateClientPassportSchema,
+    validationSchema: CreateClientPassportSchema(new Date(birthdate)),
   });
 
   useEffect(() => {
