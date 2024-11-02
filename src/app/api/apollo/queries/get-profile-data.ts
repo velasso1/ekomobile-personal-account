@@ -18,42 +18,42 @@ export const GET_PROFILE_DATA = gql`
 `;
 
 export const GET_CURRENT_USER_DATA = gql`
-  query Me($msisdn: Msisdn $year: Int! $month: Int!) {
+  query Me($msisdn: Msisdn, $year: Int!, $month: Int!) {
     me {
       account {
+        msisdn
+        email
+        birthday
+        gender
+        contactPhone
+        contactName
+        isContactPhoneVerified
+        isEmailVerified
+        number {
           msisdn
-          email
-          birthday
-          gender
-          contactPhone
-          contactName
-          isContactPhoneVerified
-          isEmailVerified
-          number {
-            msisdn
-            role
-            isActive
-            balance
-            expenses {
-              availableMonths {
+          role
+          isActive
+          balance
+          expenses {
+            availableMonths {
+              year
+              month
+            }
+            month(year: $year, month: $month) {
+              month {
                 year
                 month
               }
-              month (year: $year, month: $month) {
-                month {
-                  year
-                  month
-                }
-                amount {
-                  total
-                  parts {
-                    type
-                    amount
-                  }
+              amount {
+                total
+                parts {
+                  type
+                  amount
                 }
               }
             }
-            services {
+          }
+          services {
             ... on BillingNumberServiceEnabled {
               category {
                 id
@@ -72,8 +72,8 @@ export const GET_CURRENT_USER_DATA = gql`
               }
             }
           }
-          }
-          billingNumber(msisdn: $msisdn) {
+        }
+        billingNumber(msisdn: $msisdn) {
           msisdn
           isActive
           balance

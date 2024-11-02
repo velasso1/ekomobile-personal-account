@@ -1,5 +1,5 @@
-// 9663740842 mIuBkrA8EnK8 
-// 
+// 9663740842 mIuBkrA8EnK8
+//
 
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";

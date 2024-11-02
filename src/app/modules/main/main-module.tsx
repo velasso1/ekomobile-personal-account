@@ -19,6 +19,7 @@ import { ProfilePage } from "../pages/profile-page";
 import { GosuslugiNumbersPage } from "../pages/gosuslugi-numbers-page";
 import { GosuslugiAboutPage } from "../pages/gosuslugi-about-page";
 import { defaultStyles } from "../../utils/default-styles";
+import { GosuslugiConfirmationPage } from "../pages/gosuslugi-confirmation-page";
 
 export const Context = createContext(null);
 
@@ -53,6 +54,7 @@ const MainModule: FC = () => {
           <Route path="*" element={<Navigate to="main" />} />
           <Route path="gosuslugi-numbers" element={<GosuslugiNumbersPage />} />
           <Route path="gosuslugi-about" element={<GosuslugiAboutPage />} />
+          <Route path="gosuslugi-confirmation" element={<GosuslugiConfirmationPage />} />
         </Routes>
       </div>
 
