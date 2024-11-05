@@ -3,7 +3,11 @@ import { Button } from "../button";
 import { IMainRoutes } from "../../../types/routes-types";
 
 interface IProps {
-  nextRoute: IMainRoutes[keyof IMainRoutes];
+  nextClick?: () => void;
+  prevClick?: () => void;
+  nextRoute?: IMainRoutes[keyof IMainRoutes];
+  nextDisabled?: boolean;
+  prevDisabled?: boolean;
 }
 
 const staticTexts = {
@@ -13,7 +17,7 @@ const staticTexts = {
   },
 };
 
-const PrevNextButtons = ({ nextRoute }: IProps) => {
+const PrevNextButtons = ({ nextRoute, nextDisabled, prevDisabled, nextClick, prevClick }: IProps) => {
   const navigate = useNavigate();
 
   return (
@@ -22,12 +26,30 @@ const PrevNextButtons = ({ nextRoute }: IProps) => {
         <Button
           buttonType="grayBackgroundBlackText"
           title={staticTexts.buttonTitles.previous}
-          onClickCb={() => navigate(-1)}
+          onClickCb={() => {
+            if (prevClick) {
+              prevClick();
+            } else {
+              navigate(-1);
+            }
+          }}
+          disabled={prevDisabled}
         />
       </div>
 
       <div>
-        <Button buttonType="default" title={staticTexts.buttonTitles.next} onClickCb={() => navigate(nextRoute)} />
+        <Button
+          buttonType="default"
+          title={staticTexts.buttonTitles.next}
+          onClickCb={() => {
+            if (nextClick) {
+              nextClick();
+            } else if (nextRoute) {
+              navigate(nextRoute);
+            }
+          }}
+          disabled={nextDisabled}
+        />
       </div>
     </div>
   );
