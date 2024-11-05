@@ -29,11 +29,11 @@ const LineProgressBar: FC<ILineProgressBarProps> = ({ progressItem, totalExpense
     <div className="">
       <div className="progress mb-[20px]">
         <div
-          className={`${bgColor[`${getProgressColor[2]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          className={`${bgColor[`${getProgressColor[3]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
           style={{ width: `${totalForServices / totalExpenses}%` }}
         ></div>
         <div
-          className={`${bgColor[`${getProgressColor[1]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
+          className={`${bgColor[`${getProgressColor[4]}`]} progress-bar mr-[5px] rounded-[3px] py-[5px]`}
           style={{ width: `${totalForPricePlan / totalExpenses}%` }}
         ></div>
       </div>
@@ -41,13 +41,13 @@ const LineProgressBar: FC<ILineProgressBarProps> = ({ progressItem, totalExpense
       <div className="flex">
         <DotForLineProgressBar
           name={ExpensesNames["SERVICES"]}
-          color={bgColor[`${getProgressColor[2]}`]}
+          color={bgColor[`${getProgressColor[3]}`]}
           value={moneyFormatter(totalForServices)}
         />
 
         <DotForLineProgressBar
           name={ExpensesNames["PRICE_PLAN"]}
-          color={bgColor[`${getProgressColor[1]}`]}
+          color={bgColor[`${getProgressColor[4]}`]}
           value={moneyFormatter(totalForPricePlan)}
         />
       </div>

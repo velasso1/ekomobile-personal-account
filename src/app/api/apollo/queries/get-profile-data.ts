@@ -17,6 +17,7 @@ export const GET_PROFILE_DATA = gql`
   }
 `;
 
+// this query need for change info when changed a select in header;
 export const GET_CURRENT_USER_DATA = gql`
   query Me($msisdn: Msisdn, $year: Int!, $month: Int!) {
     me {

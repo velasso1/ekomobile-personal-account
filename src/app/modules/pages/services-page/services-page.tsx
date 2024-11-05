@@ -1,7 +1,8 @@
 import { FC, useState, useEffect } from "react";
 
 import { useLazyQuery } from "@apollo/client";
-import { GET_AVAILABLE_SERVICES } from "../../../api/apollo/queries/get-services";
+import { GET_AVAILABLE_SERVICES, GET_SERVICES } from "../../../api/apollo/queries/get-services";
+import { IServicesPageResponse } from "../../../types/servicespage-response-types";
 
 import { IAvailableServicesResponse } from "../../../types/servicespage-response-types";
 
@@ -22,8 +23,8 @@ const ServicesPage: FC = () => {
   const dispatch = useAppDispatch();
 
   // queries
-  // const [getEnabledServices, { data: enabledServices, loading, error }] =
-  //   useLazyQuery<IServicesPageResponse>(GET_SERVICES);
+  const [getEnabledServices, { data: enabledServices, loading, error }] =
+    useLazyQuery<IServicesPageResponse>(GET_SERVICES);
   const [getAvailableServices, { data: availableServices, loading: avaiLoading, error: avaiError }] =
     useLazyQuery<IAvailableServicesResponse>(GET_AVAILABLE_SERVICES);
 
@@ -44,8 +45,9 @@ const ServicesPage: FC = () => {
     if (newCurrentData) {
       setEnabledServicesData(servicesConverter(filterFreeItems(newCurrentData, false)));
       setFreeServices(servicesConverter(filterFreeItems(newCurrentData, true)));
+      dispatch(changeSelectOption("ENABLED"));
     }
-  }, [newCurrentData]);
+  }, [newCurrentData, enabledServices]);
 
   useEffect(() => {
     if (availableServices && availableServices.me) {
@@ -54,7 +56,7 @@ const ServicesPage: FC = () => {
     }
   }, [availableServices]);
 
-  if (!newCurrentData || avaiLoading) {
+  if (!newCurrentData || avaiLoading || loading) {
     return <Loader />;
   }
 
@@ -73,6 +75,11 @@ const ServicesPage: FC = () => {
         onChange={(e) => {
           if (e.target.value === "ENABLED" || e.target.value === "DISABLED") {
             dispatch(changeSelectOption(e.target.value));
+          }
+
+          if (e.target.value === "ENABLED") {
+            getEnabledServices({ fetchPolicy: "no-cache" });
+            return;
           }
 
           getAvailableServices({ fetchPolicy: "no-cache" });
@@ -110,6 +117,7 @@ const ServicesPage: FC = () => {
 
                   return (
                     <Accordion
+                      key={crypto.randomUUID()}
                       accordionNumber={2}
                       accordionTitle={`${serviceItem[0]}`}
                       accrodionItems={serviceItem[1]}
@@ -128,6 +136,7 @@ const ServicesPage: FC = () => {
 
                   return (
                     <Accordion
+                      key={crypto.randomUUID()}
                       accordionNumber={2}
                       accordionTitle={`${serviceItem[0]}`}
                       accrodionItems={serviceItem[1]}
@@ -148,6 +157,7 @@ const ServicesPage: FC = () => {
 
               return (
                 <Accordion
+                  key={crypto.randomUUID()}
                   accordionNumber={2}
                   accordionTitle={`${serviceItem[0]}`}
                   accrodionItems={serviceItem[1]}

@@ -12,7 +12,6 @@ export const GET_NUMBERS_GROUP = gql`
             balance
             defaultName
             isBalancerEnabled
-
             numbers {
               mark {
                 name
@@ -24,6 +23,13 @@ export const GET_NUMBERS_GROUP = gql`
               description
               access
               hasFullAccess
+              pricePlan {
+                id
+                name
+                description
+                monthFee
+                isArchive
+              }
             }
           }
           pricePlan {

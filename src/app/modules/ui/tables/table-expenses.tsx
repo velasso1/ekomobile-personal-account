@@ -25,14 +25,12 @@ const TableExpenses: FC<ITableExpensesProps> = ({ tableItem }) => {
               </th>
               <th>
                 <span className="sort desc">
-                  <span className="sort-label">Тип операции</span>
-                  <span className="sort-icon"></span>
+                  <span className="sort-label hover:cursor-default">Тип операции</span>
                 </span>
               </th>
               <th className="w-[400px]">
                 <span className="sort asc">
-                  <span className="sort-label">Описание</span>
-                  <span className="sort-icon"></span>
+                  <span className="sort-label hover:cursor-default">Описание</span>
                 </span>
               </th>
             </tr>

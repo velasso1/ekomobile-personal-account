@@ -2,7 +2,7 @@ import { FC, useState, useEffect } from "react";
 
 import { useLocation } from "react-router-dom";
 
-import { useAppDispatch } from "../../../store";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { putUserInfo } from "../../../store/slices/user-slice";
 
 import { useQuery, useMutation } from "@apollo/client";
@@ -20,6 +20,7 @@ import { PageTitle } from "../../ui/page-title";
 import { Button } from "../../ui/button";
 import { WarningBadge } from "../../ui";
 import ChangePasswordForm from "./change-password-form/change-password-form";
+import SecretKeyForm from "./change-password-form/secret-code-form";
 
 import { defaultStyles } from "../../../utils/default-styles";
 
@@ -37,7 +38,10 @@ const ProfilePage: FC = () => {
     currentPass: "",
     newPassword: "",
     repeatNewPassword: "",
+    secretKey: "",
   });
+
+  // const [secretKey, setSecretKey] = useState<string>('');
 
   const [profileInfo, setProfileInfo] = useState<IProfileInfo>({
     fullName: "",
@@ -191,21 +195,9 @@ const ProfilePage: FC = () => {
           </div>
         </>
       </Card>
-      <ChangePasswordForm passState={passwordChange} passChange={setPasswordChange} />
-      {/* <Card cardTitle="Смена пароля">
-        <TextField
-          id="change-info-pass"
-          type="password"
-          Label="Пароль"
-          placeholder="пароль"
-          value={profileInfo.password}
-          onChangeCb={(e) => setProfileInfo({ ...profileInfo, password: e.target.value.trim() })}
-          addStyle="mb-[20px]"
-        />
-        <div className="w-[290px]">
-          <Button buttonType="default" title="Сменить" />
-        </div>
-      </Card> */}
+      <Card cardTitle="Смена пароля">
+        <SecretKeyForm passState={passwordChange} passChange={setPasswordChange} />
+      </Card>
     </div>
   );
 };

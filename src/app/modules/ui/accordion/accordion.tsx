@@ -1,7 +1,5 @@
 import { FC, useState } from "react";
 
-import ModalServices from "../modals/modal-services";
-
 import { defaultStyles } from "../../../utils/default-styles";
 
 import { IServicesItem } from "../../../types/servicespage-response-types";
@@ -104,7 +102,6 @@ const Accordion: FC<IAccordionProps> = ({
           </div>
         </div>
       </div>
-      <ModalServices />
     </>
   );
 };

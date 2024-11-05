@@ -1,3 +1,3 @@
-type TProgressColor = ["darkGrey", "yellow", "primary", "lightBlue", "darkBlue", "lightGrey"];
+type TProgressColor = ["darkGrey", "darkBlue", "lightBlue", "primary", "yellow", "lightGrey"];
 
-export const getProgressColor: TProgressColor = ["darkGrey", "yellow", "primary", "lightBlue", "darkBlue", "lightGrey"];
+export const getProgressColor: TProgressColor = ["darkGrey", "darkBlue", "lightBlue", "primary", "yellow", "lightGrey"];

@@ -28,7 +28,12 @@ interface IOrderState {
 
 const DetailsPage: FC = () => {
   const [orderDetails, { data, loading, error }] = useMutation<IOrderDetailsResponse>(ORDER_DETAILS);
-  const { data: checkData, loading: checkLoading, error: checkError } = useQuery<ICheckResponse>(CHECK_DETAILS_FORMAT);
+  const {
+    data: checkData,
+    loading: checkLoading,
+    error: checkError,
+    refetch,
+  } = useQuery<ICheckResponse>(CHECK_DETAILS_FORMAT);
 
   const { selectedNumber, userInfo } = useAppSelector((state) => state.userSlice);
 
@@ -52,6 +57,25 @@ const DetailsPage: FC = () => {
   });
 
   const { textColor } = defaultStyles;
+
+  useEffect(() => {
+    if (checkData) {
+      setOrderDate({
+        lastOrder: dateFormatter(`${checkData.me.account.number.details.lastOrderInfo.orderTime}`),
+        orderTimeout: dateFormatter(`${checkData.me.account.number.details.lastOrderInfo.orderTimeout}`),
+      });
+    }
+  }, [checkData]);
+
+  useEffect(() => {
+    const timeoutDate = orderDate.orderTimeout.date.split(".").map((item) => Number(item));
+    const timeoutOver = new Date() < new Date(timeoutDate[2], timeoutDate[1] - 1, timeoutDate[0]);
+
+    setDetailsInfo({
+      ...detailsInfo,
+      orderIsBlocked: timeoutOver,
+    });
+  }, [orderDate.orderTimeout, checkData]);
 
   const checkFields = (): void => {
     setFieldsEmpty(false);
@@ -80,26 +104,8 @@ const DetailsPage: FC = () => {
         targetMsisdn: selectedNumber,
       },
     });
+    refetch();
   };
-
-  useEffect(() => {
-    if (checkData) {
-      setOrderDate({
-        lastOrder: dateFormatter(`${checkData.me.account.number.details.lastOrderInfo.orderTime}`),
-        orderTimeout: dateFormatter(`${checkData.me.account.number.details.lastOrderInfo.orderTimeout}`),
-      });
-    }
-  }, [checkData]);
-
-  useEffect(() => {
-    const today = new Date().toLocaleDateString();
-    const timeoutOver = today < `${orderDate.orderTimeout.date}`;
-
-    setDetailsInfo({
-      ...detailsInfo,
-      orderIsBlocked: timeoutOver,
-    });
-  }, [orderDate.orderTimeout, checkData]);
 
   if (loading || checkLoading) {
     return <Loader />;

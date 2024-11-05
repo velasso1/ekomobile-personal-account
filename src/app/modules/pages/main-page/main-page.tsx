@@ -2,13 +2,13 @@ import { FC, useEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-import { useQuery } from "@apollo/client";
-import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
+// import { useQuery } from "@apollo/client";
+// import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
 
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { setChecking } from "../../../store/slices/auth-slice";
 
-import { IVerificationData } from "../../../types/mainpage-userinfo-types";
+// import { IVerificationData } from "../../../types/mainpage-userinfo-types";
 
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
@@ -26,11 +26,11 @@ const MainPage: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const {
-    data: verificData,
-    loading: verificLoading,
-    error: verificError,
-  } = useQuery<IVerificationData>(CHECK_VERIFICATION);
+  // const {
+  //   data: verificData,
+  //   loading: verificLoading,
+  //   error: verificError,
+  // } = useQuery<IVerificationData>(CHECK_VERIFICATION);
 
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
@@ -41,17 +41,17 @@ const MainPage: FC = () => {
     dispatch(setChecking(false));
   }, []);
 
-  if (verificLoading || !newCurrentData) {
+  if (!newCurrentData) {
     return <Loader />;
   }
 
-  if (verificError) {
-    return <WarningBadge isError={true} />;
-  }
+  // if (verificError) {
+  //   return <WarningBadge isError={true} />;
+  // }
 
   return (
     <div className="main-page mb-[40px] pt-[8px]">
-      {verificData && !verificData.me.account.isContactPhoneVerified && (
+      {!newCurrentData?.me.account.isContactPhoneVerified && (
         <WarningBadge
           title="Требуется подтверждение"
           message="Требуется подтверждение номера на Госуслугах."
