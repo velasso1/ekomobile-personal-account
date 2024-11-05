@@ -52,7 +52,10 @@ const BalancePage: FC = () => {
     msisdn: "",
   });
   const [invalidValue, setIvalidValue] = useState<boolean>(false);
-  const [modalsOpen, setModalsOpen] = useState<{balance: boolean, services: boolean}>({balance: false, services: false});
+  const [modalsOpen, setModalsOpen] = useState<{ balance: boolean; services: boolean }>({
+    balance: false,
+    services: false,
+  });
 
   useEffect(() => {
     setPaymentState({ ...paymentState, msisdn: selectedNumber });
@@ -66,14 +69,13 @@ const BalancePage: FC = () => {
         value: recommendedValue === "0" ? "Введите сумму" : recommendedValue,
       });
     }
-
   }, [newCurrentData, selectedNumber]);
 
   const { textSize, textColor } = defaultStyles;
 
   const checkValue = (): void => {
     console.log(paymentState.msisdn);
-    
+
     setIvalidValue(false);
     if (+paymentState.value > 1 && +paymentState.value < 15000) {
       generateSBPPayment({
@@ -100,12 +102,12 @@ const BalancePage: FC = () => {
   }
   return (
     <>
-      {modalsOpen.balance && <ModalBalance modalState={modalsOpen} closeModal={setModalsOpen}/>}
+      {modalsOpen.balance && <ModalBalance modalState={modalsOpen} closeModal={setModalsOpen} />}
 
-      {modalsOpen.services && <ModalServices modalState={modalsOpen} closeModal={setModalsOpen}/>}
+      {modalsOpen.services && <ModalServices modalState={modalsOpen} closeModal={setModalsOpen} />}
 
-      <div className={`${(modalsOpen.balance || modalsOpen.services) && "opacity-20 pointer-events-none"}`}>
-        <div className="h-full px-[45px] xs:mx-[18px] xs:p-[0] md:mx-[auto] md:px-[45px] md:pt-[40px] ">
+      <div className={`${(modalsOpen.balance || modalsOpen.services) && "pointer-events-none opacity-20"}`}>
+        <div className="h-full px-[45px] xs:mx-[18px] xs:p-[0] md:mx-[auto] md:px-[45px] md:pt-[40px]">
           <PageTitle title="Пополнение баланса" />
           <Card>
             <div className="take-balance flex justify-between xs:flex-col md:flex-row">
@@ -127,13 +129,17 @@ const BalancePage: FC = () => {
                   width="300px"
                 />
 
-                {+paymentState.value > 15000 && <span className={`${defaultStyles.textSize.default} block`}>Сумма должна быть больше 1₽ и меньше 15.000₽</span>}
+                {+paymentState.value > 15000 && (
+                  <span className={`${defaultStyles.textSize.default} block`}>
+                    Сумма должна быть больше 1₽ и меньше 15.000₽
+                  </span>
+                )}
                 {invalidValue && <Warning text="Введите коррекктную сумму" />}
                 <div className="">
                   <button
                     className={`btn btn-link my-[40px] ${textColor.primary} no-underline`}
                     // data-modal-toggle="#modal_25"
-                    onClick={() => setModalsOpen({...modalsOpen, balance: true})}
+                    onClick={() => setModalsOpen({ ...modalsOpen, balance: true })}
                   >
                     Как сформирован рекомендованный платеж?
                   </button>
@@ -181,7 +187,10 @@ const BalancePage: FC = () => {
                       <td>{dateFormatter(item.timestamp).date}</td>
                       <td>{item.methodName}</td>
                       <td>
-                        <i className="ki-outline ki-information-2 cursor-pointer" onClick={() => setModalsOpen({...modalsOpen, services: true})}></i>
+                        <i
+                          className="ki-outline ki-information-2 cursor-pointer"
+                          onClick={() => setModalsOpen({ ...modalsOpen, services: true })}
+                        ></i>
                       </td>
                       <td>{item.amount / 100}</td>
                     </tr>
