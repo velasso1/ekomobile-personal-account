@@ -12,11 +12,14 @@ import { Card } from "../../ui/card";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
+import { useAppSelector } from "../../../store";
 
 type TProgressBarColor = "primary" | "lightBlue" | "lightGrey";
 
 const RemainderPage: FC = () => {
   const { data, loading, error } = useQuery<IRemaindersResponse>(GET_REMAINDERS);
+
+  const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const { bgColor, textColor, textSize } = defaultStyles;
 

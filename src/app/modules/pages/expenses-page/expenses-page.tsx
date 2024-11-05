@@ -44,8 +44,6 @@ const ExpensesPage: FC = () => {
     return <WarningBadge isError={true} />;
   }
 
-  console.log(currentData.me.account.billingNumber.expenses.month.month.month);
-
   return (
     <div className="mb-[40px] h-full w-full px-[45px] pt-[40px]">
       <PageTitle title="Расходы" />
@@ -56,7 +54,6 @@ const ExpensesPage: FC = () => {
             name="select"
             onChange={(e) => {
               setSelectState(+e.target.value);
-              console.log(e.target.value);
 
               getExpenses({
                 variables: {

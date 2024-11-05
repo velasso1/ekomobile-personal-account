@@ -12,7 +12,6 @@ export const mainRoutes: IMainRoutes = {
   profile: "/main/profile",
   gosuslugiNumbers: "/main/gosuslugi-numbers",
   gosuslugiAbout: "/main/gosuslugi-about",
-  gosuslugiConfirmation: "/main/gosuslugi-confirmation",
 };
 
 export const authRoutes: IAuthRoutes = {

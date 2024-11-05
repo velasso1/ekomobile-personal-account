@@ -13,3 +13,8 @@ export enum CircleProgressName {
   MIN = "МИН",
   SMS = "СМС",
 }
+
+export enum RecommendedPaymentNames {
+  BALANCE = "Баланс",
+  STATUS_FEE = "Ежемесячный платёж",
+}

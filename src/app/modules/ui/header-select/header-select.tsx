@@ -2,7 +2,6 @@ import { FC, useState, useEffect } from "react";
 
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_NUMBERS_GROUP } from "../../../api/apollo/queries/get-number-groups";
-import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
 import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { useAppDispatch, useAppSelector } from "../../../store";
@@ -10,6 +9,7 @@ import { changeSelectedNumber } from "../../../store/slices/user-slice";
 import { newDataReceived } from "../../../store/slices/user-slice";
 
 import { INumbersResponse } from "../../../types/numbers-response-types";
+import { ICurrentDataResponse } from "../../../types/new-current-data-types";
 
 import Loader from "../loader/loader";
 import HeaderSelectOption from "./header-select-option";
@@ -17,7 +17,7 @@ import HeaderSelectOption from "./header-select-option";
 import { defaultStyles } from "../../../utils/default-styles";
 import WarningBadge from "../badges/warning-badge";
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
-import { dateFormatter } from "../../../utils/helpers/date-formatter";
+// import { dateFormatter } from "../../../utils/helpers/date-formatter";
 
 interface IHeaderSelectProps {
   label: string;
@@ -31,14 +31,13 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
   const date = new Date();
 
   const [getAnotherNumberData, { data: anotherData, loading: anotherLoading, error: adnotherError }] =
-    useLazyQuery(GET_CURRENT_USER_DATA);
+    useLazyQuery<ICurrentDataResponse>(GET_CURRENT_USER_DATA);
 
   const { data, loading, error } = useQuery<INumbersResponse>(GET_NUMBERS_GROUP);
-  const { data: profileData, loading: profileLoading, error: profileError } = useQuery(GET_PROFILE_DATA);
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
-  const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
+  // const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
 
   useEffect(() => {
     if (selectedNumber) {
@@ -51,34 +50,31 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
         },
       });
     }
-  }, [selectedNumber]);
+  }, []);
 
   useEffect(() => {
-    if (profileData) {
-      dispatch(changeSelectedNumber(profileData.userInfo.account.msisdn));
+    // dispatch(changeSelectedNumber(data.me.account.number.));
+  }, []);
+
+  // useEffect(() => {
+  //   setMsidn(formatPhoneNumber(selectedNumber));
+  // }, [selectedNumber]);
+
+  useEffect(() => {
+    if (anotherData) {
+      dispatch(newDataReceived(anotherData));
     }
-  }, [profileData, dispatch]);
-
-  useEffect(() => {
-    setMsidn(formatPhoneNumber(selectedNumber));
-  }, [selectedNumber]);
-
-  useEffect(() => {
-    dispatch(newDataReceived(anotherData));
-  }, [anotherData]);
+  }, [anotherData, dispatch]);
 
   const { textColor } = defaultStyles;
 
-  if (loading || profileLoading || anotherLoading) {
-    return <Loader />;
-  }
-
-  if (error || profileError || adnotherError) {
+  if (error || adnotherError) {
     return <WarningBadge isError={true} />;
   }
 
   return (
     <>
+      {(loading || anotherLoading) && <Loader />}
       <div className={`flex flex-wrap items-baseline gap-2.5 rounded-[8px] lg:flex-nowrap ${addStyle}`}>
         <label className={`form-label max-w-32 font-medium ${textColor.darkGrey} xs:hidden md:block`}>{label}</label>
         <select
@@ -97,7 +93,7 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
           }}
           value={selectedNumber}
         >
-          {data.me.account.number.groups.length > 0 ? (
+          {data?.me.account.number.groups.length > 0 ? (
             data.me.account.number.groups.map((item) => {
               return (
                 <>
@@ -109,7 +105,7 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
               );
             })
           ) : (
-            <option>{accountMsisdn}</option>
+            <option>{formatPhoneNumber(selectedNumber)}</option>
           )}
         </select>
       </div>

@@ -16,11 +16,11 @@ import { dateFormatter } from "../../../utils/helpers/date-formatter";
 import { defaultStyles } from "../../../utils/default-styles";
 
 const ApplicationPage: FC = () => {
+  const { data, loading, error } = useQuery<IApplicationsResponse>(GET_APPLICATIONS);
+
   const [qtyApps, setQty] = useState<number>(5);
 
   const { textColor } = defaultStyles;
-
-  const { data, loading, error } = useQuery<IApplicationsResponse>(GET_APPLICATIONS);
 
   if (loading) {
     return <Loader />;

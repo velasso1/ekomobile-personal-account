@@ -58,8 +58,6 @@ const authSlice = createSlice({
 
 export const signIn = (body: TUserState) => {
   return async (dispatch: AppDispatch): Promise<void> => {
-    console.log(new URLSearchParams({ username: body.username, password: body.password }).toString());
-
     dispatch(requestIsLoading(true));
     try {
       await fetch(`${import.meta.env.VITE_AUTH_REST_URL}`, {
@@ -71,7 +69,7 @@ export const signIn = (body: TUserState) => {
         },
         body: new URLSearchParams({ username: body.username, password: body.password }).toString(),
       }).then((resp) => {
-        dispatch(changeLoginRequest(true));
+        dispatch(changeLoginRequest(resp.status === 200));
       });
     } catch (error) {
       dispatch(requestError(true));

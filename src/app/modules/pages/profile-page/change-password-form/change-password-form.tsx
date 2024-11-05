@@ -32,7 +32,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
   };
 
   return (
-    <Card cardTitle="Смена пароля">
+    <div>
       <TextField
         id="change-info-pass"
         type="password"
@@ -71,7 +71,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
       <div className="w-[290px]">
         <Button buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
       </div>
-    </Card>
+    </div>
   );
 };
 

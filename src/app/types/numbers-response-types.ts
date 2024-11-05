@@ -17,6 +17,13 @@ export interface INumbersItem {
   mark: {
     name: string;
   };
+  pricePlan: {
+    id: string;
+    name: string;
+    description: string | null;
+    monthFee: number;
+    isArchive: boolean;
+  };
 }
 
 export interface IGroupItem {
