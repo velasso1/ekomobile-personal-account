@@ -107,3 +107,8 @@ export type TFormikClientPassport = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],
   "series" | "number" | "issueDate" | "issuePlace" | "issuePlaceCode" | "registrationAddress"
 >;
+
+export interface ISelectSearchOption {
+  value: string;
+  label: string;
+}

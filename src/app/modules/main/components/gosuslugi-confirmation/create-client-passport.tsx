@@ -1,6 +1,7 @@
 import {
   IGroup,
   IGUConfirmationPassportField,
+  ISelectSearchOption,
   TFormikClientPassport,
   TGUConfirmationCards,
 } from "../../../../types/gosuslugi-types";
@@ -13,6 +14,9 @@ import maskIssuePlaceCode from "../../../../utils/helpers/maskIssuePlaceCode";
 import { useAppSelector } from "../../../../store";
 import getIsIssueDateIsValid from "../../../../utils/helpers/getIsIssueDateValid";
 import getAge from "../../../../utils/helpers/getAge";
+import AsyncSelect from "react-select/async";
+import { useState } from "react";
+import { getSuggestAddress } from "../../../../api/axios/dadata";
 
 interface IProps {
   groups: IGroup[];
@@ -153,6 +157,8 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
   });
 
 const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
+  const [addresses, setAddresses] = useState<ISelectSearchOption[]>([]);
+
   const {
     confirmationPassportRF: {
       passportRF: { birthdate },
@@ -223,6 +229,43 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
               formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
             }
           }}
+        />
+      </div>
+
+      <div className="pt-8">
+        <AsyncSelect<ISelectSearchOption>
+          className="react-select-styled w-[290px]"
+          classNamePrefix="react-select"
+          styles={{
+            menu: (baseStyles) => ({
+              ...baseStyles,
+              width: 350,
+            }),
+            option: (basestyles) => ({
+              ...basestyles,
+              fontSize: 12,
+            }),
+            input: (baseStyles) => ({
+              ...baseStyles,
+              fontSize: 12,
+            }),
+          }}
+          value={{
+            label: formik.values.registrationAddress,
+            value: formik.values.registrationAddress,
+          }}
+          id={"registrationAddress"}
+          onBlur={formik.handleBlur}
+          loadOptions={getSuggestAddress}
+          onChange={(option: ISelectSearchOption) => {
+            if (!option) {
+              formik.setFieldValue("registrationAddress", "");
+            }
+            formik.setFieldValue("registrationAddress", option.label);
+          }}
+          isClearable
+          isSearchable
+          cacheOptions
         />
       </div>
     </>
