@@ -3,6 +3,7 @@ export type TGUConfimationStatusId = "REQUIRED" | "NOT_REQUIRED" | "REQUESTED";
 export type TGUConfirmationCards = "choose-client" | "choose-numbers" | "create-client-fio" | "create-client-passport";
 export type TGUConfirmationClientGender = "MALE" | "FEMALE";
 
+export const ISSUE_PLACE_MANUAL = "issuePlaceManual";
 export interface IGUConfirmationStatus {
   name: string;
   id: TGUConfimationStatusId;
@@ -73,10 +74,13 @@ export interface IGURequestConfirmationPassportRFParams {
   };
 }
 
+export type TGUConfirmationPassportFieldId =
+  | keyof IGURequestConfirmationPassportRFParams["passportRF"]
+  | typeof ISSUE_PLACE_MANUAL;
 interface IGUConfirmationPassportFieldBase {
   label: string;
   placeholder?: string;
-  id: keyof IGURequestConfirmationPassportRFParams["passportRF"];
+  id: TGUConfirmationPassportFieldId;
 }
 
 interface IGUConfirmationPassportFieldRadio extends IGUConfirmationPassportFieldBase {
@@ -93,10 +97,23 @@ interface IGUConfirmationPassportFieldText extends IGUConfirmationPassportFieldB
   mask?: string;
 }
 
+interface IGUConfirmationPassportFieldAsyncSelect extends IGUConfirmationPassportFieldBase {
+  type: "asyncSelect";
+  noOptionsMessageWrong: string;
+  noOptionsMessageEmpty: string;
+}
+
+interface IGUConfirmationPassportFieldSelect extends IGUConfirmationPassportFieldBase {
+  type: "select";
+  options: { label: string; value: string }[];
+}
+
 export type IGUConfirmationPassportField =
   | IGUConfirmationPassportFieldRadio
   | IGUConfirmationPassportFieldDate
-  | IGUConfirmationPassportFieldText;
+  | IGUConfirmationPassportFieldText
+  | IGUConfirmationPassportFieldAsyncSelect
+  | IGUConfirmationPassportFieldSelect;
 
 export type TFormikClientFio = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],
@@ -106,4 +123,9 @@ export type TFormikClientFio = Pick<
 export type TFormikClientPassport = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],
   "series" | "number" | "issueDate" | "issuePlace" | "issuePlaceCode" | "registrationAddress"
->;
+> & { [ISSUE_PLACE_MANUAL]: string };
+
+export interface ISelectSearchOption {
+  value: string;
+  label: string;
+}

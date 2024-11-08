@@ -1,27 +1,27 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IGURequestConfirmationPassportRFParams } from "../../types/gosuslugi-types";
+import { IGURequestConfirmationPassportRFParams, ISSUE_PLACE_MANUAL } from "../../types/gosuslugi-types";
 
-interface IInitGUSlice {
-  confirmationPassportRF: IGURequestConfirmationPassportRFParams;
-}
+type TInitGUSlice = {
+  passportRF: {
+    [ISSUE_PLACE_MANUAL]: string;
+  } & IGURequestConfirmationPassportRFParams["passportRF"];
+};
 
-const initialState: IInitGUSlice = {
-  confirmationPassportRF: {
-    passportRF: {
-      birthdate: "",
-      birthplace: "",
-      gender: "",
-      issueDate: "",
-      issuePlace: "",
-      issuePlaceCode: "",
-      nameFamily: "",
-      nameGiven: "",
-      namePatronymic: "",
-      number: "",
-      registrationAddress: "",
-      series: "",
-    },
-    targetMsisdn: "",
+const initialState: TInitGUSlice = {
+  passportRF: {
+    birthdate: "",
+    birthplace: "",
+    gender: "",
+    issueDate: "",
+    issuePlace: "",
+    issuePlaceManual: "",
+    issuePlaceCode: "",
+    nameFamily: "",
+    nameGiven: "",
+    namePatronymic: "",
+    number: "",
+    registrationAddress: "",
+    series: "",
   },
 };
 
@@ -29,12 +29,9 @@ const gosuslugiSlice = createSlice({
   name: "gosuslugiSlice",
   initialState,
   reducers: {
-    updateConfirmationPassportRF(
-      state,
-      action: PayloadAction<Partial<IGURequestConfirmationPassportRFParams["passportRF"]>>
-    ) {
-      state.confirmationPassportRF.passportRF = {
-        ...state.confirmationPassportRF.passportRF,
+    updateConfirmationPassportRF(state, action: PayloadAction<Partial<TInitGUSlice>>) {
+      state.passportRF = {
+        ...state.passportRF,
         ...action.payload,
       };
     },

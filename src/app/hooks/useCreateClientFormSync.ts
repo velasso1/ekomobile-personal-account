@@ -7,9 +7,7 @@ import { TFormikClientFio, TFormikClientPassport } from "../types/gosuslugi-type
 const useCreateClientFormSync = (formik: FormikProps<TFormikClientFio | TFormikClientPassport>) => {
   const [isNextDisabled, setIsNextDisabled] = useState(false);
   const dispatch = useAppDispatch();
-  const {
-    confirmationPassportRF: { passportRF },
-  } = useAppSelector((state) => state.gosuslugiSlice);
+  const { passportRF } = useAppSelector((state) => state.gosuslugiSlice);
 
   useEffect(() => {
     const hasErrors = Object.keys(formik.errors).some((key) => formik.errors[key] && formik.touched[key]);
