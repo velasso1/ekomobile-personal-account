@@ -14,9 +14,9 @@ import maskIssuePlaceCode from "../../../../utils/helpers/maskIssuePlaceCode";
 import { useAppSelector } from "../../../../store";
 import getIsIssueDateIsValid from "../../../../utils/helpers/getIsIssueDateValid";
 import getAge from "../../../../utils/helpers/getAge";
-import AsyncSelect from "react-select/async";
-import { useState } from "react";
 import { getSuggestAddress } from "../../../../api/axios/dadata";
+import AsyncSelectSearch from "../../../ui/fields/async-select-search";
+import { useEffect } from "react";
 
 interface IProps {
   groups: IGroup[];
@@ -82,7 +82,9 @@ const staticTexts: IStaticTexts = {
     {
       label: "Адрес регистрации (прописка)",
       id: "registrationAddress",
-      type: "text",
+      noOptionsMessageEmpty: "Пожалуйста начните вводить адрес",
+      noOptionsMessageWrong: "Не нашли такой адрес:",
+      type: "asyncSelect",
     },
   ],
   errors: {
@@ -153,12 +155,10 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
     issuePlaceCode: Yup.string()
       .required(staticTexts.errors.isRequired)
       .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat),
-    registrationAddress: Yup.string(),
+    registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
 const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
-  const [addresses, setAddresses] = useState<ISelectSearchOption[]>([]);
-
   const {
     confirmationPassportRF: {
       passportRF: { birthdate },
@@ -180,12 +180,17 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
   });
 
   const { isNextDisabled } = useCreateClientFormSync(formik);
+
+  useEffect(() => {
+    console.log(formik.errors);
+  }, [formik.errors]);
+
   return (
     <>
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
       <div className="form-group">
         {staticTexts.fields.map((field) => {
-          if (field.id !== "gender") {
+          if (field.type === "text" || field.type === "date") {
             return (
               <TextField
                 key={field.id}
@@ -204,13 +209,43 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                   if (formik.touched[field.id]) {
                     await formik.validateField(field.id);
                   }
-                  // await formik.setFieldTouched(field.id, false);
                 }}
                 onBlurCb={async (e) => await formik.handleBlur(e)}
                 type={field.type}
                 value={formik.values[field.id]}
                 addStyle="pt-[20px]"
                 error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+              />
+            );
+          } else if (field.type === "asyncSelect") {
+            return (
+              <AsyncSelectSearch
+                containerClass="pt-8"
+                error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+                id={field.id}
+                label={field.label}
+                loadOptions={getSuggestAddress}
+                key={field.id}
+                optionWidth={350}
+                noOptionsMessage={({ inputValue }) =>
+                  inputValue ? `${field.noOptionsMessageWrong} ${inputValue}` : field.noOptionsMessageEmpty
+                }
+                onChange={async (option: ISelectSearchOption) => {
+                  if (option?.label && option?.value) {
+                    await formik.setFieldValue(field.id, option?.label);
+                  } else {
+                    await formik.setFieldValue(field.id, "");
+                    await formik.setFieldTouched(field.id, true);
+                  }
+                  if (formik.touched[field.id]) {
+                    await formik.validateField(field.id);
+                  }
+                }}
+                value={{
+                  label: formik.values[field.id],
+                  value: formik.values[field.id],
+                }}
+                onBlur={formik.handleBlur}
               />
             );
           }
@@ -229,43 +264,6 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
               formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
             }
           }}
-        />
-      </div>
-
-      <div className="pt-8">
-        <AsyncSelect<ISelectSearchOption>
-          className="react-select-styled w-[290px]"
-          classNamePrefix="react-select"
-          styles={{
-            menu: (baseStyles) => ({
-              ...baseStyles,
-              width: 350,
-            }),
-            option: (basestyles) => ({
-              ...basestyles,
-              fontSize: 12,
-            }),
-            input: (baseStyles) => ({
-              ...baseStyles,
-              fontSize: 12,
-            }),
-          }}
-          value={{
-            label: formik.values.registrationAddress,
-            value: formik.values.registrationAddress,
-          }}
-          id={"registrationAddress"}
-          onBlur={formik.handleBlur}
-          loadOptions={getSuggestAddress}
-          onChange={(option: ISelectSearchOption) => {
-            if (!option) {
-              formik.setFieldValue("registrationAddress", "");
-            }
-            formik.setFieldValue("registrationAddress", option.label);
-          }}
-          isClearable
-          isSearchable
-          cacheOptions
         />
       </div>
     </>

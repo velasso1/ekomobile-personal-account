@@ -93,10 +93,17 @@ interface IGUConfirmationPassportFieldText extends IGUConfirmationPassportFieldB
   mask?: string;
 }
 
+interface IGUConfirmationPassportFieldAsyncSelect extends IGUConfirmationPassportFieldBase {
+  type: "asyncSelect";
+  noOptionsMessageWrong: string;
+  noOptionsMessageEmpty: string;
+}
+
 export type IGUConfirmationPassportField =
   | IGUConfirmationPassportFieldRadio
   | IGUConfirmationPassportFieldDate
-  | IGUConfirmationPassportFieldText;
+  | IGUConfirmationPassportFieldText
+  | IGUConfirmationPassportFieldAsyncSelect;
 
 export type TFormikClientFio = Pick<
   IGURequestConfirmationPassportRFParams["passportRF"],

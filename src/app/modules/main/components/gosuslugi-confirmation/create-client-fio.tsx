@@ -144,7 +144,7 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
       <div className="form-group">
         {staticTexts.fields.map((field) => {
-          if (field.id !== "gender") {
+          if (field.type === "date" || field.type === "text") {
             return (
               <TextField
                 key={field.id}
@@ -162,34 +162,30 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
                 error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
               />
             );
+          } else if (field.type === "radio") {
+            return (
+              <div className="pt-[20px]" key={field.id}>
+                <div className={`${defaultStyles.textSize.p14} font-semibold`}>{field.label}</div>
+                <div className="radio-list flex flex-col pt-4">
+                  {field.options.map((option: { text: string; value: string }, index: number) => (
+                    <RadioInput
+                      key={option.value}
+                      isFirst={index === 0}
+                      name={field.id}
+                      value={option.value}
+                      isChecked={formik.values.gender === option.value}
+                      label={option.text}
+                      onChange={formik.handleChange}
+                    />
+                  ))}
+                  {formik.errors.gender && formik.touched.gender && (
+                    <div className="text-[12px] text-red-600">{formik.errors.gender}</div>
+                  )}
+                </div>
+              </div>
+            );
           }
         })}
-      </div>
-
-      <div className="pt-[20px]">
-        <div className={`${defaultStyles.textSize.p14} font-semibold`}>
-          {staticTexts.fields.find((field) => field.id === "gender").label}
-        </div>
-        <div className="radio-list flex flex-col pt-4">
-          {staticTexts.fields.map((field) => {
-            if (field.id === "gender" && field.type === "radio") {
-              return field.options.map((option: { text: string; value: string }, index: number) => (
-                <RadioInput
-                  key={option.value}
-                  isFirst={index === 0}
-                  name={field.id}
-                  value={option.value}
-                  isChecked={formik.values.gender === option.value}
-                  label={option.text}
-                  onChange={formik.handleChange}
-                />
-              ));
-            }
-          })}
-          {formik.errors.gender && formik.touched.gender && (
-            <div className="text-[12px] text-red-600">{formik.errors.gender}</div>
-          )}
-        </div>
       </div>
 
       <div className="pt-8">
