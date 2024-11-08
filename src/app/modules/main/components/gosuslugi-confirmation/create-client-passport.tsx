@@ -14,7 +14,7 @@ import maskIssuePlaceCode from "../../../../utils/helpers/maskIssuePlaceCode";
 import { useAppSelector } from "../../../../store";
 import getIsIssueDateIsValid from "../../../../utils/helpers/getIsIssueDateValid";
 import getAge from "../../../../utils/helpers/getAge";
-import { getSuggestAddress } from "../../../../api/axios/dadata";
+import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/dadata";
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
 import { useEffect } from "react";
 
@@ -181,10 +181,6 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
 
   const { isNextDisabled } = useCreateClientFormSync(formik);
 
-  useEffect(() => {
-    console.log(formik.errors);
-  }, [formik.errors]);
-
   return (
     <>
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
@@ -202,6 +198,8 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                     let value = e.target.value;
                     value = maskIssuePlaceCode(value);
                     await formik.setFieldValue(field.id, value);
+                    const addr = await getSuggestIssuePlace(value)
+                    console.log(addr)
                   } else {
                     await formik.handleChange(e);
                   }

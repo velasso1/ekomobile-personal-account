@@ -85,13 +85,10 @@ const AsyncSelectSearch = ({
             ...baseStyles,
             color: "#4B5675",
           }),
-          singleValue: (baseStyles, state) => {
-            console.log("single option state: ", state);
-            return {
-              ...baseStyles,
-              color: "#78829D",
-            };
-          },
+          singleValue: (baseStyles, state) => ({
+            ...baseStyles,
+            color: "#78829D",
+          }),
           noOptionsMessage: (baseStyles) => ({
             ...baseStyles,
             fontSize: 12,
