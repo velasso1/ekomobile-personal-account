@@ -19,6 +19,7 @@ import getAge from "../../../../utils/helpers/getAge";
 import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/dadata";
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
 import { useEffect, useState } from "react";
+import PreviewClientData from "./preview-client-data";
 
 interface IProps {
   groups: IGroup[];
@@ -171,8 +172,8 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
         const issueDate = new Date(value || "");
         return today >= issueDate;
       }),
-    issuePlaceCode: Yup.string(),
-    issuePlaceManual: Yup.string().matches(
+    issuePlaceManual: Yup.string(),
+    issuePlaceCode: Yup.string().matches(
       staticTexts.regex.allowedInIssuePlaceCode,
       staticTexts.errors.isWrongCodeFormat
     ),
@@ -181,9 +182,7 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
 
 const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
   const {
-    confirmationPassportRF: {
-      passportRF: { birthdate },
-    },
+    passportRF: { birthdate },
   } = useAppSelector((state) => state.gosuslugiSlice);
   const [issuePlaceOptions, setIssuePlaceOptions] = useState<{ label: string; value: string }[]>([]);
 
@@ -221,95 +220,99 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
   return (
     <>
       <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
-      <div className="form-group">
-        {staticTexts.fields.map((field) => {
-          if (field.type === "text" || field.type === "date") {
-            if (getIsShowIssuePlaceManual(field.id)) {
-              return null;
-            }
-            return (
-              <TextField
-                key={field.id}
-                Label={field.label}
-                id={field.id}
-                placeholder={field?.placeholder}
-                onChangeCb={async (e) => {
-                  if (field.id === "issuePlaceCode") {
-                    let value = e.target.value;
-                    value = maskIssuePlaceCode(value);
-                    await formik.setFieldValue(field.id, value);
-                  } else {
-                    await formik.handleChange(e);
-                  }
-
-                  if (formik.touched[field.id]) {
-                    await formik.validateField(field.id);
-                  }
-                }}
-                onBlurCb={async (e) => await formik.handleBlur(e)}
-                type={field.type}
-                value={formik.values[field.id]}
-                addStyle="pt-[20px]"
-                error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
-                disabled={getIsShowIssuePlaceManual(field.id)}
-              />
-            );
-          } else if (field.type === "asyncSelect") {
-            return (
-              <AsyncSelectSearch
-                containerClass="pt-8"
-                error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
-                id={field.id}
-                label={field.label}
-                loadOptions={getSuggestAddress}
-                key={field.id}
-                optionWidth={350}
-                noOptionsMessage={({ inputValue }) =>
-                  inputValue ? `${field.noOptionsMessageWrong} ${inputValue}` : field.noOptionsMessageEmpty
-                }
-                onChange={async (option: ISelectSearchOption) => {
-                  if (option?.label && option?.value) {
-                    await formik.setFieldValue(field.id, option?.label);
-                  } else {
-                    await formik.setFieldValue(field.id, "");
-                    await formik.setFieldTouched(field.id, true);
-                  }
-                  if (formik.touched[field.id]) {
-                    await formik.validateField(field.id);
-                  }
-                }}
-                value={{
-                  label: formik.values[field.id],
-                  value: formik.values[field.id],
-                }}
-                onBlur={formik.handleBlur}
-              />
-            );
-          } else if (field.type === "select") {
-            return (
-              <div key={field.id} className="pt-[20px]">
-                <label className="mb-[5px] block text-left text-sm font-medium dark:text-white">{field.label}</label>
-                <select
+      <div className="flex">
+        <div className="form-group mr-10 w-[290px]">
+          {staticTexts.fields.map((field) => {
+            if (field.type === "text" || field.type === "date") {
+              if (getIsShowIssuePlaceManual(field.id)) {
+                return null;
+              }
+              return (
+                <TextField
+                  key={field.id}
+                  Label={field.label}
                   id={field.id}
-                  className="input w-[290px]"
-                  onChange={formik.handleChange}
-                  value={formik.values[field.id]}
-                  disabled={formik.values.issuePlaceCode.length !== ISSSUE_PLACE_CODE_LENGTH_UI}
-                >
-                  {issuePlaceOptions.map((opt, index) => {
-                    return (
-                      <option key={opt.label} value={opt.value} disabled={index === 0}>
-                        {opt.label}
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-            );
-          }
-        })}
-      </div>
+                  placeholder={field?.placeholder}
+                  onChangeCb={async (e) => {
+                    if (field.id === "issuePlaceCode") {
+                      let value = e.target.value;
+                      value = maskIssuePlaceCode(value);
+                      await formik.setFieldValue(field.id, value);
+                    } else {
+                      await formik.handleChange(e);
+                    }
 
+                    if (formik.touched[field.id]) {
+                      await formik.validateField(field.id);
+                    }
+                  }}
+                  onBlurCb={async (e) => await formik.handleBlur(e)}
+                  type={field.type}
+                  value={formik.values[field.id]}
+                  addStyle="pt-[20px]"
+                  error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+                  disabled={getIsShowIssuePlaceManual(field.id)}
+                />
+              );
+            } else if (field.type === "asyncSelect") {
+              return (
+                <AsyncSelectSearch
+                  containerClass="pt-8"
+                  error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+                  id={field.id}
+                  label={field.label}
+                  loadOptions={getSuggestAddress}
+                  key={field.id}
+                  optionWidth={350}
+                  noOptionsMessage={({ inputValue }) =>
+                    inputValue ? `${field.noOptionsMessageWrong} ${inputValue}` : field.noOptionsMessageEmpty
+                  }
+                  onChange={async (option: ISelectSearchOption) => {
+                    if (option?.label && option?.value) {
+                      await formik.setFieldValue(field.id, option?.label);
+                    } else {
+                      await formik.setFieldValue(field.id, "");
+                      await formik.setFieldTouched(field.id, true);
+                    }
+                    if (formik.touched[field.id]) {
+                      await formik.validateField(field.id);
+                    }
+                  }}
+                  value={{
+                    label: formik.values[field.id],
+                    value: formik.values[field.id],
+                  }}
+                  onBlur={formik.handleBlur}
+                />
+              );
+            } else if (field.type === "select") {
+              return (
+                <div key={field.id} className="pt-[20px]">
+                  <label className="mb-[5px] block text-left text-sm font-medium dark:text-white">{field.label}</label>
+                  <select
+                    id={field.id}
+                    className="input w-[290px]"
+                    onChange={formik.handleChange}
+                    value={formik.values[field.id]}
+                    disabled={formik.values.issuePlaceCode.length !== ISSSUE_PLACE_CODE_LENGTH_UI}
+                  >
+                    {issuePlaceOptions.map((opt, index) => {
+                      return (
+                        <option key={opt.label} value={opt.value} disabled={index === 0}>
+                          {opt.label}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              );
+            }
+          })}
+        </div>
+        <div className="pt-[20px]">
+          <PreviewClientData />
+        </div>
+      </div>
       <div className="pt-8">
         <PrevNextButtons
           nextDisabled={isNextDisabled}
