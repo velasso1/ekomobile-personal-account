@@ -2,8 +2,10 @@ import {
   IGroup,
   IGUConfirmationPassportField,
   ISelectSearchOption,
+  ISSUE_PLACE_MANUAL,
   TFormikClientPassport,
   TGUConfirmationCards,
+  TGUConfirmationPassportFieldId,
 } from "../../../../types/gosuslugi-types";
 import TextField from "../../../ui/fields/text-field";
 import { FormikTouched, FormikValues, setNestedObjectValues, useFormik } from "formik";
@@ -16,7 +18,7 @@ import getIsIssueDateIsValid from "../../../../utils/helpers/getIsIssueDateValid
 import getAge from "../../../../utils/helpers/getAge";
 import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/dadata";
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface IProps {
   groups: IGroup[];
@@ -46,6 +48,8 @@ interface IStaticTexts {
     dateFormat: RegExp;
   };
 }
+
+const ISSSUE_PLACE_CODE_LENGTH_UI = 7;
 
 const staticTexts: IStaticTexts = {
   card: "Паспортные данные:",
@@ -77,6 +81,21 @@ const staticTexts: IStaticTexts = {
     {
       label: "Кем выдан",
       id: "issuePlace",
+      type: "select",
+      options: [
+        {
+          label: "--- пожалуйста выберите ---",
+          value: "",
+        },
+        {
+          label: "Ввести адрес вручную",
+          value: ISSUE_PLACE_MANUAL,
+        },
+      ],
+    },
+    {
+      label: "Кем выдан (ручной ввод)",
+      id: "issuePlaceManual",
       type: "text",
     },
     {
@@ -152,9 +171,11 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
         const issueDate = new Date(value || "");
         return today >= issueDate;
       }),
-    issuePlaceCode: Yup.string()
-      .required(staticTexts.errors.isRequired)
-      .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat),
+    issuePlaceCode: Yup.string(),
+    issuePlaceManual: Yup.string().matches(
+      staticTexts.regex.allowedInIssuePlaceCode,
+      staticTexts.errors.isWrongCodeFormat
+    ),
     registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
@@ -164,11 +185,14 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
       passportRF: { birthdate },
     },
   } = useAppSelector((state) => state.gosuslugiSlice);
+  const [issuePlaceOptions, setIssuePlaceOptions] = useState<{ label: string; value: string }[]>([]);
+
   const formik = useFormik<TFormikClientPassport>({
     initialValues: {
       issueDate: "",
       issuePlace: "",
       issuePlaceCode: "",
+      issuePlaceManual: "",
       number: "",
       registrationAddress: "",
       series: "",
@@ -180,6 +204,19 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
   });
 
   const { isNextDisabled } = useCreateClientFormSync(formik);
+  const getIsShowIssuePlaceManual = (fieldId: TGUConfirmationPassportFieldId) =>
+    fieldId === "issuePlaceManual" && formik.values.issuePlace !== ISSUE_PLACE_MANUAL;
+  useEffect(() => {
+    if (formik.values.issuePlaceCode.length === ISSSUE_PLACE_CODE_LENGTH_UI) {
+      const staticOptions = staticTexts.fields.find((field) => field.type === "select").options;
+      getSuggestIssuePlace(formik.values.issuePlaceCode).then((result) =>
+        setIssuePlaceOptions([...staticOptions, ...result])
+      );
+    } else {
+      setIssuePlaceOptions([]);
+      formik.setFieldValue("issuePlace", "");
+    }
+  }, [formik.values.issuePlaceCode]);
 
   return (
     <>
@@ -187,6 +224,9 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
       <div className="form-group">
         {staticTexts.fields.map((field) => {
           if (field.type === "text" || field.type === "date") {
+            if (getIsShowIssuePlaceManual(field.id)) {
+              return null;
+            }
             return (
               <TextField
                 key={field.id}
@@ -198,8 +238,6 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                     let value = e.target.value;
                     value = maskIssuePlaceCode(value);
                     await formik.setFieldValue(field.id, value);
-                    const addr = await getSuggestIssuePlace(value)
-                    console.log(addr)
                   } else {
                     await formik.handleChange(e);
                   }
@@ -213,6 +251,7 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                 value={formik.values[field.id]}
                 addStyle="pt-[20px]"
                 error={formik.touched[field.id] && formik.errors[field.id] ? formik.errors[field.id] : undefined}
+                disabled={getIsShowIssuePlaceManual(field.id)}
               />
             );
           } else if (field.type === "asyncSelect") {
@@ -245,6 +284,27 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
                 }}
                 onBlur={formik.handleBlur}
               />
+            );
+          } else if (field.type === "select") {
+            return (
+              <div key={field.id} className="pt-[20px]">
+                <label className="mb-[5px] block text-left text-sm font-medium dark:text-white">{field.label}</label>
+                <select
+                  id={field.id}
+                  className="input w-[290px]"
+                  onChange={formik.handleChange}
+                  value={formik.values[field.id]}
+                  disabled={formik.values.issuePlaceCode.length !== ISSSUE_PLACE_CODE_LENGTH_UI}
+                >
+                  {issuePlaceOptions.map((opt, index) => {
+                    return (
+                      <option key={opt.label} value={opt.value} disabled={index === 0}>
+                        {opt.label}
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
             );
           }
         })}
