@@ -9,4 +9,3 @@
 `npm run build` - собирает проект в директорию `/build`
 
 `npm run serve` - запускает проект из директории `/build` в production mode
-
