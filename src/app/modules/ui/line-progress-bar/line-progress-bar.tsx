@@ -17,6 +17,8 @@ interface ILineProgressBarProps {
 const LineProgressBar: FC<ILineProgressBarProps> = ({ progressItem, totalExpenses }) => {
   const { bgColor } = defaultStyles;
 
+  console.log(progressItem);
+
   const totalForServices: number = progressItem.reduce((acc, value) => {
     return acc + (value.type === "PRICE_PLAN" ? 0 : value.amount) * -1;
   }, 0);

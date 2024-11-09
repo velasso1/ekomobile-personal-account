@@ -19,10 +19,6 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
 
   const { textSize, textColor } = defaultStyles;
 
-  if (!tableItem) {
-    return <Loader />;
-  }
-
   return (
     <>
       {popupData.showPopup && <ChangeMarkPopUp popupData={popupData} setPopupData={setPopupData} />}
@@ -56,7 +52,7 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                         {moneyFormatter(+item.balance)} ₽
                       </td>
                       <td>
-                        <span className={`badge badge-outline badge-${item.isActive ? "success" : ""}`}>
+                        <span className={`badge badge-outline badge-${item.isActive ? "success" : "danger"}`}>
                           {item.isActive ? "Активен" : "Заблокирован"}
                         </span>
                       </td>
@@ -89,7 +85,7 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                   <td>{pricePlan.name}</td>
                   <td>{moneyFormatter(tableItem.balance)}</td>
                   <td>
-                    <span className={`badge badge-outline badge-${tableItem.isActive ? "success" : ""}`}>
+                    <span className={`badge badge-outline badge-${tableItem.isActive ? "success" : "danger"}`}>
                       {tableItem.isActive ? "Активен" : "Заблокирован"}
                     </span>
                   </td>

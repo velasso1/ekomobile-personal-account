@@ -64,10 +64,12 @@ const BalancePage: FC = () => {
   useEffect(() => {
     if (newCurrentData) {
       const recommendedValue = (newCurrentData.me.account.billingNumber.recommendedPayment.amount / 100).toString();
-      setPaymentState({
-        ...paymentState,
-        value: recommendedValue === "0" ? "Введите сумму" : recommendedValue,
-      });
+      if (paymentState.value === "") {
+        setPaymentState({
+          ...paymentState,
+          value: recommendedValue === "0" ? "Введите сумму" : recommendedValue,
+        });
+      }
     }
   }, [newCurrentData, selectedNumber]);
 

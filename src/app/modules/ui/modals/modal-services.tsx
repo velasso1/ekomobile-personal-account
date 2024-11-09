@@ -6,18 +6,15 @@ import TableServicesModal from "../tables/table-services-modal";
 
 import { defaultStyles } from "../../../utils/default-styles";
 
-const ModalServices: FC<IModalProps> = ({ modalState, closeModal }) => {
+const ModalServices: FC<IModalProps> = ({modalState, closeModal}) => {
   const { textSize } = defaultStyles;
   return (
     <>
-      <div className="absolute left-[40%] top-[25%]" data-modal="true" id="modal_27">
+      <div className="absolute top-[25%] left-[40%]" data-modal="true" id="modal_27">
         <div className="modal-content top-[20%] max-w-[600px]">
           <div className="modal-header">
             <h3 className="modal-title">Детали платежа</h3>
-            <button
-              className="btn-icon btn btn-xs btn-light"
-              onClick={() => closeModal({ ...modalState, services: false })}
-            >
+            <button className="btn-icon btn btn-xs btn-light" onClick={() => closeModal({...modalState, services: false})}>
               <i className="ki-outline ki-cross"></i>
             </button>
           </div>
