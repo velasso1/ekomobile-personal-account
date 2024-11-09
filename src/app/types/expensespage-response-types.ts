@@ -17,7 +17,7 @@ interface IExpensesMonthItem {
     month: {
       year: number;
       month: number;
-    };
+    }
   };
   amount: {
     total: number;

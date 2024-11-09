@@ -20,7 +20,7 @@ interface IChangeMarkPopupProps {
 
 const ChangeMarkPopUp: FC<IChangeMarkPopupProps> = ({ popupData, setPopupData }) => {
   const [changeMark, { data, loading, error }] = useMutation(CHANGE_NUMBER_MARK, {
-    refetchQueries: [{ query: GET_NUMBERS_GROUP }],
+    refetchQueries: [GET_NUMBERS_GROUP],
   });
 
   const [newMark, setNewMark] = useState<string>("");

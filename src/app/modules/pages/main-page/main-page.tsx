@@ -76,7 +76,7 @@ const MainPage: FC = () => {
           </div>
           <div className="ml-[15px]">
             <span
-              className={`badge badge-outline ${newCurrentData.me.account.billingNumber.isActive ? "badge-success" : null}`}
+              className={`badge badge-outline ${newCurrentData.me.account.billingNumber.isActive ? "badge-success" : "badge-danger"}`}
             >
               {newCurrentData.me.account.billingNumber.isActive ? "Активен" : "Заблокирован"}
             </span>

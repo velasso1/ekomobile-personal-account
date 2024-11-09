@@ -28,7 +28,7 @@ const NumbersPage: FC = () => {
         },
       });
     }
-  }, []);
+  }, [data]);
 
   if (loading || fullLoading) {
     return <Loader />;
