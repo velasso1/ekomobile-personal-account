@@ -7,11 +7,10 @@ import TableGosuslugi from "../../ui/tables/table-gosuslugi";
 
 import { useNavigate } from "react-router-dom";
 import { mainRoutes } from "../../../utils/routes-name/main-routes";
-import { useQuery } from "@apollo/client";
 
 import Loader from "../../ui/loader/loader";
-import { IGroup, IGroupNumber, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
-import { GET_GOSUSLUGI_DATA } from "../../../api/apollo/queries/get-gosuslugi-data";
+import { IGroupNumber, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
+import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -35,20 +34,8 @@ const getNumbersByStatus = (status: TGUConfimationStatusId, numbers: IGroupNumbe
 };
 
 const GosuslugiNumbersPage: FC = () => {
-  const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
+  const { data, loading, allNumbers } = useGetGosuslugiData();
   const navigate = useNavigate();
-
-  const groups = data?.me?.account?.number?.groups;
-
-  const allNumbers = groups?.flatMap((group: IGroup): IGroupNumber[] => {
-    return group.numbers.map((number: IGroupNumber) => {
-      return {
-        msisdn: number.msisdn,
-        guConfirmationInfo: number.guConfirmationInfo,
-        mark: number.mark,
-      };
-    });
-  });
 
   if (loading || !data) {
     return <Loader />;

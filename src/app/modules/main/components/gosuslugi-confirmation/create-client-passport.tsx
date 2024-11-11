@@ -1,5 +1,4 @@
 import {
-  IGroup,
   IGUConfirmationPassportField,
   ISelectSearchOption,
   ISSUE_PLACE_MANUAL,
@@ -22,7 +21,6 @@ import { useEffect, useState } from "react";
 import PreviewClientData from "./preview-client-data";
 
 interface IProps {
-  groups: IGroup[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -180,7 +178,7 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
     registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
-const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
+const CreateClientPassport = ({ setGUCard }: IProps) => {
   const {
     passportRF: { birthdate },
   } = useAppSelector((state) => state.gosuslugiSlice);
