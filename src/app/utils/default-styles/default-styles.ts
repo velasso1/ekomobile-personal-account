@@ -17,6 +17,7 @@ export const defaultStyles: IDefaultStyles = {
   textSize: {
     default: "text-[12px]",
     p13: "text-[13px]",
+    p14: "text-[14px]",
   },
 
   textColor: {
