@@ -10,7 +10,7 @@ import ChooseNumbers from "../../main/components/gosuslugi-confirmation/choose-n
 import CreateClientFio from "../../main/components/gosuslugi-confirmation/create-client-fio";
 import CreateClientPassport from "../../main/components/gosuslugi-confirmation/create-client-passport";
 import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
-import PreviewBeforeConfirmation from "../../main/components/gosuslugi-confirmation/preview-before-confirmation";
+import PreviewData from "../../main/components/gosuslugi-confirmation/preview-data";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -34,8 +34,8 @@ const GosuslugiConfirmationPage: FC = () => {
       case "create-client-passport":
         return <CreateClientPassport setGUCard={setGUCard} />;
 
-      case "preview-before-confirmation":
-        return <PreviewBeforeConfirmation setGUCard={setGUCard} />;
+      case "preview-data":
+        return <PreviewData setGUCard={setGUCard} />;
     }
   };
 

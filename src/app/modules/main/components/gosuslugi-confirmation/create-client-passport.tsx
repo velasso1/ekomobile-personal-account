@@ -18,7 +18,7 @@ import getAge from "../../../../utils/helpers/getAge";
 import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/dadata";
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
 import { useEffect, useState } from "react";
-import PreviewClientData from "./preview-client-data";
+import PreviewDataClient from "./preview-data-client";
 import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 
 interface IProps {
@@ -311,7 +311,7 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
           })}
         </div>
         <div className="pt-11">
-          <PreviewClientData containerClass="card p-8 w-[550px]" />
+          <PreviewDataClient containerClass="card p-8 w-[550px]" />
         </div>
       </div>
       <div className="pt-8">

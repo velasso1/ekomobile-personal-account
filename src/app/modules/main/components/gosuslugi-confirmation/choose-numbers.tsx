@@ -60,7 +60,7 @@ const ChooseNumbers = ({ setGUCard }: IProps) => {
             }
           }}
           nextDisabled={numbers.length < 1}
-          nextClick={() => setGUCard("preview-before-confirmation")}
+          nextClick={() => setGUCard("preview-data")}
         />
       </div>
     </>

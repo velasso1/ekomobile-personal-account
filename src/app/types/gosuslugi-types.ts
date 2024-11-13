@@ -5,7 +5,8 @@ export type TGUConfirmationCards =
   | "choose-numbers"
   | "create-client-fio"
   | "create-client-passport"
-  | "preview-before-confirmation";
+  | "preview-data"
+  | "data-sent";
 export type TGUConfirmationClientGender = "MALE" | "FEMALE";
 
 export const ISSUE_PLACE_MANUAL = "issuePlaceManual";

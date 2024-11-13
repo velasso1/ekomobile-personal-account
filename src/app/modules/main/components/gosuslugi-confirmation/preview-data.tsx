@@ -7,7 +7,7 @@ import { defaultStyles } from "../../../../utils/default-styles";
 import beautifyNumber from "../../../../utils/helpers/beautifyNumber";
 import CheckboxInput from "../../../ui/checkbox-input/checkbox-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import PreviewClientData from "./preview-client-data";
+import PreviewDataClient from "./preview-data-client";
 import shieldCross from "../../../../assets/images/shield-cross.svg";
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
@@ -23,7 +23,7 @@ const staticTexts = {
   warningText: "На время проведения проверки данных указанные номера будут заблокированы",
 };
 
-const PreviewBeforeConfirmation = ({ setGUCard }: IProps) => {
+const PreviewData = ({ setGUCard }: IProps) => {
   const { conformationRequiredNumbers, allClients } = useGetGosuslugiData();
   const { numbers, clientId } = useAppSelector((state) => state.gosuslugiSlice);
   const currentClient = allClients?.find((client) => client.id === clientId);
@@ -51,7 +51,7 @@ const PreviewBeforeConfirmation = ({ setGUCard }: IProps) => {
           </div>
           <div className="pt-8">
             {clientId === CREATE_NEW_CLIENT_ID ? (
-              <PreviewClientData />
+              <PreviewDataClient />
             ) : (
               <div
                 className={`${defaultStyles.textSize.p14} font-semibold`}
@@ -84,13 +84,19 @@ const PreviewBeforeConfirmation = ({ setGUCard }: IProps) => {
 
       <div className="pt-8">
         <PrevNextButtons
-          prevClick={() => setGUCard("choose-numbers")}
+          prevClick={() => {
+            if (conformationRequiredNumbers.length === 1) {
+              setGUCard("choose-client");
+            } else {
+              setGUCard("choose-numbers");
+            }
+          }}
           nextDisabled={!isDataCorrect}
-          nextClick={() => setGUCard("preview-before-confirmation")}
+          nextClick={() => setGUCard("preview-data")}
         />
       </div>
     </>
   );
 };
 
-export default PreviewBeforeConfirmation;
+export default PreviewData;

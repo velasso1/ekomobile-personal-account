@@ -2,7 +2,7 @@ import { ICLient, TGUConfirmationCards } from "../../../../types/gosuslugi-types
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
-import { CREATE_NEW_CLIENT_ID, updateClientId } from "../../../../store/slices/gosuslugi-slice";
+import { CREATE_NEW_CLIENT_ID, updateClientId, updateNumbers } from "../../../../store/slices/gosuslugi-slice";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 
 interface IProps {
@@ -55,7 +55,8 @@ const ChooseClient = ({ setGUCard }: IProps) => {
               if (clientId === staticTexts.newClient.id) {
                 setGUCard("create-client-fio");
               } else if (conformationRequiredNumbers.length === 1) {
-                setGUCard("preview-before-confirmation");
+                dispatch(updateNumbers({ checked: true, affectedNumber: conformationRequiredNumbers[0].msisdn }));
+                setGUCard("preview-data");
               } else {
                 setGUCard("choose-numbers");
               }
