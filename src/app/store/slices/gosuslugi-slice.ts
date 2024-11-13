@@ -1,7 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IGURequestConfirmationPassportRFParams, ISSUE_PLACE_MANUAL } from "../../types/gosuslugi-types";
 
+export const CREATE_NEW_CLIENT_ID = "createNewClientId";
+
 type TInitGUSlice = {
+  clientId: string;
   passportRF: {
     [ISSUE_PLACE_MANUAL]: string;
   } & IGURequestConfirmationPassportRFParams["passportRF"];
@@ -14,6 +17,7 @@ interface IUpdateNumbersPayload {
 }
 
 const initialState: TInitGUSlice = {
+  clientId: "",
   passportRF: {
     birthdate: "",
     birthplace: "",
@@ -50,8 +54,12 @@ const gosuslugiSlice = createSlice({
         state.numbers = state.numbers.filter((number) => number !== affectedNumber);
       }
     },
+
+    updateClientId(state, action: PayloadAction<string>) {
+      state.clientId = action.payload;
+    },
   },
 });
 
-export const { updatePassportRF, updateNumbers } = gosuslugiSlice.actions;
+export const { updatePassportRF, updateNumbers, updateClientId } = gosuslugiSlice.actions;
 export default gosuslugiSlice.reducer;

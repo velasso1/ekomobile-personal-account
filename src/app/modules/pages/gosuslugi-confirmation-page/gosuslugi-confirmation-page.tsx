@@ -10,6 +10,8 @@ import ChooseNumbers from "../../main/components/gosuslugi-confirmation/choose-n
 import CreateClientFio from "../../main/components/gosuslugi-confirmation/create-client-fio";
 import CreateClientPassport from "../../main/components/gosuslugi-confirmation/create-client-passport";
 import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
+import DataPreview from "../../main/components/gosuslugi-confirmation/data-preview";
+import DataSent from "../../main/components/gosuslugi-confirmation/data-sent";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -32,6 +34,12 @@ const GosuslugiConfirmationPage: FC = () => {
 
       case "create-client-passport":
         return <CreateClientPassport setGUCard={setGUCard} />;
+
+      case "data-preview":
+        return <DataPreview setGUCard={setGUCard} />;
+
+      case "data-sent":
+        return <DataSent />;
     }
   };
 
@@ -43,11 +51,7 @@ const GosuslugiConfirmationPage: FC = () => {
       <PageTitle title={staticTexts.title} />
       {1 > 0 && (
         <Card>
-          <div
-          // className="px-[10px] py-[20px]"
-          >
-            {showCard(GUCard)}
-          </div>
+          <div>{showCard(GUCard)}</div>
         </Card>
       )}
     </div>
