@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
-import { updateConfirmationPassportRF } from "../store/slices/gosuslugi-slice";
+
 import { FormikProps } from "formik";
 import { TFormikClientFio, TFormikClientPassport } from "../types/gosuslugi-types";
+import { updatePassportRF } from "../store/slices/gosuslugi-slice";
 
 const useCreateClientFormSync = (formik: FormikProps<TFormikClientFio | TFormikClientPassport>) => {
   const [isNextDisabled, setIsNextDisabled] = useState(false);
@@ -33,7 +34,7 @@ const useCreateClientFormSync = (formik: FormikProps<TFormikClientFio | TFormikC
   useEffect(() => {
     Object.keys(formik.values).forEach((key) => {
       if (formik.values[key] !== undefined && formik.values[key] !== null) {
-        dispatch(updateConfirmationPassportRF({ [key]: formik.values[key] }));
+        dispatch(updatePassportRF({ [key]: formik.values[key] }));
       }
     });
   }, [formik.values]);

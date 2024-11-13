@@ -2,9 +2,9 @@ import { useState } from "react";
 import { ICLient, TGUConfirmationCards } from "../../../../types/gosuslugi-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
+import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 
 interface IProps {
-  clients: ICLient[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -16,8 +16,10 @@ const staticTexts = {
   },
 };
 
-const ChooseClient = ({ clients, setGUCard }: IProps) => {
+const ChooseClient = ({ setGUCard }: IProps) => {
   const [clientId, setClientId] = useState("");
+
+  const { allClients } = useGetGosuslugiData();
 
   return (
     <>
@@ -25,7 +27,7 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
 
         <div className="radio-list flex flex-col pt-7">
-          {clients.map((client: ICLient, index: number) => (
+          {allClients.map((client: ICLient, index: number) => (
             <RadioInput
               key={client.id}
               isFirst={index === 0}
@@ -51,6 +53,8 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
             nextClick={() => {
               if (clientId === staticTexts.newClient.id) {
                 setGUCard("create-client-fio");
+              } else {
+                setGUCard("choose-numbers");
               }
             }}
           />

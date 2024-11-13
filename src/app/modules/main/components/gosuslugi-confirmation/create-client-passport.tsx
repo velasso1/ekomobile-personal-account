@@ -1,5 +1,4 @@
 import {
-  IGroup,
   IGUConfirmationPassportField,
   ISelectSearchOption,
   ISSUE_PLACE_MANUAL,
@@ -20,9 +19,9 @@ import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/d
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
 import { useEffect, useState } from "react";
 import PreviewClientData from "./preview-client-data";
+import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 
 interface IProps {
-  groups: IGroup[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -180,11 +179,13 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
     registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
-const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
+const CreateClientPassport = ({ setGUCard }: IProps) => {
   const {
     passportRF: { birthdate },
   } = useAppSelector((state) => state.gosuslugiSlice);
   const [issuePlaceOptions, setIssuePlaceOptions] = useState<{ label: string; value: string }[]>([]);
+
+  const { conformationRequiredNumbers } = useGetGosuslugiData();
 
   const formik = useFormik<TFormikClientPassport>({
     initialValues: {
@@ -309,8 +310,8 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
             }
           })}
         </div>
-        <div className="pt-[20px]">
-          <PreviewClientData />
+        <div className="pt-11">
+          <PreviewClientData containerClass="card p-8 w-[550px]" />
         </div>
       </div>
       <div className="pt-8">
@@ -320,7 +321,10 @@ const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
           nextClick={async () => {
             const errors = await formik.validateForm();
             if (Object.keys(errors).length === 0) {
-              // go create client passportRF
+              // TODO: change condition when there is real data
+              if (conformationRequiredNumbers.length > 0) {
+                setGUCard("choose-numbers");
+              }
             } else {
               formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
             }
