@@ -56,7 +56,7 @@ const ChooseClient = ({ setGUCard }: IProps) => {
                 setGUCard("create-client-fio");
               } else if (conformationRequiredNumbers.length === 1) {
                 dispatch(updateNumbers({ checked: true, affectedNumber: conformationRequiredNumbers[0].msisdn }));
-                setGUCard("preview-data");
+                setGUCard("data-preview");
               } else {
                 setGUCard("choose-numbers");
               }

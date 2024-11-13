@@ -7,7 +7,7 @@ import { defaultStyles } from "../../../../utils/default-styles";
 import beautifyNumber from "../../../../utils/helpers/beautifyNumber";
 import CheckboxInput from "../../../ui/checkbox-input/checkbox-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import PreviewDataClient from "./preview-data-client";
+import DataPreviewClient from "./data-preview-client";
 import shieldCross from "../../../../assets/images/shield-cross.svg";
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
@@ -23,7 +23,7 @@ const staticTexts = {
   warningText: "На время проведения проверки данных указанные номера будут заблокированы",
 };
 
-const PreviewData = ({ setGUCard }: IProps) => {
+const DataPreview = ({ setGUCard }: IProps) => {
   const { conformationRequiredNumbers, allClients } = useGetGosuslugiData();
   const { numbers, clientId } = useAppSelector((state) => state.gosuslugiSlice);
   const currentClient = allClients?.find((client) => client.id === clientId);
@@ -51,7 +51,7 @@ const PreviewData = ({ setGUCard }: IProps) => {
           </div>
           <div className="pt-8">
             {clientId === CREATE_NEW_CLIENT_ID ? (
-              <PreviewDataClient />
+              <DataPreviewClient />
             ) : (
               <div
                 className={`${defaultStyles.textSize.p14} font-semibold`}
@@ -92,11 +92,11 @@ const PreviewData = ({ setGUCard }: IProps) => {
             }
           }}
           nextDisabled={!isDataCorrect}
-          nextClick={() => setGUCard("preview-data")}
+          nextClick={() => setGUCard("data-sent")}
         />
       </div>
     </>
   );
 };
 
-export default PreviewData;
+export default DataPreview;

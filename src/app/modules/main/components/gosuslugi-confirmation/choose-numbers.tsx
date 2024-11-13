@@ -1,6 +1,5 @@
 import { TGUConfirmationCards } from "../../../../types/gosuslugi-types";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
-import { mainRoutes } from "../../../../utils/routes-name/main-routes";
 import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 import CheckboxInput from "../../../ui/checkbox-input/checkbox-input";
 import beautifyNumber from "../../../../utils/helpers/beautifyNumber";
@@ -60,7 +59,7 @@ const ChooseNumbers = ({ setGUCard }: IProps) => {
             }
           }}
           nextDisabled={numbers.length < 1}
-          nextClick={() => setGUCard("preview-data")}
+          nextClick={() => setGUCard("data-preview")}
         />
       </div>
     </>

@@ -17,7 +17,7 @@ const staticTexts = {
   gender: "Пол:",
 };
 
-const PreviewDataClient = ({ containerClass }: IProps) => {
+const DataPreviewClient = ({ containerClass }: IProps) => {
   const {
     passportRF: {
       birthdate,
@@ -59,4 +59,4 @@ const PreviewDataClient = ({ containerClass }: IProps) => {
   );
 };
 
-export default PreviewDataClient;
+export default DataPreviewClient;

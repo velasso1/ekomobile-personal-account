@@ -5,7 +5,7 @@ export type TGUConfirmationCards =
   | "choose-numbers"
   | "create-client-fio"
   | "create-client-passport"
-  | "preview-data"
+  | "data-preview"
   | "data-sent";
 export type TGUConfirmationClientGender = "MALE" | "FEMALE";
 
