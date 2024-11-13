@@ -5,7 +5,7 @@ import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 import CheckboxInput from "../../../ui/checkbox-input/checkbox-input";
 import beautifyNumber from "../../../../utils/helpers/beautifyNumber";
 import { useAppDispatch, useAppSelector } from "../../../../store";
-import { updateNumbers } from "../../../../store/slices/gosuslugi-slice";
+import { CREATE_NEW_CLIENT_ID, updateNumbers } from "../../../../store/slices/gosuslugi-slice";
 import { defaultStyles } from "../../../../utils/default-styles";
 
 interface IProps {
@@ -18,7 +18,7 @@ const staticTexts = {
 
 const ChooseNumbers = ({ setGUCard }: IProps) => {
   const { conformationRequiredNumbers } = useGetGosuslugiData();
-  const { numbers } = useAppSelector((state) => state.gosuslugiSlice);
+  const { numbers, clientId } = useAppSelector((state) => state.gosuslugiSlice);
   const dispatch = useAppDispatch();
 
   return (
@@ -52,9 +52,15 @@ const ChooseNumbers = ({ setGUCard }: IProps) => {
 
       <div className="pt-8">
         <PrevNextButtons
-          nextRoute={mainRoutes.gosuslugiConfirmation}
-          prevClick={() => setGUCard("create-client-passport")}
+          prevClick={() => {
+            if (clientId === CREATE_NEW_CLIENT_ID) {
+              setGUCard("create-client-passport");
+            } else {
+              setGUCard("choose-client");
+            }
+          }}
           nextDisabled={numbers.length < 1}
+          nextClick={() => setGUCard("preview-before-confirmation")}
         />
       </div>
     </>

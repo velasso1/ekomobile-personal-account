@@ -1,6 +1,11 @@
 export type TGUConfimationStatusId = "REQUIRED" | "NOT_REQUIRED" | "REQUESTED";
 // названия компонентов, которые используются для управления состоянием отображения нужного компонента для подтверждения ГУ
-export type TGUConfirmationCards = "choose-client" | "choose-numbers" | "create-client-fio" | "create-client-passport";
+export type TGUConfirmationCards =
+  | "choose-client"
+  | "choose-numbers"
+  | "create-client-fio"
+  | "create-client-passport"
+  | "preview-before-confirmation";
 export type TGUConfirmationClientGender = "MALE" | "FEMALE";
 
 export const ISSUE_PLACE_MANUAL = "issuePlaceManual";

@@ -1,8 +1,9 @@
-import { useState } from "react";
 import { ICLient, TGUConfirmationCards } from "../../../../types/gosuslugi-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
+import { CREATE_NEW_CLIENT_ID, updateClientId } from "../../../../store/slices/gosuslugi-slice";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
@@ -11,15 +12,15 @@ interface IProps {
 const staticTexts = {
   card: "Для подтверждения номера(ов) Вы можете использовать следующих контрагентов:",
   newClient: {
-    id: "createNewClient",
+    id: CREATE_NEW_CLIENT_ID,
     label: "Создать нового контрагента",
   },
 };
 
 const ChooseClient = ({ setGUCard }: IProps) => {
-  const [clientId, setClientId] = useState("");
-
-  const { allClients } = useGetGosuslugiData();
+  const { allClients, conformationRequiredNumbers } = useGetGosuslugiData();
+  const dispatch = useAppDispatch();
+  const { clientId } = useAppSelector((state) => state.gosuslugiSlice);
 
   return (
     <>
@@ -35,7 +36,7 @@ const ChooseClient = ({ setGUCard }: IProps) => {
               value={client.id}
               isChecked={clientId === client.id}
               label={`${client.nameFamily} ${client.nameGiven} ${client.namePatronymic}`}
-              onChange={() => setClientId(client.id)}
+              onChange={() => dispatch(updateClientId(client.id))}
             />
           ))}
           <RadioInput
@@ -43,7 +44,7 @@ const ChooseClient = ({ setGUCard }: IProps) => {
             value={staticTexts.newClient.id}
             isChecked={clientId === staticTexts.newClient.id}
             label={staticTexts.newClient.label}
-            onChange={() => setClientId(staticTexts.newClient.id)}
+            onChange={() => dispatch(updateClientId(staticTexts.newClient.id))}
           />
         </div>
 
@@ -53,6 +54,8 @@ const ChooseClient = ({ setGUCard }: IProps) => {
             nextClick={() => {
               if (clientId === staticTexts.newClient.id) {
                 setGUCard("create-client-fio");
+              } else if (conformationRequiredNumbers.length === 1) {
+                setGUCard("preview-before-confirmation");
               } else {
                 setGUCard("choose-numbers");
               }
