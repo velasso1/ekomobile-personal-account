@@ -3,10 +3,10 @@ import { gql } from "@apollo/client";
 
 // query for getting enbaled servieces
 export const GET_SERVICES = gql`
-  query Me {
+  query Me($msisdn: Msisdn) {
     me {
       account {
-        number {
+        billingNumber(msisdn: $msisdn) {
           services {
             ... on BillingNumberServiceEnabled {
               category {
@@ -35,10 +35,10 @@ export const GET_SERVICES = gql`
 // query for getting disabled services
 
 export const GET_AVAILABLE_SERVICES = gql`
-  query Me {
+  query Me($msisdn: Msisdn) {
     me {
       account {
-        number {
+        billingNumber(msisdn: $msisdn) {
           services {
             ... on BillingNumberServiceAvailable {
               serviceId

@@ -9,21 +9,21 @@ interface IFeeItem {
 }
 
 export interface IServicesItem {
-  category: ICategoryItem;
-  id: string;
-  serviceId: string;
-  name: string;
-  description: string;
-  state: string;
-  isReadonly: boolean;
-  enabledAt: string;
-  fee: IFeeItem;
+  category: ICategoryItem /* + */;
+  id: string /* + */;
+  serviceId: string /* + */;
+  name: string /* + */;
+  description: string /* + */;
+  state: string /* + */;
+  isReadonly: boolean /* + */;
+  enabledAt: string /* + */;
+  fee: IFeeItem /* + */;
 }
 
 export interface IServicesPageResponse {
   me: {
     account: {
-      number: {
+      billingNumber: {
         services: IServicesItem[];
       };
     };
@@ -50,7 +50,7 @@ export interface IAvailableServiceItem {
 export interface IAvailableServicesResponse {
   me: {
     account: {
-      number: {
+      billingNumber: {
         services: IAvailableServiceItem[];
       };
     };

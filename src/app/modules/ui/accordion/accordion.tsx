@@ -1,31 +1,70 @@
 import { FC, useState } from "react";
 
-import { defaultStyles } from "../../../utils/default-styles";
+import { useMutation } from "@apollo/client";
+import { ENABLE_SERVICE, DISABLE_SERVICE } from "../../../api/apollo/mutations/switch-number-service";
+import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
+
+import { useAppSelector } from "../../../store";
 
 import { IServicesItem } from "../../../types/servicespage-response-types";
 import { IAvailableServiceItem } from "../../../types/servicespage-response-types";
+import { IEnableServiceResponse, IDisableServiceResponse } from "../../../api/apollo/mutations/switch-number-service";
 
 import { PriceTypes } from "../../../utils/auxuliary-data/services-categories";
 import { dateFormatter } from "../../../utils/helpers/date-formatter";
 import { moneyFormatter } from "../../../utils/helpers/money-formatter";
+import { defaultStyles } from "../../../utils/default-styles";
+import Loader from "../loader/loader";
+import WarningBadge from "../badges/warning-badge";
 
 interface IAccordionProps {
   accordionNumber: number;
   accordionTitle: string;
   accrodionItems: IServicesItem[] | IAvailableServiceItem[];
   servicesQuantity: number;
-  connect?: boolean;
 }
 
-const Accordion: FC<IAccordionProps> = ({
-  accordionNumber,
-  accordionTitle,
-  accrodionItems,
-  servicesQuantity,
-  connect,
-}) => {
+const Accordion: FC<IAccordionProps> = ({ accordionNumber, accordionTitle, accrodionItems, servicesQuantity }) => {
+  const { selectedNumber, servicesChecked } = useAppSelector((state) => state.userSlice);
+
+  const [enableServiceQuery, { data, loading, error }] = useMutation<IEnableServiceResponse>(ENABLE_SERVICE, {
+    refetchQueries: [GET_CURRENT_USER_DATA],
+  });
+  const [disableServiceQuery, { data: disableData, loading: disableLoading, error: disableError }] =
+    useMutation<IDisableServiceResponse>(DISABLE_SERVICE, { refetchQueries: [GET_CURRENT_USER_DATA] });
+
   const [accordionOpen, setAccOpen] = useState<boolean>(false);
   const { bgColor, textSize, textColor } = defaultStyles;
+
+  const enableService = (serviceId: string): void => {
+    enableServiceQuery({
+      variables: {
+        correlationId: crypto.randomUUID(),
+        actionId: crypto.randomUUID(),
+        targetMsisdn: selectedNumber,
+        availableServiceId: serviceId,
+      },
+    });
+  };
+
+  const disableService = (serviceId: string): void => {
+    disableServiceQuery({
+      variables: {
+        correlationId: crypto.randomUUID(),
+        actionId: crypto.randomUUID(),
+        targetMsisdn: selectedNumber,
+        enabledServiceId: serviceId,
+      },
+    });
+  };
+
+  if (loading || disableLoading) {
+    return <Loader />;
+  }
+
+  if (error || disableError) {
+    return <WarningBadge isError={true} />;
+  }
 
   return (
     <>
@@ -85,10 +124,20 @@ const Accordion: FC<IAccordionProps> = ({
                           <td>
                             {item.isReadonly ? (
                               <span className="">Для уточнения обратитесь в поддержку</span>
-                            ) : !connect ? (
-                              <span className="badge badge-danger hover:cursor-pointer">Отключить</span>
+                            ) : item.enabledAt ? (
+                              <span
+                                className="badge badge-danger cursor-pointer"
+                                onClick={() => disableService(item.serviceId)}
+                              >
+                                Отключить
+                              </span>
                             ) : (
-                              <span className="badge badge-primary">Подключить</span>
+                              <span
+                                className="badge badge-primary cursor-pointer"
+                                onClick={() => enableService(item.serviceId)}
+                              >
+                                Подключить
+                              </span>
                             )}
                           </td>
                         </tr>

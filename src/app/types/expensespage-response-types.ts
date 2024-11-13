@@ -1,5 +1,7 @@
 import { IOrderAvailableMonth } from "./detailspage-response-types";
 
+import { IPartsInfo } from "./mainpage-userinfo-types";
+
 export interface INodeItem {
   timestamp: string;
   type: string;
@@ -17,15 +19,16 @@ interface IExpensesMonthItem {
     month: {
       year: number;
       month: number;
-    }
+    };
   };
   amount: {
     total: number;
+    parts: IPartsInfo[];
   };
   transactionList: ITransactionList;
 }
 
-interface IExpensesInfo {
+export interface IExpensesInfo {
   availableMonths: IOrderAvailableMonth[];
   month: IExpensesMonthItem;
 }
