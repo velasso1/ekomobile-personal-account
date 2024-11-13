@@ -53,6 +53,8 @@ const ChooseClient = ({ setGUCard }: IProps) => {
             nextClick={() => {
               if (clientId === staticTexts.newClient.id) {
                 setGUCard("create-client-fio");
+              } else {
+                setGUCard("choose-numbers");
               }
             }}
           />
