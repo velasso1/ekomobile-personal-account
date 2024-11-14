@@ -18,8 +18,10 @@ const staticTexts = {
 };
 
 const GosuslugiConfirmationPage: FC = () => {
-  const [GUCard, setGUCard] = useState<TGUConfirmationCards>("choose-client");
-  const { data, loading } = useGetGosuslugiData();
+  const { data, loading, allClients } = useGetGosuslugiData();
+  const [GUCard, setGUCard] = useState<TGUConfirmationCards>(
+    allClients.length > 0 ? "choose-client" : "create-client-fio"
+  );
 
   const showCard = (cardNow: TGUConfirmationCards) => {
     switch (cardNow) {
