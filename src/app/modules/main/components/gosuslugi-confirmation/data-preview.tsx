@@ -9,6 +9,8 @@ import CheckboxInput from "../../../ui/checkbox-input/checkbox-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
 import DataPreviewClient from "./data-preview-client";
 import shieldCross from "../../../../assets/images/shield-cross.svg";
+import useConfirmGosuslugiData from "../../../../hooks/useConfirmGosuslugiData";
+import Loader from "../../../ui/loader/loader";
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
@@ -25,6 +27,7 @@ const staticTexts = {
 
 const DataPreview = ({ setGUCard }: IProps) => {
   const { conformationRequiredNumbers, allClients } = useGetGosuslugiData();
+  const { confirmNumbers, loadingClient, loadingPassport, dataClient, errorClient } = useConfirmGosuslugiData();
   const { numbers, clientId } = useAppSelector((state) => state.gosuslugiSlice);
   const currentClient = allClients?.find((client) => client.id === clientId);
 
@@ -32,7 +35,8 @@ const DataPreview = ({ setGUCard }: IProps) => {
 
   return (
     <>
-      <div>
+      {(loadingClient || loadingPassport) && <Loader />}
+      <div className="bg-opacity-5">
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.cardSubtitile}</div>
         <div className="pt-[20px]">
@@ -92,7 +96,10 @@ const DataPreview = ({ setGUCard }: IProps) => {
             }
           }}
           nextDisabled={!isDataCorrect}
-          nextClick={() => setGUCard("data-sent")}
+          nextClick={async () => {
+            await confirmNumbers();
+            setGUCard("data-sent");
+          }}
         />
       </div>
     </>
