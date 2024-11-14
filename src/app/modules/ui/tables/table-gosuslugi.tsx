@@ -1,10 +1,13 @@
 import { FC } from "react";
 
-import { IGroupNumber, ITableGosuslugiProps, TGUConfimationStatusId } from "../../../types/table-types";
 import beautifyNumber from "../../../utils/helpers/beautifyNumber";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import config from "../../../../../auxuliary.json";
 import { defaultStyles } from "../../../utils/default-styles";
+
+import Loader from "../loader/loader";
+import { IGroupNumber, IGUHints, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
+import { ITableGosuslugiProps } from "../../../types/table-types";
+import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
 
 const getStatusBageClass = (status: TGUConfimationStatusId) => {
   const bageBase = "badge badge-outline badge-";
@@ -18,8 +21,7 @@ const getStatusBageClass = (status: TGUConfimationStatusId) => {
   }
 };
 
-const getGUHintText = (status: TGUConfimationStatusId) => {
-  const hints = config.GUHints.data.info.guConfirmation.hints;
+const getGUHintText = (status: TGUConfimationStatusId, hints: IGUHints) => {
   switch (status) {
     case "NOT_REQUIRED":
       return hints.confirmationNotNeeded;
@@ -54,6 +56,12 @@ const TableGosuslugi: FC<ITableGosuslugiProps> = ({ tableName, tableItem }) => {
     return null;
   }
 
+  const { data, loading, hints } = useGetGosuslugiData();
+
+  if (loading || !data) {
+    return <Loader />;
+  }
+
   return (
     <div className="card mt-[30px] xs:w-[283px] xs:overflow-scroll md:w-auto lg:overflow-auto">
       <div className="card-header flex justify-start">
@@ -64,7 +72,7 @@ const TableGosuslugi: FC<ITableGosuslugiProps> = ({ tableName, tableItem }) => {
           delay={{ show: 250, hide: 400 }}
           overlay={(props) => (
             <Tooltip id="hint-tooltip" {...props} className="max-w-[300px] py-[10px]">
-              {getGUHintText(getStatus(tableItem))}
+              {getGUHintText(getStatus(tableItem), hints)}
             </Tooltip>
           )}
         >
