@@ -1,23 +1,26 @@
-import { useState } from "react";
 import { ICLient, TGUConfirmationCards } from "../../../../types/gosuslugi-types";
 import { RadioInput } from "../../../ui/radio-input";
 import PrevNextButtons from "../../../ui/prev-next-buttons/prev-next-buttons";
+import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
+import { CREATE_NEW_CLIENT_ID, updateClientId, updateNumbers } from "../../../../store/slices/gosuslugi-slice";
+import { useAppDispatch, useAppSelector } from "../../../../store";
 
 interface IProps {
-  clients: ICLient[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
 const staticTexts = {
   card: "Для подтверждения номера(ов) Вы можете использовать следующих контрагентов:",
   newClient: {
-    id: "createNewClient",
+    id: CREATE_NEW_CLIENT_ID,
     label: "Создать нового контрагента",
   },
 };
 
-const ChooseClient = ({ clients, setGUCard }: IProps) => {
-  const [clientId, setClientId] = useState("");
+const ChooseClient = ({ setGUCard }: IProps) => {
+  const { allClients, conformationRequiredNumbers } = useGetGosuslugiData();
+  const dispatch = useAppDispatch();
+  const { clientId } = useAppSelector((state) => state.gosuslugiSlice);
 
   return (
     <>
@@ -25,7 +28,7 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
 
         <div className="radio-list flex flex-col pt-7">
-          {clients.map((client: ICLient, index: number) => (
+          {allClients.map((client: ICLient, index: number) => (
             <RadioInput
               key={client.id}
               isFirst={index === 0}
@@ -33,7 +36,7 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
               value={client.id}
               isChecked={clientId === client.id}
               label={`${client.nameFamily} ${client.nameGiven} ${client.namePatronymic}`}
-              onChange={() => setClientId(client.id)}
+              onChange={() => dispatch(updateClientId(client.id))}
             />
           ))}
           <RadioInput
@@ -41,7 +44,7 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
             value={staticTexts.newClient.id}
             isChecked={clientId === staticTexts.newClient.id}
             label={staticTexts.newClient.label}
-            onChange={() => setClientId(staticTexts.newClient.id)}
+            onChange={() => dispatch(updateClientId(staticTexts.newClient.id))}
           />
         </div>
 
@@ -51,6 +54,11 @@ const ChooseClient = ({ clients, setGUCard }: IProps) => {
             nextClick={() => {
               if (clientId === staticTexts.newClient.id) {
                 setGUCard("create-client-fio");
+              } else if (conformationRequiredNumbers.length === 1) {
+                dispatch(updateNumbers({ checked: true, affectedNumber: conformationRequiredNumbers[0].msisdn }));
+                setGUCard("data-preview");
+              } else {
+                setGUCard("choose-numbers");
               }
             }}
           />

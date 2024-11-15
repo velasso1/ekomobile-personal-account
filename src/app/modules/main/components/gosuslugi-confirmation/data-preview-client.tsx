@@ -2,11 +2,14 @@ import { useAppSelector } from "../../../../store";
 import { ISSUE_PLACE_MANUAL } from "../../../../types/gosuslugi-types";
 import { defaultStyles } from "../../../../utils/default-styles";
 
+interface IProps {
+  containerClass?: string;
+}
 const staticTexts = {
   title: "Будут подтверждены на контрагента",
   birthdate: "Дата рождения:",
   birthplace: "Место рождения:",
-  passport: "Пасспорт РФ:",
+  passport: "Паспорт РФ:",
   issueDate: "Выдан:",
   issuePlace: "Место выдачи:",
   issuePlaceCode: "Код подразделения:",
@@ -14,7 +17,7 @@ const staticTexts = {
   gender: "Пол:",
 };
 
-const PreviewClientData = () => {
+const DataPreviewClient = ({ containerClass }: IProps) => {
   const {
     passportRF: {
       birthdate,
@@ -33,9 +36,8 @@ const PreviewClientData = () => {
     },
   } = useAppSelector((state) => state.gosuslugiSlice);
 
-  console.log(birthdate);
   return (
-    <div className={`${defaultStyles.textSize.p14}`}>
+    <div className={`${defaultStyles.textSize.p14} ${containerClass ? containerClass : ""}`}>
       {nameFamily && nameGiven && (
         <div className="font-semibold">{`${staticTexts.title} ${nameFamily} ${nameGiven} ${namePatronymic}`}</div>
       )}
@@ -57,4 +59,4 @@ const PreviewClientData = () => {
   );
 };
 
-export default PreviewClientData;
+export default DataPreviewClient;

@@ -13,6 +13,8 @@ import * as Yup from "yup";
 import { defaultStyles } from "../../../../utils/default-styles";
 import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
 import getAge from "../../../../utils/helpers/getAge";
+import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   groups: IGroup[];
@@ -138,6 +140,8 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
   });
 
   const { isNextDisabled } = useCreateClientFormSync(formik);
+  const { allClients } = useGetGosuslugiData();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -191,7 +195,13 @@ const CreateClientFio = ({ groups, setGUCard }: IProps) => {
       <div className="pt-8">
         <PrevNextButtons
           nextDisabled={isNextDisabled}
-          prevClick={() => setGUCard("choose-client")}
+          prevClick={() => {
+            if (allClients.length < 0) {
+              setGUCard("choose-client");
+            } else {
+              navigate(-1);
+            }
+          }}
           nextClick={async () => {
             const errors = await formik.validateForm();
             if (Object.keys(errors).length === 0) {
