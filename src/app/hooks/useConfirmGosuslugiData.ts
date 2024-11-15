@@ -33,6 +33,7 @@ const useConfirmGosuslugiData = () => {
         correlationId: crypto.randomUUID(),
       },
       params: {
+        id: crypto.randomUUID(),
         targetMsisdn: number,
         passportRF: {
           series: passportRF.series,
@@ -40,7 +41,7 @@ const useConfirmGosuslugiData = () => {
           number: passportRF.number,
           namePatronymic: passportRF.namePatronymic,
           nameGiven: passportRF.nameGiven,
-          nameFamily: passportRF.nameGiven,
+          nameFamily: passportRF.nameFamily,
           issuePlaceCode: passportRF.issuePlaceCode,
           issuePlace: passportRF.issuePlaceManual ? passportRF.issuePlaceManual : passportRF.issuePlace,
           issueDate: passportRF.issueDate,
@@ -52,17 +53,41 @@ const useConfirmGosuslugiData = () => {
     }));
   };
 
-  const confirmNumbers = () => {
-    if (clientId === CREATE_NEW_CLIENT_ID) {
-      confirmationPassportParams().forEach((passportParams) =>
-        guRequestConfirmationPassportRF({ variables: passportParams })
-      );
-    } else {
-      confirmationClientParams().forEach((cilentParams) => guRequestConfirmationClient({ variables: cilentParams }));
+  const confirmNumbers = async () => {
+    try {
+      if (clientId === CREATE_NEW_CLIENT_ID) {
+        const passportPromises = confirmationPassportParams().map(async (passportParams) => {
+          try {
+            await guRequestConfirmationPassportRF({ variables: passportParams });
+          } catch (err) {
+            console.error(`Passport Confirmation Error:`, err);
+          }
+        });
+        await Promise.all(passportPromises);
+      } else {
+        const clientPromises = confirmationClientParams().map(async (clientParams) => {
+          try {
+            await guRequestConfirmationClient({ variables: clientParams });
+          } catch (err) {
+            console.error(`Client Confirmation Error:`, err);
+          }
+        });
+        await Promise.all(clientPromises);
+      }
+    } catch (err) {
+      console.error(`Confirmation Error:`, err);
     }
   };
 
-  return { confirmNumbers, dataClient, dataPassport, loadingClient, loadingPassport, errorClient, errorPassport };
+  return {
+    confirmNumbers,
+    dataClient,
+    dataPassport,
+    loadingClient,
+    loadingPassport,
+    errorClient,
+    errorPassport,
+  };
 };
 
 export default useConfirmGosuslugiData;

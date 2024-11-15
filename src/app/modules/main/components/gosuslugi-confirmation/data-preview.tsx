@@ -27,7 +27,8 @@ const staticTexts = {
 
 const DataPreview = ({ setGUCard }: IProps) => {
   const { conformationRequiredNumbers, allClients } = useGetGosuslugiData();
-  const { confirmNumbers, loadingClient, loadingPassport, dataClient, errorClient } = useConfirmGosuslugiData();
+  const { confirmNumbers, loadingClient, loadingPassport, dataClient, dataPassport, errorClient, errorPassport } =
+    useConfirmGosuslugiData();
   const { numbers, clientId } = useAppSelector((state) => state.gosuslugiSlice);
   const currentClient = allClients?.find((client) => client.id === clientId);
 
@@ -36,6 +37,7 @@ const DataPreview = ({ setGUCard }: IProps) => {
   return (
     <>
       {(loadingClient || loadingPassport) && <Loader />}
+
       <div className="bg-opacity-5">
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.card}</div>
         <div className="w-[650px] text-[18px] font-semibold">{staticTexts.cardSubtitile}</div>
@@ -98,7 +100,9 @@ const DataPreview = ({ setGUCard }: IProps) => {
           nextDisabled={!isDataCorrect}
           nextClick={async () => {
             await confirmNumbers();
-            setGUCard("data-sent");
+            if (!loadingClient && !loadingPassport) {
+              setGUCard("data-sent");
+            }
           }}
         />
       </div>
