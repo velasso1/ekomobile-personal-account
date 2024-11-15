@@ -2,8 +2,9 @@ import { ChangeEvent } from "react";
 import { defaultStyles } from "../../../utils/default-styles";
 
 interface IProps {
-  name: string;
-  value: string;
+  name?: string;
+  id?: unknown;
+  value?: string;
   onChange: (e: ChangeEvent<any>) => void;
   label: string;
   isChecked: boolean;

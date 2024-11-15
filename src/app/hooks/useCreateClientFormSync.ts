@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
-import { updateConfirmationPassportRF } from "../store/slices/gosuslugi-slice";
+import  updateConfirmationPassportRF  from "../store/slices/gosuslugi-slice";
 import { FormikProps } from "formik";
 import { TFormikClientFio, TFormikClientPassport } from "../types/gosuslugi-types";
 

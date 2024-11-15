@@ -1,8 +1,5 @@
 import {
-<<<<<<< HEAD
   IGroup,
-=======
->>>>>>> stage
   IGUConfirmationPassportField,
   TFormikClientFio,
   TGUConfirmationCards,
@@ -18,10 +15,7 @@ import useCreateClientFormSync from "../../../../hooks/useCreateClientFormSync";
 import getAge from "../../../../utils/helpers/getAge";
 
 interface IProps {
-<<<<<<< HEAD
   groups: IGroup[];
-=======
->>>>>>> stage
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -127,11 +121,7 @@ const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().s
   gender: Yup.string().required(staticTexts.errors.isRequired).oneOf(genders, staticTexts.errors.isNotAllowedGender),
 });
 
-<<<<<<< HEAD
 const CreateClientFio = ({ groups, setGUCard }: IProps) => {
-=======
-const CreateClientFio = ({ setGUCard }: IProps) => {
->>>>>>> stage
   const formik = useFormik<TFormikClientFio>({
     initialValues: {
       nameFamily: "",

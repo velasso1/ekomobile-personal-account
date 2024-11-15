@@ -1,8 +1,5 @@
 import {
-<<<<<<< HEAD
   IGroup,
-=======
->>>>>>> stage
   IGUConfirmationPassportField,
   ISelectSearchOption,
   ISSUE_PLACE_MANUAL,
@@ -23,15 +20,9 @@ import { getSuggestAddress, getSuggestIssuePlace } from "../../../../api/axios/d
 import AsyncSelectSearch from "../../../ui/fields/async-select-search";
 import { useEffect, useState } from "react";
 import PreviewClientData from "./preview-client-data";
-<<<<<<< HEAD
 
 interface IProps {
   groups: IGroup[];
-=======
-import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
-
-interface IProps {
->>>>>>> stage
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -189,21 +180,12 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
     registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
-<<<<<<< HEAD
 const CreateClientPassport = ({ groups, setGUCard }: IProps) => {
-=======
-const CreateClientPassport = ({ setGUCard }: IProps) => {
->>>>>>> stage
   const {
     passportRF: { birthdate },
   } = useAppSelector((state) => state.gosuslugiSlice);
   const [issuePlaceOptions, setIssuePlaceOptions] = useState<{ label: string; value: string }[]>([]);
 
-<<<<<<< HEAD
-=======
-  const { conformationRequiredNumbers } = useGetGosuslugiData();
-
->>>>>>> stage
   const formik = useFormik<TFormikClientPassport>({
     initialValues: {
       issueDate: "",
@@ -327,13 +309,8 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
             }
           })}
         </div>
-<<<<<<< HEAD
         <div className="pt-[20px]">
           <PreviewClientData />
-=======
-        <div className="pt-11">
-          <PreviewClientData containerClass="card p-8 w-[550px]" />
->>>>>>> stage
         </div>
       </div>
       <div className="pt-8">
@@ -343,14 +320,7 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
           nextClick={async () => {
             const errors = await formik.validateForm();
             if (Object.keys(errors).length === 0) {
-<<<<<<< HEAD
               // go create client passportRF
-=======
-              // TODO: change condition when there is real data
-              if (conformationRequiredNumbers.length > 0) {
-                setGUCard("choose-numbers");
-              }
->>>>>>> stage
             } else {
               formik.setTouched(setNestedObjectValues<FormikTouched<FormikValues>>(errors, true));
             }
