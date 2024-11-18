@@ -23,7 +23,7 @@ export interface IServicesItem {
 export interface IServicesPageResponse {
   me: {
     account: {
-      number: {
+      billingNumber: {
         services: IServicesItem[];
       };
     };
@@ -50,7 +50,7 @@ export interface IAvailableServiceItem {
 export interface IAvailableServicesResponse {
   me: {
     account: {
-      number: {
+      billingNumber: {
         services: IAvailableServiceItem[];
       };
     };

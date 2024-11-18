@@ -137,6 +137,35 @@ export const GET_CURRENT_USER_DATA = gql`
               }
             }
           }
+          expenses {
+            availableMonths {
+              year
+              month
+            }
+            month(year: $year, month: $month) {
+              month {
+                year
+                month
+              }
+              amount {
+                total
+                parts {
+                  type
+                  amount
+                }
+              }
+              transactionList(page: 0, pageSize: 99) {
+                total
+                nodes {
+                  timestamp
+                  type
+                  name
+                  amount
+                  balanceAfter
+                }
+              }
+            }
+          }
         }
       }
     }

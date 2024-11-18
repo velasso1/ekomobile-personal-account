@@ -27,7 +27,9 @@ interface IOrderState {
 }
 
 const DetailsPage: FC = () => {
-  const [orderDetails, { data, loading, error }] = useMutation<IOrderDetailsResponse>(ORDER_DETAILS);
+  const [orderDetails, { data, loading, error }] = useMutation<IOrderDetailsResponse>(ORDER_DETAILS, {
+    refetchQueries: [CHECK_DETAILS_FORMAT],
+  });
   const {
     data: checkData,
     loading: checkLoading,

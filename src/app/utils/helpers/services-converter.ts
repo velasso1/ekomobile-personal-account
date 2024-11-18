@@ -22,19 +22,22 @@ export const servicesConverter = (
   }
 
   // get data from converterItem and push item to according to its category
-  for (let i = 0; i <= converterItem.me.account.number.services.length; i++) {
+  for (let i = 0; i <= converterItem.me.account.billingNumber.services.length; i++) {
     if (
-      converterItem.me.account.number.services[i] &&
-      converterItem.me.account.number.services[i].category !== undefined
+      converterItem.me.account.billingNumber.services[i] &&
+      converterItem.me.account.billingNumber.services[i].category !== undefined
     ) {
-      serviceData[`${ServicesWithId[converterItem.me.account.number.services[i].category.id]}`].push(
-        converterItem.me.account.number.services[i]
+      serviceData[`${ServicesWithId[converterItem.me.account.billingNumber.services[i].category.id]}`].push(
+        converterItem.me.account.billingNumber.services[i]
       );
     }
   }
 
   return serviceData;
 };
+
+// разделение от подключенных до доступных
+// && converterItem.me.account.billingNumber.services[i].state === "ENABLED"
 
 export const filterFreeItems = (
   filterItem: IServicesPageResponse | IAvailableServicesResponse,
@@ -43,8 +46,8 @@ export const filterFreeItems = (
   const newFilteredItems: IServicesPageResponse | IAvailableServicesResponse = {
     me: {
       account: {
-        number: {
-          services: filterItem.me.account.number.services.filter((item) => {
+        billingNumber: {
+          services: filterItem.me.account.billingNumber.services.filter((item) => {
             if (item.fee) {
               return free ? item.fee.amount === 0 : item.fee.amount > 0;
             }

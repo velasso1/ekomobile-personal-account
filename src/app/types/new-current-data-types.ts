@@ -2,6 +2,7 @@
 
 import { INumberInfo } from "./response-full-userinfo-types";
 import { IServicesItem } from "./servicespage-response-types";
+import { IExpensesInfo } from "./expensespage-response-types";
 
 interface ICurrentNumber extends INumberInfo {
   services: IServicesItem[];
@@ -35,6 +36,8 @@ interface IBillingNumber {
     amount: number;
     balance: number;
   };
+  services: IServicesItem[];
+  expenses: IExpensesInfo;
 }
 
 export interface ICurrentDataResponse {

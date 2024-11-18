@@ -142,16 +142,16 @@ const MainPage: FC = () => {
           </div>
           <div className="card-body">
             <div className="sum mb-[10px] text-[30px] font-semibold">
-              {moneyFormatter(newCurrentData.me.account.number.expenses.month.amount.total)} ₽
+              {moneyFormatter(newCurrentData.me.account.billingNumber.expenses.month.amount.total)} ₽
             </div>
             <div className="progress py-[5px]">
-              {newCurrentData.me.account.number.expenses.month.amount.parts.map((item, index) => {
+              {newCurrentData.me.account.billingNumber.expenses.month.amount.parts.map((item, index) => {
                 return (
                   <div
                     key={crypto.randomUUID()}
                     className={`${bgColor[`${getProgressColor[index]}`]} progress-bar rounded-[3px] py-[5px]`}
                     style={{
-                      width: `${(item.amount * 100) / newCurrentData.me.account.number.expenses.month.amount.total}%`,
+                      width: `${(item.amount * 100) / newCurrentData.me.account.billingNumber.expenses.month.amount.total}%`,
                     }}
                   ></div>
                 );
@@ -159,7 +159,7 @@ const MainPage: FC = () => {
             </div>
 
             <div className="explanation mt-[20px] flex xs:flex-col">
-              {newCurrentData.me.account.number.expenses.month.amount.parts.map((item, index) => {
+              {newCurrentData.me.account.billingNumber.expenses.month.amount.parts.map((item, index) => {
                 if (item.amount <= 0) {
                   return;
                 }
@@ -216,16 +216,16 @@ const MainPage: FC = () => {
                 </div>
                 {visibleTab ? (
                   <div className="" id="tab_1_1">
-                    {newCurrentData.me.account.number.services.map((item) => {
-                      if (item.fee && item.fee.amount === 0) {
+                    {newCurrentData.me.account.billingNumber.services.map((item) => {
+                      if (item.fee && item.fee.amount === 0 && item.state === "ENABLED") {
                         return <Button key={item.id} buttonType="services" title={item.name} />;
                       }
                     })}
                   </div>
                 ) : (
                   <div className="" id="tab_1_2">
-                    {newCurrentData.me.account.number.services.map((item) => {
-                      if (item.fee && item.fee.amount > 0) {
+                    {newCurrentData.me.account.billingNumber.services.map((item) => {
+                      if (item.fee && item.fee.amount > 0 && item.state === "ENABLED") {
                         return <Button key={item.id} buttonType="services" title={item.name} />;
                       }
                     })}

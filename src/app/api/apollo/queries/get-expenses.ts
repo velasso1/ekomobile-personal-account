@@ -54,7 +54,7 @@ export const GET_CURRENT_EXPENSES = gql`
                   amount
                 }
               }
-              transactionList(page: 1, pageSize: 999) {
+              transactionList(page: 0, pageSize: 999) {
                 total
                 nodes {
                   timestamp

@@ -2,22 +2,25 @@ import { FC, useState, useEffect } from "react";
 
 import { useLazyQuery } from "@apollo/client";
 import { GET_AVAILABLE_SERVICES, GET_SERVICES } from "../../../api/apollo/queries/get-services";
+
 import { IServicesPageResponse } from "../../../types/servicespage-response-types";
+import {
+  IAvailableServicesResponse,
+  IServicesItem,
+  IAvailableServiceItem,
+} from "../../../types/servicespage-response-types";
 
-import { IAvailableServicesResponse } from "../../../types/servicespage-response-types";
-
-import { IReturningItem } from "../../../utils/helpers/services-converter";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { changeSelectOption } from "../../../store/slices/user-slice";
 
 import Accordion from "../../ui/accordion/accordion";
 import { PageTitle } from "../../ui/page-title";
-
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
 
 import { servicesConverter } from "../../../utils/helpers/services-converter";
 import { filterFreeItems } from "../../../utils/helpers/services-converter";
-import { useAppDispatch, useAppSelector } from "../../../store";
-import { changeSelectOption } from "../../../store/slices/user-slice";
+import { IReturningItem } from "../../../utils/helpers/services-converter";
 
 const ServicesPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -38,29 +41,38 @@ const ServicesPage: FC = () => {
   const [freeServices, setFreeServices] = useState<IReturningItem>({});
 
   // react-redux
-  const { servicesChecked, newCurrentData } = useAppSelector((state) => state.userSlice);
+  const { servicesChecked, newCurrentData, selectedNumber } = useAppSelector((state) => state.userSlice);
 
   // effects
   useEffect(() => {
-    if (newCurrentData) {
-      setEnabledServicesData(servicesConverter(filterFreeItems(newCurrentData, false)));
-      setFreeServices(servicesConverter(filterFreeItems(newCurrentData, true)));
+    getEnabledServices({
+      fetchPolicy: "no-cache",
+      variables: {
+        msisdn: selectedNumber,
+      },
+    });
+  }, [selectedNumber]);
+
+  useEffect(() => {
+    if (enabledServices) {
+      setEnabledServicesData(servicesConverter(filterFreeItems(enabledServices, false)));
+      setFreeServices(servicesConverter(filterFreeItems(enabledServices, true)));
       dispatch(changeSelectOption("ENABLED"));
     }
-  }, [newCurrentData, enabledServices]);
+  }, [enabledServices, selectedNumber]);
 
   useEffect(() => {
     if (availableServices && availableServices.me) {
       setAvalableServicesState(servicesConverter(filterFreeItems(availableServices, false)));
       setFreeServices(servicesConverter(filterFreeItems(availableServices, true)));
     }
-  }, [availableServices]);
+  }, [availableServices, selectedNumber]);
 
   if (!newCurrentData || avaiLoading || loading) {
     return <Loader />;
   }
 
-  if (avaiError) {
+  if (avaiError || error) {
     return <WarningBadge isError={true} />;
   }
 
@@ -78,11 +90,21 @@ const ServicesPage: FC = () => {
           }
 
           if (e.target.value === "ENABLED") {
-            getEnabledServices({ fetchPolicy: "no-cache" });
+            getEnabledServices({
+              fetchPolicy: "no-cache",
+              variables: {
+                msisdn: selectedNumber,
+              },
+            });
             return;
           }
 
-          getAvailableServices({ fetchPolicy: "no-cache" });
+          getAvailableServices({
+            fetchPolicy: "no-cache",
+            variables: {
+              msisdn: selectedNumber,
+            },
+          });
         }}
       >
         <option value="ENABLED">Подключенные</option>
@@ -122,7 +144,6 @@ const ServicesPage: FC = () => {
                       accordionTitle={`${serviceItem[0]}`}
                       accrodionItems={serviceItem[1]}
                       servicesQuantity={serviceItem[1].length}
-                      connect={true}
                     />
                   );
                 })}
@@ -141,7 +162,6 @@ const ServicesPage: FC = () => {
                       accordionTitle={`${serviceItem[0]}`}
                       accrodionItems={serviceItem[1]}
                       servicesQuantity={serviceItem[1].length}
-                      connect={true}
                     />
                   );
                 })}
@@ -162,7 +182,6 @@ const ServicesPage: FC = () => {
                   accordionTitle={`${serviceItem[0]}`}
                   accrodionItems={serviceItem[1]}
                   servicesQuantity={serviceItem[1].length}
-                  connect={true}
                 />
               );
             })}

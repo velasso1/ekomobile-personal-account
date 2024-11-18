@@ -4,7 +4,7 @@ import { TailSpin } from "react-loader-spinner";
 
 const Loader: FC = () => {
   return (
-    <div className="absolute left-[47vw] top-[50vh]">
+    <div className="absolute left-[50%] top-[35%] z-[2000]">
       <TailSpin
         visible={true}
         height="120"

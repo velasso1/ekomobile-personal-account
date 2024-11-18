@@ -36,7 +36,7 @@ const ExpensesPage: FC = () => {
     });
   }, [selectedNumber]);
 
-  if (!currentData || !newCurrentData || currentLoading) {
+  if (!newCurrentData || currentLoading) {
     return <Loader />;
   }
 
@@ -66,26 +66,40 @@ const ExpensesPage: FC = () => {
             }}
             value={selectState}
           >
-            {currentData.me.account.billingNumber.expenses.availableMonths.map((item) => {
-              return (
-                <option className="cursor-pointer" key={item.month} value={item.month}>
-                  {month[item.month - 1]}
-                </option>
-              );
-            })}
+            {(currentData ? currentData : newCurrentData).me.account.billingNumber.expenses.availableMonths.map(
+              (item) => {
+                return (
+                  <option className="cursor-pointer" key={item.month} value={item.month}>
+                    {month[item.month - 1]}
+                  </option>
+                );
+              }
+            )}
           </select>
           <div className="full-sum my-[20px] text-[30px] font-semibold">
-            {moneyFormatter(currentData.me.account.billingNumber.expenses.month.amount.total)} ₽
+            {moneyFormatter(
+              (currentData ? currentData : newCurrentData).me.account.billingNumber.expenses.month.amount.total
+            )}{" "}
+            ₽
           </div>
           <div className="expenses flex w-full flex-col">
             <LineProgressBar
-              progressItem={currentData.me.account.billingNumber.expenses.month.transactionList.nodes}
-              totalExpenses={currentData.me.account.billingNumber.expenses.month.amount.total / 100}
+              progressItem={
+                (currentData ? currentData : newCurrentData).me.account.billingNumber.expenses.month.transactionList
+                  .nodes
+              }
+              totalExpenses={
+                (currentData ? currentData : newCurrentData).me.account.billingNumber.expenses.month.amount.total / 100
+              }
             />
           </div>
         </div>
       </Card>
-      <TableExpenses tableItem={currentData.me.account.billingNumber.expenses.month.transactionList.nodes} />
+      <TableExpenses
+        tableItem={
+          (currentData ? currentData : newCurrentData).me.account.billingNumber.expenses.month.transactionList.nodes
+        }
+      />
     </div>
   );
 };
