@@ -9,15 +9,15 @@ interface IFeeItem {
 }
 
 export interface IServicesItem {
-  category: ICategoryItem /* + */;
-  id: string /* + */;
-  serviceId: string /* + */;
-  name: string /* + */;
-  description: string /* + */;
-  state: string /* + */;
-  isReadonly: boolean /* + */;
-  enabledAt: string /* + */;
-  fee: IFeeItem /* + */;
+  category: ICategoryItem;
+  id: string;
+  serviceId: string;
+  name: string;
+  description: string;
+  state: string;
+  isReadonly: boolean;
+  enabledAt: string;
+  fee: IFeeItem;
 }
 
 export interface IServicesPageResponse {

@@ -1,5 +1,4 @@
 import {
-  IGroup,
   IGUConfirmationPassportField,
   TFormikClientFio,
   TGUConfirmationCards,
@@ -17,7 +16,6 @@ import useGetGosuslugiData from "../../../../hooks/useGetGosuslugiData";
 import { useNavigate } from "react-router-dom";
 
 interface IProps {
-  groups: IGroup[];
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
 
@@ -123,7 +121,7 @@ const CreateClientFioSchema: Yup.ObjectSchema<TFormikClientFio> = Yup.object().s
   gender: Yup.string().required(staticTexts.errors.isRequired).oneOf(genders, staticTexts.errors.isNotAllowedGender),
 });
 
-const CreateClientFio = ({ groups, setGUCard }: IProps) => {
+const CreateClientFio = ({ setGUCard }: IProps) => {
   const formik = useFormik<TFormikClientFio>({
     initialValues: {
       nameFamily: "",
