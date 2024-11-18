@@ -40,6 +40,7 @@ interface IStaticTexts {
     isBeforeTwentyOrAfterFortyFive: string;
     isBeforeOrEqualFortyFive: string;
     isNoFuture: string;
+    eitherIssuePlaceRequired: string;
   };
   regex: {
     allowedInSeries: RegExp;
@@ -118,6 +119,7 @@ const staticTexts: IStaticTexts = {
     isBeforeTwentyOrAfterFortyFive: "Дата выдачи не может быть раньше или равна достижения 20 лет и поздее 45 лет",
     isBeforeOrEqualFortyFive: "Дата выдачи не может раньше или равна достижения 45 лет",
     isNoFuture: "Дата выдачи не может быть в будущем",
+    eitherIssuePlaceRequired: 'Пожалуйста заполните поле "Кем выдан" или  "Кем выдан (ручной ввод)"',
   },
   regex: {
     allowedInNumber: /^\d{6}$/,
@@ -137,7 +139,7 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
       .required(staticTexts.errors.isRequired)
       .matches(staticTexts.regex.allowedInSeries, staticTexts.errors.isWrongSeriesFormat)
       .length(4, staticTexts.errors.isNotFourCharsLong),
-    issuePlace: Yup.string(),
+
     issueDate: Yup.string()
       .required(staticTexts.errors.isRequired)
       .matches(staticTexts.regex.dateFormat, staticTexts.errors.isWrongDateFormat)
@@ -171,11 +173,21 @@ const CreateClientPassportSchema = (birthdate: Date): Yup.ObjectSchema<TFormikCl
         const issueDate = new Date(value || "");
         return today >= issueDate;
       }),
-    issuePlaceManual: Yup.string(),
-    issuePlaceCode: Yup.string().matches(
-      staticTexts.regex.allowedInIssuePlaceCode,
-      staticTexts.errors.isWrongCodeFormat
-    ),
+    issuePlace: Yup.string()
+      .nullable()
+      .test("either-place-or-placeManual", staticTexts.errors.eitherIssuePlaceRequired, function () {
+        const { issuePlace, issuePlaceManual } = this.parent;
+        return !!((issuePlace !== ISSUE_PLACE_MANUAL && issuePlace) || issuePlaceManual);
+      }),
+    issuePlaceManual: Yup.string()
+      .nullable()
+      .test("either-place-or-placeManual", staticTexts.errors.eitherIssuePlaceRequired, function () {
+        const { issuePlace, issuePlaceManual } = this.parent;
+        return !!((issuePlace !== ISSUE_PLACE_MANUAL && issuePlace) || issuePlaceManual);
+      }),
+    issuePlaceCode: Yup.string()
+      .matches(staticTexts.regex.allowedInIssuePlaceCode, staticTexts.errors.isWrongCodeFormat)
+      .required(staticTexts.errors.isRequired),
     registrationAddress: Yup.string().required(staticTexts.errors.isRequired),
   });
 
@@ -206,6 +218,7 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
   const { isNextDisabled } = useCreateClientFormSync(formik);
   const getIsShowIssuePlaceManual = (fieldId: TGUConfirmationPassportFieldId) =>
     fieldId === "issuePlaceManual" && formik.values.issuePlace !== ISSUE_PLACE_MANUAL;
+
   useEffect(() => {
     if (formik.values.issuePlaceCode.length === ISSSUE_PLACE_CODE_LENGTH_UI) {
       const staticOptions = staticTexts.fields.find((field) => field.type === "select").options;
@@ -239,6 +252,9 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
                       let value = e.target.value;
                       value = maskIssuePlaceCode(value);
                       await formik.setFieldValue(field.id, value);
+                    } else if (field.id === "issuePlaceManual") {
+                      await formik.handleChange(e);
+                      await formik.validateField("issuePlace");
                     } else {
                       await formik.handleChange(e);
                     }
@@ -292,8 +308,12 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
                   <label className="mb-[5px] block text-left text-sm font-medium dark:text-white">{field.label}</label>
                   <select
                     id={field.id}
-                    className="input w-[290px]"
-                    onChange={formik.handleChange}
+                    name={field.id}
+                    className={`input w-[290px]`}
+                    onChange={async (e) => {
+                      await formik.setFieldValue(field.id, e.target.value);
+                      await formik.setFieldTouched(field.id, true);
+                    }}
                     value={formik.values[field.id]}
                     disabled={formik.values.issuePlaceCode.length !== ISSSUE_PLACE_CODE_LENGTH_UI}
                   >
@@ -305,6 +325,9 @@ const CreateClientPassport = ({ setGUCard }: IProps) => {
                       );
                     })}
                   </select>
+                  {formik.errors[field.id] && formik.touched[field.id] && (
+                    <div className="text-[12px] text-red-600">{formik.errors[field.id]}</div>
+                  )}
                 </div>
               );
             }

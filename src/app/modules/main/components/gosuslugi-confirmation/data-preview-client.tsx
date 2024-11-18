@@ -41,7 +41,7 @@ const DataPreviewClient = ({ containerClass }: IProps) => {
       {nameFamily && nameGiven && (
         <div className="font-semibold">{`${staticTexts.title} ${nameFamily} ${nameGiven} ${namePatronymic}`}</div>
       )}
-      {gender && <div>{`${staticTexts.gender} ${gender}`}</div>}
+      {gender && <div>{`${staticTexts.gender} ${gender === "FEMALE" ? "Ж/F" : "М/M"}`}</div>}
       <div className="pt-4"></div>
       {birthdate && <div>{`${staticTexts.birthdate} ${birthdate}`}</div>}
       {birthplace && <div>{`${staticTexts.birthplace} ${birthplace}`}</div>}
