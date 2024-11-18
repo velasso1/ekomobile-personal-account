@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 import { PageTitle } from "../../ui/page-title";
 import { Card } from "../../ui/card";
@@ -12,6 +12,8 @@ import CreateClientPassport from "../../main/components/gosuslugi-confirmation/c
 import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
 import DataPreview from "../../main/components/gosuslugi-confirmation/data-preview";
 import DataSent from "../../main/components/gosuslugi-confirmation/data-sent";
+import { useAppDispatch, useAppSelector } from "../../../store";
+import { CREATE_NEW_CLIENT_ID, updateClientId } from "../../../store/slices/gosuslugi-slice";
 
 const staticTexts = {
   title: "Подтверждение номера на Госуслугах",
@@ -19,6 +21,8 @@ const staticTexts = {
 
 const GosuslugiConfirmationPage: FC = () => {
   const { data, loading, allClients } = useGetGosuslugiData();
+  const { clientId } = useAppSelector((state) => state.gosuslugiSlice);
+  const dispatch = useAppDispatch();
   const [GUCard, setGUCard] = useState<TGUConfirmationCards>(
     allClients.length > 0 ? "choose-client" : "create-client-fio"
   );
@@ -44,6 +48,12 @@ const GosuslugiConfirmationPage: FC = () => {
         return <DataSent />;
     }
   };
+
+  useEffect(() => {
+    if (allClients.length === 0 && clientId === "") {
+      dispatch(updateClientId(CREATE_NEW_CLIENT_ID));
+    }
+  }, []);
 
   if (loading || !data) {
     return <Loader />;
