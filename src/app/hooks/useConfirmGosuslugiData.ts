@@ -5,6 +5,7 @@ import { GOSUSLUGI_CONFIRM_CLIENT } from "../api/apollo/mutations/confirm-gosusl
 import { CREATE_NEW_CLIENT_ID } from "../store/slices/gosuslugi-slice";
 
 const useConfirmGosuslugiData = () => {
+  // write types for this queries
   const [guRequestConfirmationPassportRF, { data: dataPassport, loading: loadingPassport, error: errorPassport }] =
     useMutation(GOSUSLUGI_CONFIRM_PASSPORT);
   const [guRequestConfirmationClient, { data: dataClient, loading: loadingClient, error: errorClient }] =

@@ -12,14 +12,14 @@ import { UPDATE_ACCOUNT_INFO } from "../../../api/apollo/mutations/update-accoun
 import { IProfileInfo } from "../../../types/profile-info-types";
 import { IChangePasswordState } from "../../../types/change-password-types";
 
-import TextField from "../../ui/fields/text-field";
+import { Card } from "../../ui/card";
+import { WarningBadge } from "../../ui";
+import { Button } from "../../ui/button";
 import Loader from "../../ui/loader/loader";
 import Warning from "../../ui/warning/warning";
-import { Card } from "../../ui/card";
 import { PageTitle } from "../../ui/page-title";
-import { Button } from "../../ui/button";
-import { WarningBadge } from "../../ui";
-import ChangePasswordForm from "./change-password-form/change-password-form";
+import TextField from "../../ui/fields/text-field";
+// import ChangePasswordForm from "./change-password-form/change-password-form";
 import SecretKeyForm from "./change-password-form/secret-code-form";
 
 import { defaultStyles } from "../../../utils/default-styles";
@@ -35,13 +35,10 @@ const ProfilePage: FC = () => {
     useMutation(UPDATE_ACCOUNT_INFO);
 
   const [passwordChange, setPasswordChange] = useState<IChangePasswordState>({
-    currentPass: "",
     newPassword: "",
     repeatNewPassword: "",
     secretKey: "",
   });
-
-  // const [secretKey, setSecretKey] = useState<string>('');
 
   const [profileInfo, setProfileInfo] = useState<IProfileInfo>({
     fullName: "",

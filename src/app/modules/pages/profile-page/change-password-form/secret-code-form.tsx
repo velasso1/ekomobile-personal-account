@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 
 import { useMutation } from "@apollo/client";
-import { CREATE_CHANGING_PASSWORD, CHANGE_PASSWORD_SUBMIT } from "../../../../api/apollo/mutations/change-password";
+import { CREATE_CHANGING_PASSWORD, SUBMIT_SECRET_KEY } from "../../../../api/apollo/mutations/change-password";
 
-import { IChangePasswordState } from "../../../../types/change-password-types";
+import { IChangePasswordState, ICreatePasswordChangeResponse } from "../../../../types/change-password-types";
+import { ISecretCodeState } from "../../../../types/profile-info-types";
 
 import { useAppSelector } from "../../../../store";
 
@@ -19,38 +20,75 @@ interface ISecretKeyFormProps {
 }
 
 const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
-  const [createChangingPassword, { data, loading, error }] = useMutation(CREATE_CHANGING_PASSWORD);
-  const [submitSecretKey, { data: keyData, loading: keyLoading, error: keyError }] =
-    useMutation(CHANGE_PASSWORD_SUBMIT);
+  const [createChangingPassword, { data, loading, error }] =
+    useMutation<ICreatePasswordChangeResponse>(CREATE_CHANGING_PASSWORD);
+  const [submitSecretKey, { data: submitData, loading: submitLoading, error: submitError }] =
+    useMutation(SUBMIT_SECRET_KEY);
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
   const [changingStep, setChangingStep] = useState<"1" | "2" | "3">("1");
+  const [state, setState] = useState<ISecretCodeState>({
+    error: {
+      errorStatus: false,
+      errorMessage: "",
+    },
+    loading: false,
+    identifiers: {
+      actionId: crypto.randomUUID(),
+      correlationId: crypto.randomUUID(),
+      passwordChangeId: crypto.randomUUID(),
+    },
+  });
+
+  useEffect(() => {
+    if (passState.secretKey.length === 6) submitingSecretKey();
+  }, [passState.secretKey]);
+
+  useEffect(() => {
+    if (submitData) {
+      console.log(submitData);
+    }
+  }, [submitData]);
 
   const createChangePassword = (): void => {
     createChangingPassword({
       variables: {
-        correlationId: crypto.randomUUID(),
-        actionId: crypto.randomUUID(),
-        passwordChangeId: crypto.randomUUID(),
+        actionId: state.identifiers.actionId,
+        correlationId: state.identifiers.correlationId,
+        passwordChangeId: state.identifiers.passwordChangeId,
         msisdn: selectedNumber,
       },
     });
   };
 
   const submitingSecretKey = () => {
-    if (passState.secretKey.length === 6) {
-      submitSecretKey({ variables: {} });
-    }
+    // query for check secret code
+
+    // submitSecretKey({variables: {
+    //   actionId: state.identifiers.actionId,
+    //   correlationId: state.identifiers.correlationId,
+    //   passwordChangeId: state.identifiers.passwordChangeId,
+    //   secret: passState.secretKey,
+    // }})
+
+    // if code approved, show form with change pass (step 3),
+    // if code not approved, show a warning badge;
+    // if code not approved twice, show button for get new secret code;
+
+    console.log(state.identifiers);
+    setChangingStep("3");
   };
 
-  if (error) {
-    return <WarningBadge isError={true} />;
+  if (error || submitError) {
+    return <WarningBadge isError={true} message={error.message} />;
   }
 
   return (
     <div className="w-[290px]">
-      {changingStep === "3" && <ChangePasswordForm passState={passState} passChange={passChange} />}
+      {changingStep === "3" && (
+        <ChangePasswordForm passState={passState} passChange={passChange} identifires={state.identifiers} />
+      )}
       {changingStep === "2" && (
         <TextField
           id="secret-key-field"

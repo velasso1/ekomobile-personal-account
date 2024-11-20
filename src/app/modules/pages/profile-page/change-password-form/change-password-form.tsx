@@ -1,54 +1,56 @@
 import React, { FC, useState } from "react";
 
+import { useMutation } from "@apollo/client";
+import { SUBMIT_CHANGING_PASSWORD } from "../../../../api/apollo/mutations/change-password";
+
 import { Card } from "../../../ui/card";
 import TextField from "../../../ui/fields/text-field";
 import { Button } from "../../../ui/button";
+import Loader from "../../../ui/loader/loader";
+import { WarningBadge } from "../../../ui";
+
 import { IChangePasswordState } from "../../../../types/change-password-types";
 
 interface IChangePasswordFormProps {
   passState: IChangePasswordState;
   passChange: (IChangePasswordState) => void;
+  identifires: { correlationId: string; actionId: string; passwordChangeId: string };
 }
 
-const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChange }) => {
-  // query for mutation new password;
+const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChange, identifires }) => {
+  const [changePassword, { data, loading, error }] = useMutation(SUBMIT_CHANGING_PASSWORD);
 
   const validationNewPassword = (): string | boolean => {
     if (passState.newPassword !== passState.repeatNewPassword) {
       console.log("пароли не совпадают");
-      return "Пароли не совпадают";
+      return;
     }
 
-    if (passState.currentPass !== "HERE NEEDS A CURRENT USER-PASSWORD") {
-      console.log("текущий пароль введен неверно");
-      return "текущий пароль введён неверно";
-    }
-
-    changePassword();
+    console.log(identifires);
+    // changePassword({
+    //   variables: {
+    //     correlationId: identifires.correlationId,
+    //     actionId: identifires.actionId,
+    //     passwordChangeId: identifires.passwordChangeId,
+    //     newPassword: null,
+    //   },
+    // });
   };
 
-  const changePassword = () => {
-    console.log("pass was changed");
-  };
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <WarningBadge isError={true} message={error.message} />;
+  }
 
   return (
-    <div>
-      <TextField
-        id="change-info-pass"
-        type="password"
-        Label="Текущий пароль"
-        placeholder="Текущий пароль"
-        value={passState.currentPass}
-        onChangeCb={(e) => {
-          passChange({ ...passState, currentPass: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
-
+    <div className="w-[290px]">
       <TextField
         id="change-info-new-pass"
         type="password"
-        Label="Новый пароль"
+        Label="Придумайте новый пароль"
         placeholder="Введите новый пароль"
         value={passState.newPassword}
         onChangeCb={(e) => {
@@ -60,7 +62,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
       <TextField
         id="change-info-repeat-new-pass"
         type="password"
-        Label="Повторите новый пароль"
+        Label="Введите пароль еще раз"
         placeholder="Повторите новый пароль"
         value={passState.repeatNewPassword}
         onChangeCb={(e) => {
@@ -68,9 +70,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
         }}
         addStyle="mb-[20px]"
       />
-      <div className="w-[290px]">
-        <Button buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
-      </div>
+      <Button buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { GET_GOSUSLUGI_DATA } from "../api/apollo/queries/get-gosuslugi-data";
 import { ICLient, IGroup, IGroupNumber, IGUConfrirmation, IGUHints } from "../types/gosuslugi-types";
 
 const useGetGosuslugiData = () => {
+  // write types for this response pls
   const { data, loading, error } = useQuery(GET_GOSUSLUGI_DATA);
 
   const aboutContent: IGUConfrirmation = data?.info?.guConfirmation;

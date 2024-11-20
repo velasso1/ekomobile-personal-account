@@ -6,3 +6,16 @@ export interface IProfileInfo {
   sex: "NOTSELECTED" | "MALE" | "FEMALE";
   password?: string;
 }
+
+export interface ISecretCodeState {
+  error: {
+    errorStatus: boolean;
+    errorMessage: string;
+  };
+  loading: boolean;
+  identifiers: {
+    actionId: string;
+    correlationId: string;
+    passwordChangeId: string;
+  };
+}
