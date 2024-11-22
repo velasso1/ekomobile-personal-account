@@ -5,10 +5,17 @@ export interface IChangePasswordState {
 }
 
 export interface ICreatePasswordChangeResponse {
-  data: {
-    passwordChangeCreate: {
-      deadline: string;
-      verificationId: string;
-    };
-  };
+   passwordChangeCreate: {
+     deadline: string;
+     verificationId: string;
+   };
+};
+
+export interface ISubmitSecretKeyResponse {
+  verificationSubmit: {
+    result: {
+      notice: string;
+      isSuccess: boolean;
+    }
+  }
 }

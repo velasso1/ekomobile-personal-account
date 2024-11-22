@@ -17,5 +17,6 @@ export interface ISecretCodeState {
     actionId: string;
     correlationId: string;
     passwordChangeId: string;
+    verificationId: string | null;
   };
 }

@@ -10,6 +10,7 @@ const TextField: FC<ITextFieldProps> = ({
   value,
   onChangeCb,
   addStyle,
+  customStyle,
   width = "290px",
   error,
   disabled,
@@ -23,7 +24,7 @@ const TextField: FC<ITextFieldProps> = ({
       </label>
       <div className={`input w-[${width}] ${error ? "border-red-600" : ""} `}>
         <input
-          className=""
+          className={`${customStyle}`}
           type={type}
           id={id}
           name={id}

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { useMutation } from "@apollo/client";
 import { SUBMIT_CHANGING_PASSWORD } from "../../../../api/apollo/mutations/change-password";
@@ -8,6 +8,7 @@ import TextField from "../../../ui/fields/text-field";
 import { Button } from "../../../ui/button";
 import Loader from "../../../ui/loader/loader";
 import { WarningBadge } from "../../../ui";
+import Warning from "../../../ui/warning/warning";
 
 import { IChangePasswordState } from "../../../../types/change-password-types";
 
@@ -20,22 +21,25 @@ interface IChangePasswordFormProps {
 const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChange, identifires }) => {
   const [changePassword, { data, loading, error }] = useMutation(SUBMIT_CHANGING_PASSWORD);
 
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
+
   const validationNewPassword = (): string | boolean => {
     if (passState.newPassword !== passState.repeatNewPassword) {
-      console.log("пароли не совпадают");
+      setPasswordMatch(false);
       return;
     }
 
-    console.log(identifires);
-    // changePassword({
-    //   variables: {
-    //     correlationId: identifires.correlationId,
-    //     actionId: identifires.actionId,
-    //     passwordChangeId: identifires.passwordChangeId,
-    //     newPassword: null,
-    //   },
-    // });
+    changePassword({
+      variables: {
+        correlationId: identifires.correlationId,
+        actionId: identifires.actionId,
+        passwordChangeId: identifires.passwordChangeId,
+        newPassword: passState.newPassword,
+      },
+    });
   };
+
+  useEffect(() => {if (data) {console.log(data)}}, [data])
 
   if (loading) {
     return <Loader />;
@@ -47,6 +51,7 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
 
   return (
     <div className="w-[290px]">
+
       <TextField
         id="change-info-new-pass"
         type="password"
@@ -70,7 +75,12 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
         }}
         addStyle="mb-[20px]"
       />
-      <Button buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
+
+
+      {!passwordMatch &&           <div className="flex items-center justify-center mb-[20px] w-[100%]">
+          <Warning text="Пароли не совпадают"/>
+          </div>}
+      <Button disabled={!passState.newPassword || !passState.repeatNewPassword || loading} buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
     </div>
   );
 };

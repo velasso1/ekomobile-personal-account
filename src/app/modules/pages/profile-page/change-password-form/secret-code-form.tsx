@@ -3,7 +3,7 @@ import { FC, useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_CHANGING_PASSWORD, SUBMIT_SECRET_KEY } from "../../../../api/apollo/mutations/change-password";
 
-import { IChangePasswordState, ICreatePasswordChangeResponse } from "../../../../types/change-password-types";
+import { IChangePasswordState, ICreatePasswordChangeResponse, ISubmitSecretKeyResponse } from "../../../../types/change-password-types";
 import { ISecretCodeState } from "../../../../types/profile-info-types";
 
 import { useAppSelector } from "../../../../store";
@@ -23,11 +23,12 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
   const [createChangingPassword, { data, loading, error }] =
     useMutation<ICreatePasswordChangeResponse>(CREATE_CHANGING_PASSWORD);
   const [submitSecretKey, { data: submitData, loading: submitLoading, error: submitError }] =
-    useMutation(SUBMIT_SECRET_KEY);
+    useMutation<ISubmitSecretKeyResponse>(SUBMIT_SECRET_KEY);
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
   const [changingStep, setChangingStep] = useState<"1" | "2" | "3">("1");
+  const [successSubmit, setSuccessSubmit] = useState<{submitCount: number, succes: boolean}>({submitCount: 0, succes: false});
   const [state, setState] = useState<ISecretCodeState>({
     error: {
       errorStatus: false,
@@ -38,18 +39,31 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
       actionId: crypto.randomUUID(),
       correlationId: crypto.randomUUID(),
       passwordChangeId: crypto.randomUUID(),
+      verificationId: null, 
     },
   });
 
   useEffect(() => {
-    if (passState.secretKey.length === 6) submitingSecretKey();
+    if (passState.secretKey.length === 6) {
+      submitingSecretKey();
+      passChange({...passState, secretKey: ''});
+    };
   }, [passState.secretKey]);
 
   useEffect(() => {
-    if (submitData) {
-      console.log(submitData);
+    if (data) {
+      setState({...state, identifiers: {...state.identifiers, verificationId: data.passwordChangeCreate.verificationId}});
+      setChangingStep("2");
     }
-  }, [submitData]);
+  }, [data])
+
+  useEffect(() => {
+    if (submitData && submitData.verificationSubmit.result.isSuccess) {
+      setChangingStep("3");
+      return;
+    }
+
+  }, [submitData])
 
   const createChangePassword = (): void => {
     createChangingPassword({
@@ -64,24 +78,24 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
 
   const submitingSecretKey = () => {
     // query for check secret code
+    submitSecretKey({variables: {
+      actionId: state.identifiers.actionId,
+      correlationId: state.identifiers.correlationId,
+      verificationId: state.identifiers.verificationId,
+      secret: passState.secretKey,
+    }})
 
-    // submitSecretKey({variables: {
-    //   actionId: state.identifiers.actionId,
-    //   correlationId: state.identifiers.correlationId,
-    //   passwordChangeId: state.identifiers.passwordChangeId,
-    //   secret: passState.secretKey,
-    // }})
-
-    // if code approved, show form with change pass (step 3),
-    // if code not approved, show a warning badge;
     // if code not approved twice, show button for get new secret code;
-
-    console.log(state.identifiers);
-    setChangingStep("3");
   };
 
+  if (loading) {
+    return (
+      <Loader/>
+    )
+  }
+
   if (error || submitError) {
-    return <WarningBadge isError={true} message={error.message} />;
+    return <WarningBadge isError={true} message={error?.message} />;
   }
 
   return (
@@ -93,14 +107,13 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
         <TextField
           id="secret-key-field"
           type="password"
-          Label="Секретный код"
+          Label={`${submitData?.verificationSubmit.result.notice ?? "Введите секретный код"}`}
           placeholder="Введите секретный код"
           value={passState.secretKey}
           onChangeCb={(e) => {
             passChange({ ...passState, secretKey: e.target.value });
-            submitingSecretKey();
           }}
-          addStyle="mb-[20px]"
+          error={submitData?.verificationSubmit.result.isSuccess === false}
         />
       )}
 
@@ -110,7 +123,6 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
           title="Получить код для смены пароля"
           onClickCb={() => {
             createChangePassword();
-            setChangingStep("2");
           }}
         />
       )}
