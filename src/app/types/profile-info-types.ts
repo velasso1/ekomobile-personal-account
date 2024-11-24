@@ -12,6 +12,7 @@ export interface ISecretCodeState {
     errorStatus: boolean;
     errorMessage: string;
   };
+  submitAttempts: number;
   loading: boolean;
   identifiers: {
     actionId: string;

@@ -39,7 +39,11 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
     });
   };
 
-  useEffect(() => {if (data) {console.log(data)}}, [data])
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+    }
+  }, [data]);
 
   if (loading) {
     return <Loader />;
@@ -50,38 +54,49 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
   }
 
   return (
-    <div className="w-[290px]">
+    <>
+      {data ? (
+        <p>Пароль успешно изменен</p>
+      ) : (
+        <div className="w-[290px]">
+          <TextField
+            id="change-info-new-pass"
+            type="password"
+            Label="Придумайте новый пароль"
+            placeholder="Введите новый пароль"
+            value={passState.newPassword}
+            onChangeCb={(e) => {
+              passChange({ ...passState, newPassword: e.target.value.trim() });
+            }}
+            addStyle="mb-[20px]"
+          />
 
-      <TextField
-        id="change-info-new-pass"
-        type="password"
-        Label="Придумайте новый пароль"
-        placeholder="Введите новый пароль"
-        value={passState.newPassword}
-        onChangeCb={(e) => {
-          passChange({ ...passState, newPassword: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
+          <TextField
+            id="change-info-repeat-new-pass"
+            type="password"
+            Label="Введите пароль еще раз"
+            placeholder="Повторите новый пароль"
+            value={passState.repeatNewPassword}
+            onChangeCb={(e) => {
+              passChange({ ...passState, repeatNewPassword: e.target.value.trim() });
+            }}
+            addStyle="mb-[20px]"
+          />
 
-      <TextField
-        id="change-info-repeat-new-pass"
-        type="password"
-        Label="Введите пароль еще раз"
-        placeholder="Повторите новый пароль"
-        value={passState.repeatNewPassword}
-        onChangeCb={(e) => {
-          passChange({ ...passState, repeatNewPassword: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
-
-
-      {!passwordMatch &&           <div className="flex items-center justify-center mb-[20px] w-[100%]">
-          <Warning text="Пароли не совпадают"/>
-          </div>}
-      <Button disabled={!passState.newPassword || !passState.repeatNewPassword || loading} buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
-    </div>
+          {!passwordMatch && (
+            <div className="mb-[20px] flex w-[100%] items-center justify-center">
+              <Warning text="Пароли не совпадают" />
+            </div>
+          )}
+          <Button
+            disabled={!passState.newPassword || !passState.repeatNewPassword || loading}
+            buttonType="default"
+            title="Сменить"
+            onClickCb={() => validationNewPassword()}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

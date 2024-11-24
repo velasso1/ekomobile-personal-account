@@ -3,7 +3,11 @@ import { FC, useState, useEffect } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_CHANGING_PASSWORD, SUBMIT_SECRET_KEY } from "../../../../api/apollo/mutations/change-password";
 
-import { IChangePasswordState, ICreatePasswordChangeResponse, ISubmitSecretKeyResponse } from "../../../../types/change-password-types";
+import {
+  IChangePasswordState,
+  ICreatePasswordChangeResponse,
+  ISubmitSecretKeyResponse,
+} from "../../../../types/change-password-types";
 import { ISecretCodeState } from "../../../../types/profile-info-types";
 
 import { useAppSelector } from "../../../../store";
@@ -23,47 +27,53 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
   const [createChangingPassword, { data, loading, error }] =
     useMutation<ICreatePasswordChangeResponse>(CREATE_CHANGING_PASSWORD);
   const [submitSecretKey, { data: submitData, loading: submitLoading, error: submitError }] =
-    useMutation<ISubmitSecretKeyResponse>(SUBMIT_SECRET_KEY);
+    useMutation<ISubmitSecretKeyResponse>(SUBMIT_SECRET_KEY, { fetchPolicy: "no-cache" });
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
   const [changingStep, setChangingStep] = useState<"1" | "2" | "3">("1");
-  const [successSubmit, setSuccessSubmit] = useState<{submitCount: number, succes: boolean}>({submitCount: 0, succes: false});
+
   const [state, setState] = useState<ISecretCodeState>({
     error: {
       errorStatus: false,
       errorMessage: "",
     },
+    submitAttempts: 0,
     loading: false,
     identifiers: {
       actionId: crypto.randomUUID(),
       correlationId: crypto.randomUUID(),
       passwordChangeId: crypto.randomUUID(),
-      verificationId: null, 
+      verificationId: null,
     },
   });
 
   useEffect(() => {
     if (passState.secretKey.length === 6) {
       submitingSecretKey();
-      passChange({...passState, secretKey: ''});
-    };
+      passChange({ ...passState, secretKey: "" });
+    }
   }, [passState.secretKey]);
 
   useEffect(() => {
     if (data) {
-      setState({...state, identifiers: {...state.identifiers, verificationId: data.passwordChangeCreate.verificationId}});
+      setState({
+        ...state,
+        identifiers: { ...state.identifiers, verificationId: data.passwordChangeCreate.verificationId },
+      });
       setChangingStep("2");
     }
-  }, [data])
+  }, [data]);
 
   useEffect(() => {
-    if (submitData && submitData.verificationSubmit.result.isSuccess) {
+    if (submitData?.verificationSubmit.result.isSuccess) {
       setChangingStep("3");
-      return;
     }
 
-  }, [submitData])
+    if (submitData && !submitData?.verificationSubmit.result.isSuccess) {
+      setState({ ...state, submitAttempts: ++state.submitAttempts });
+    }
+  }, [submitData]);
 
   const createChangePassword = (): void => {
     createChangingPassword({
@@ -78,20 +88,18 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
 
   const submitingSecretKey = () => {
     // query for check secret code
-    submitSecretKey({variables: {
-      actionId: state.identifiers.actionId,
-      correlationId: state.identifiers.correlationId,
-      verificationId: state.identifiers.verificationId,
-      secret: passState.secretKey,
-    }})
-
-    // if code not approved twice, show button for get new secret code;
+    submitSecretKey({
+      variables: {
+        actionId: state.identifiers.actionId,
+        correlationId: state.identifiers.correlationId,
+        verificationId: state.identifiers.verificationId,
+        secret: passState.secretKey,
+      },
+    });
   };
 
   if (loading) {
-    return (
-      <Loader/>
-    )
+    return <Loader />;
   }
 
   if (error || submitError) {
@@ -103,25 +111,30 @@ const SecretKeyForm: FC<ISecretKeyFormProps> = ({ passState, passChange }) => {
       {changingStep === "3" && (
         <ChangePasswordForm passState={passState} passChange={passChange} identifires={state.identifiers} />
       )}
+
       {changingStep === "2" && (
         <TextField
           id="secret-key-field"
           type="password"
-          Label={`${submitData?.verificationSubmit.result.notice ?? "Введите секретный код"}`}
+          disabled={submitLoading}
+          Label={`${state.submitAttempts > 0 ? (submitData?.verificationSubmit.result.notice ?? "Проверяем..") : "Введите секретный код"}`}
           placeholder="Введите секретный код"
           value={passState.secretKey}
           onChangeCb={(e) => {
             passChange({ ...passState, secretKey: e.target.value });
           }}
           error={submitData?.verificationSubmit.result.isSuccess === false}
+          addStyle="mb-[20px]"
         />
       )}
 
-      {changingStep === "1" && (
+      {(changingStep === "1" || state.submitAttempts >= 2) && (
         <Button
           buttonType="default"
-          title="Получить код для смены пароля"
+          disabled={submitLoading}
+          title={`${state.submitAttempts >= 2 ? "Получить новый код" : "Получить код для смены пароля"}`}
           onClickCb={() => {
+            setState({ ...state, submitAttempts: 0 });
             createChangePassword();
           }}
         />
