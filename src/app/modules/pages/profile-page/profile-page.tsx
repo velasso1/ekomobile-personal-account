@@ -8,6 +8,7 @@ import { putUserInfo } from "../../../store/slices/user-slice";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
 import { UPDATE_ACCOUNT_INFO } from "../../../api/apollo/mutations/update-account-info";
+import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { IProfileInfo } from "../../../types/profile-info-types";
 import { IChangePasswordState } from "../../../types/change-password-types";
@@ -31,8 +32,10 @@ const ProfilePage: FC = () => {
   const { textColor } = defaultStyles;
 
   const { data, loading, error } = useQuery(GET_PROFILE_DATA);
-  const [updateProfileData, { data: updateData, loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_ACCOUNT_INFO);
+  const [updateProfileData, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_ACCOUNT_INFO,
+    { refetchQueries: [GET_CURRENT_USER_DATA] }
+  );
 
   const [passwordChange, setPasswordChange] = useState<IChangePasswordState>({
     newPassword: "",
@@ -48,6 +51,7 @@ const ProfilePage: FC = () => {
     sex: "NOTSELECTED",
     password: "",
   });
+
   const [fieldError, setFieldError] = useState<boolean>(false);
 
   useEffect(() => {

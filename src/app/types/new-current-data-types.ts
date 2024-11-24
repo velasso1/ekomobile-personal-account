@@ -8,7 +8,7 @@ interface ICurrentNumber extends INumberInfo {
   services: IServicesItem[];
 }
 
-interface IRemainsFullItem {
+export interface IRemainsFullItem {
   measure: string;
   balance: number;
   size: number;

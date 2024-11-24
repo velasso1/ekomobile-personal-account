@@ -67,7 +67,7 @@ const BalancePage: FC = () => {
       if (paymentState.value === "") {
         setPaymentState({
           ...paymentState,
-          value: recommendedValue === "0" ? "Введите сумму" : recommendedValue,
+          value: recommendedValue === "0" ? "" : recommendedValue,
         });
       }
     }
@@ -79,7 +79,7 @@ const BalancePage: FC = () => {
     console.log(paymentState.msisdn);
 
     setIvalidValue(false);
-    if (+paymentState.value > 1 && +paymentState.value < 15000) {
+    if (+paymentState.value > 1 && +paymentState.value <= 15000) {
       generateSBPPayment({
         variables: {
           correlationId: crypto.randomUUID(),

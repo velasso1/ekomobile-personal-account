@@ -1,9 +1,13 @@
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 
 import { useQuery } from "@apollo/client";
 import { GET_REMAINDERS } from "../../../api/apollo/queries/get-remainders";
 
 import { IRemaindersResponse } from "../../../types/remainderpage-response-types";
+import { IRemainsFullItem } from "../../../types/new-current-data-types";
+import { IResidueCombainer } from "../../../utils/helpers/residue-combainer";
+
+import { useAppSelector } from "../../../store";
 
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
@@ -12,24 +16,32 @@ import { Card } from "../../ui/card";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
-import { useAppSelector } from "../../../store";
+import residueCombainer from "../../../utils/helpers/residue-combainer";
 
 type TProgressBarColor = "primary" | "lightBlue" | "lightGrey";
 
 const RemainderPage: FC = () => {
-  const { data, loading, error } = useQuery<IRemaindersResponse>(GET_REMAINDERS);
-
+  // const { data, loading, error } = useQuery<IRemaindersResponse>(GET_REMAINDERS);
+  const [remainders, setRemainders] = useState<IResidueCombainer[]>();
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const { bgColor, textColor, textSize } = defaultStyles;
 
-  if (loading) {
+  useEffect(() => {
+    if (newCurrentData) {
+      setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
+    }
+
+    console.log(remainders);
+  }, [newCurrentData]);
+
+  if (!newCurrentData || !remainders) {
     return <Loader />;
   }
 
-  if (error) {
-    return <WarningBadge isError={true} />;
-  }
+  // if (error) {
+  //   return <WarningBadge isError={true} />;
+  // }
 
   return (
     <div className="full h-full px-[45px] pt-[40px]">
@@ -44,10 +56,9 @@ const RemainderPage: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {data.onlyRemainder.account.number.remains.simple.map((item, index) => {
-              const progressWidth: string = item.isUnlimited ? "100%" : (+item.balance / +item.size) * 100 + "%";
+            {remainders?.map((item, index) => {
+              const progressWidth: string = item.isUnlimited ? "100%" : (item.balance / item.size) * 100 + "%";
               const progressColor: TProgressBarColor[] = ["primary", "lightBlue", "lightGrey"];
-
               return (
                 <tr className="" key={crypto.randomUUID()}>
                   <td className="flex items-center">
@@ -60,13 +71,15 @@ const RemainderPage: FC = () => {
                         }}
                       >
                         <span className={`${textSize.default} ${textColor.white}`}>
-                          {item.isUnlimited ? "∞" : ((+item.balance / +item.size) * 100).toFixed() + "%"}
+                          {item.isUnlimited ? "∞" : ((item.balance / item.size) * 100).toFixed() + "%"}
                         </span>
                       </div>
                     </div>
                   </td>
-                  <td>{item.isUnlimited ? "Безлимитно" : item.size}</td>
-                  <td>{item.isUnlimited ? "Безлимитно" : item.balance}</td>
+                  <td>{item.isUnlimited ? "Безлимитно" : item.measure === "MB" ? item.size / 1024 : item.size}</td>
+                  <td>
+                    {item.isUnlimited ? "Безлимитно" : item.measure === "MB" ? item.balance / 1024 : item.balance}
+                  </td>
                 </tr>
               );
             })}

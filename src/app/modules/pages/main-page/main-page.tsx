@@ -21,6 +21,8 @@ import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 import { moneyFormatter } from "../../../utils/helpers/money-formatter";
+import residueCombainer from "../../../utils/helpers/residue-combainer";
+import { IResidueCombainer } from "../../../utils/helpers/residue-combainer";
 
 const MainPage: FC = () => {
   const navigate = useNavigate();
@@ -35,13 +37,20 @@ const MainPage: FC = () => {
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const [visibleTab, setVisibleTab] = useState<boolean>(true);
+  const [remainders, setRemainders] = useState<IResidueCombainer[]>();
   const { bgColor, textSize, textColor } = defaultStyles;
 
   useEffect(() => {
     dispatch(setChecking(false));
   }, []);
 
-  if (!newCurrentData) {
+  useEffect(() => {
+    if (newCurrentData) {
+      setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
+    }
+  }, [newCurrentData]);
+
+  if (!newCurrentData || !remainders) {
     return <Loader />;
   }
 
@@ -108,7 +117,7 @@ const MainPage: FC = () => {
             <h3 className="card-title">Остатки по пакетам</h3>
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
-            {newCurrentData.me.account.billingNumber.remains.full.map((item, index) => {
+            {remainders?.map((item, index) => {
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
 
               return (
