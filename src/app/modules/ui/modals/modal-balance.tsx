@@ -33,12 +33,12 @@ const ModalBalance: FC<IModalProps> = ({ modalState, closeModal }) => {
   }
 
   return (
-    <div className="absolute left-[45%] top-[30%]">
-      <div className="modal-content max-w-[600px] px-[15px] pb-[20px] text-[14px]">
+    <div className="fixed left-[45%] top-[30%] z-[2] w-[400px]">
+      <div className="modal-content top-[20%] max-w-[600px]">
         <div className="modal-header">
           <h3 className="modal-title font-semibold">Рекомендованный платеж</h3>
           <button
-            className="btn-icon btn btn-xs cursor-pointer"
+            className="btn-icon btn btn-xs btn-light cursor-pointer"
             onClick={() => closeModal({ ...modalState, balance: false })}
           >
             <i className="ki-filled ki-cross"></i>

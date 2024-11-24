@@ -9,6 +9,7 @@ import { GENERATE_SBP_PAYMENT } from "../../../api/apollo/mutations/generate-sbp
 // } from "../../../api/apollo/queries/get-recommended-payment";
 
 import { IBalancePageResponse, IBalanceReplenishment } from "../../../types/balancepage-response-types";
+import { ITableServicesModalProps } from "../../../types/servicespage-response-types";
 
 import { useAppSelector } from "../../../store";
 
@@ -54,6 +55,7 @@ const BalancePage: FC = () => {
     msisdn: "",
   });
   const [invalidValue, setIvalidValue] = useState<boolean>(false);
+  const [paymentItem, setPaymentItem] = useState<ITableServicesModalProps>();
   const [modalsOpen, setModalsOpen] = useState<{ balance: boolean; services: boolean }>({
     balance: false,
     services: false,
@@ -66,20 +68,16 @@ const BalancePage: FC = () => {
   useEffect(() => {
     if (newCurrentData) {
       const recommendedValue = (newCurrentData.me.account.billingNumber.recommendedPayment.amount / 100).toString();
-      // if (paymentState.value === "") {
       setPaymentState({
         ...paymentState,
         value: recommendedValue === "0" ? "" : recommendedValue,
       });
-      // }
     }
   }, [newCurrentData, selectedNumber]);
 
   const { textSize, textColor } = defaultStyles;
 
   const checkValue = (): void => {
-    console.log(paymentState.msisdn);
-
     setIvalidValue(false);
     if (+paymentState.value > 1 && +paymentState.value <= 15000) {
       generateSBPPayment({
@@ -108,9 +106,13 @@ const BalancePage: FC = () => {
     <>
       {modalsOpen.balance && <ModalBalance modalState={modalsOpen} closeModal={setModalsOpen} />}
 
-      {modalsOpen.services && <ModalServices modalState={modalsOpen} closeModal={setModalsOpen} />}
+      {modalsOpen.services && (
+        <ModalServices modalState={modalsOpen} closeModal={setModalsOpen} tableItem={paymentItem} />
+      )}
 
-      <div className={`${(modalsOpen.balance || modalsOpen.services) && "pointer-events-none opacity-20"}`}>
+      <div
+        className={`${(modalsOpen.balance || modalsOpen.services) && "pointer-events-none overscroll-none opacity-20"}`}
+      >
         <div className="h-full px-[45px] xs:mx-[18px] xs:p-[0] md:mx-[auto] md:px-[45px] md:pt-[40px]">
           <PageTitle title="Пополнение баланса" />
           <Card>
@@ -142,7 +144,6 @@ const BalancePage: FC = () => {
                 <div className="">
                   <button
                     className={`btn btn-link my-[40px] ${textColor.primary} no-underline`}
-                    // data-modal-toggle="#modal_25"
                     onClick={() => setModalsOpen({ ...modalsOpen, balance: true })}
                   >
                     Как сформирован рекомендованный платеж?
@@ -193,7 +194,10 @@ const BalancePage: FC = () => {
                       <td>
                         <i
                           className="ki-outline ki-information-2 cursor-pointer"
-                          onClick={() => setModalsOpen({ ...modalsOpen, services: true })}
+                          onClick={() => {
+                            setPaymentItem({ date: item.timestamp, sum: item.amount, paymentMethod: item.methodName });
+                            setModalsOpen({ ...modalsOpen, services: true });
+                          }}
                         ></i>
                       </td>
                       <td>{item.amount / 100}</td>
