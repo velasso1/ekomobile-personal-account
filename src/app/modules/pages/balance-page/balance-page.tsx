@@ -34,7 +34,11 @@ interface IPaymentState {
 }
 
 const BalancePage: FC = () => {
-  const { data, loading, error } = useQuery<IBalancePageResponse>(GET_BALANCE_HISTORY);
+  const { selectedNumber, newCurrentData } = useAppSelector((state) => state.userSlice);
+
+  const { data, loading, error } = useQuery<IBalancePageResponse>(GET_BALANCE_HISTORY, {
+    variables: { msisdn: selectedNumber },
+  });
   const [generateSBPPayment, { data: paymentData, loading: paymentLoading, error: paymentError }] =
     useMutation<IBalanceReplenishment>(GENERATE_SBP_PAYMENT);
 
@@ -43,8 +47,6 @@ const BalancePage: FC = () => {
   //   loading: recomLoading,
   //   error: recomError,
   // } = useQuery<IRecommendedPaymentResponse>(GET_RECOMMENDED_PAYMENT);
-
-  const { selectedNumber, newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const [qtyApps, setQty] = useState<number>(4);
   const [paymentState, setPaymentState] = useState<IPaymentState>({
@@ -64,12 +66,12 @@ const BalancePage: FC = () => {
   useEffect(() => {
     if (newCurrentData) {
       const recommendedValue = (newCurrentData.me.account.billingNumber.recommendedPayment.amount / 100).toString();
-      if (paymentState.value === "") {
-        setPaymentState({
-          ...paymentState,
-          value: recommendedValue === "0" ? "" : recommendedValue,
-        });
-      }
+      // if (paymentState.value === "") {
+      setPaymentState({
+        ...paymentState,
+        value: recommendedValue === "0" ? "" : recommendedValue,
+      });
+      // }
     }
   }, [newCurrentData, selectedNumber]);
 

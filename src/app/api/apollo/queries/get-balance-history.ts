@@ -2,11 +2,11 @@
 import { gql } from "@apollo/client";
 
 export const GET_BALANCE_HISTORY = gql`
-  query Me {
+  query Me($msisdn: Msisdn) {
     me {
       account {
-        billingNumber {
-          balanceTopUpList(page: 1, pageSize: 1) {
+        billingNumber(msisdn: $msisdn) {
+          balanceTopUpList(page: 0, pageSize: 999) {
             nodes {
               amount
               timestamp
