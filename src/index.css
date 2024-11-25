@@ -1,0 +1,12 @@
+@import "./metronic/vendors/keenicons/duotone/style.css";
+@import "./metronic/vendors/keenicons/filled/style.css";
+@import "./metronic/vendors/keenicons/solid/style.css";
+@import "./metronic/vendors/keenicons/outline/style.css";
+
+@import "./metronic/css/styles.css";
+@import "./app/modules/pages/gosuslugi-about-page/gosuslugi-about.css";
+@import "./app/modules/main/components/gosuslugi-confirmation/data-sent.css";
+
+#__next {
+  display: contents;
+}
