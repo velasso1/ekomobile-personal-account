@@ -11,6 +11,7 @@ import DataPreviewClient from "./data-preview-client";
 import shieldCross from "../../../../assets/images/shield-cross.svg";
 import useConfirmGosuslugiData from "../../../../hooks/useConfirmGosuslugiData";
 import Loader from "../../../ui/loader/loader";
+import { NumberMarkName } from "../../../ui/number-mark-name";
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
 }
@@ -33,6 +34,8 @@ const DataPreview = ({ setGUCard }: IProps) => {
   const currentClient = allClients?.find((client) => client.id === clientId);
 
   const [isDataCorrect, setIsDataCorrect] = useState(false);
+  const getNumberName = (number: string) =>
+    conformationRequiredNumbers.find((item) => item.msisdn === number)?.mark?.name;
 
   return (
     <>
@@ -48,9 +51,7 @@ const DataPreview = ({ setGUCard }: IProps) => {
               <div key={number} className="pt-4">
                 <div className={`${defaultStyles.textSize.p14}`}>
                   {`${beautifyNumber(number)}`}
-                  <span
-                    className={`ml-2 text-[12px] ${defaultStyles.textColor.lightGrey}`}
-                  >{`(${conformationRequiredNumbers.find((item) => item.msisdn === number)?.mark.name})`}</span>
+                  <NumberMarkName numberMarkName={getNumberName(number)} />
                 </div>
               </div>
             ))}

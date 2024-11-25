@@ -8,6 +8,7 @@ import Loader from "../loader/loader";
 import { IGroupNumber, IGUHints, TGUConfimationStatusId } from "../../../types/gosuslugi-types";
 import { ITableGosuslugiProps } from "../../../types/table-types";
 import useGetGosuslugiData from "../../../hooks/useGetGosuslugiData";
+import { NumberMarkName } from "../number-mark-name";
 
 const getStatusBageClass = (status: TGUConfimationStatusId) => {
   const bageBase = "badge badge-outline badge-";
@@ -90,9 +91,7 @@ const TableGosuslugi: FC<ITableGosuslugiProps> = ({ tableName, tableItem }) => {
                 <tr key={item.msisdn}>
                   <td className="w-[50%]">
                     {beautifyNumber(item.msisdn)}
-                    <span
-                      className={`ml-2 text-[12px] ${defaultStyles.textColor.lightGrey}`}
-                    >{`(${item.mark.name})`}</span>
+                    <NumberMarkName numberMarkName={item.mark.name} />
                   </td>
                   <td className="w-[50%]">
                     <span className={getStatusBageClass(item.guConfirmationInfo.status.id)}>

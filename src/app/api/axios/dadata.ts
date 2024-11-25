@@ -15,8 +15,8 @@ export const getSuggestAddress = (query: string): Promise<ISelectSearchOption[]>
   suggest.post("/address", { query: query }).then((resp) => {
     return resp.data.suggestions.map((suggestion) => {
       return {
-        value: suggestion.unrestricted_value,
-        label: suggestion.unrestricted_value,
+        value: suggestion.value,
+        label: suggestion.value,
       };
     });
   });

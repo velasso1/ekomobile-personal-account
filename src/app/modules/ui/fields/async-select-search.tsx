@@ -1,5 +1,7 @@
 import AsyncSelect from "react-select/async";
+import { SelectInstance } from "react-select";
 import { ISelectSearchOption } from "../../../types/gosuslugi-types";
+import { useEffect, useRef, useState } from "react";
 
 interface IProps {
   containerClass: string;
@@ -37,23 +39,33 @@ const getBorderColorHover = (isError: boolean, isFocused: boolean) => {
 
 const AsyncSelectSearch = ({
   containerClass,
-  inputWidth = 290,
+  inputWidth = 190,
   optionWidth,
   value,
   id,
-  onBlur,
   loadOptions,
   onChange,
   noOptionsMessage,
   label,
   error,
 }: IProps) => {
+  const [inputValue, setInputValue] = useState("");
+  const selectRef = useRef<SelectInstance<ISelectSearchOption> | null>(null);
+
+  useEffect(() => {
+    if (selectRef.current) {
+      selectRef.current.state.inputIsHidden = false;
+      selectRef.current.state.inputIsHiddenAfterUpdate = false;
+    }
+  }, [selectRef?.current?.state]);
+
   return (
     <div className={containerClass}>
       <label className="mb-[5px] block text-left text-sm font-medium dark:text-white" htmlFor={id}>
         {label}
       </label>
       <AsyncSelect<ISelectSearchOption>
+        ref={selectRef}
         isClearable
         isSearchable
         cacheOptions
@@ -95,10 +107,27 @@ const AsyncSelectSearch = ({
           }),
         }}
         value={value}
+        inputValue={inputValue}
+        onMenuClose={() => {
+          if (value && inputValue === "") {
+            setInputValue(value.value);
+          } else {
+            setInputValue(inputValue);
+          }
+        }}
+        onInputChange={(newValue) => {
+          setInputValue(newValue);
+        }}
         id={id}
-        onBlur={onBlur}
         loadOptions={loadOptions}
-        onChange={onChange}
+        onChange={(option) => {
+          onChange(option);
+          if (!option || !option.value) {
+            setInputValue("");
+          } else {
+            setInputValue(option.value);
+          }
+        }}
         noOptionsMessage={noOptionsMessage}
       />
       {error && <div className="text-[12px] text-red-600">{error}</div>}

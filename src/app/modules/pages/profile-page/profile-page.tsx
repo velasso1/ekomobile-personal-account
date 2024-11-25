@@ -51,7 +51,6 @@ const ProfilePage: FC = () => {
     sex: "NOTSELECTED",
     password: "",
   });
-
   const [fieldError, setFieldError] = useState<boolean>(false);
 
   useEffect(() => {

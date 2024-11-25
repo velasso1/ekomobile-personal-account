@@ -6,6 +6,7 @@ import beautifyNumber from "../../../../utils/helpers/beautifyNumber";
 import { useAppDispatch, useAppSelector } from "../../../../store";
 import { CREATE_NEW_CLIENT_ID, updateNumbers } from "../../../../store/slices/gosuslugi-slice";
 import { defaultStyles } from "../../../../utils/default-styles";
+import { NumberMarkName } from "../../../ui/number-mark-name";
 
 interface IProps {
   setGUCard: React.Dispatch<React.SetStateAction<TGUConfirmationCards>>;
@@ -33,9 +34,7 @@ const ChooseNumbers = ({ setGUCard }: IProps) => {
                 label={
                   <div className={`${defaultStyles.textSize.p14}`}>
                     {`${beautifyNumber(number.msisdn)}`}
-                    <span
-                      className={`ml-2 text-[12px] ${defaultStyles.textColor.lightGrey}`}
-                    >{`(${number.mark.name})`}</span>
+                    <NumberMarkName numberMarkName={number.mark.name} />
                   </div>
                 }
                 onChange={(e) => {
