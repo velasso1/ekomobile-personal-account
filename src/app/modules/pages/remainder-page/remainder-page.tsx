@@ -31,8 +31,6 @@ const RemainderPage: FC = () => {
     if (newCurrentData) {
       setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
     }
-
-    console.log(remainders);
   }, [newCurrentData]);
 
   if (!newCurrentData || !remainders) {

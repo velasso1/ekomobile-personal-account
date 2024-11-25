@@ -28,6 +28,7 @@ import button from "../../../assets/images/button.svg";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { dateFormatter } from "../../../utils/helpers/date-formatter";
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
 
 interface IPaymentState {
   value: string;
@@ -200,7 +201,7 @@ const BalancePage: FC = () => {
                           }}
                         ></i>
                       </td>
-                      <td>{item.amount / 100}</td>
+                      <td>{moneyFormatter(item.amount)} ₽</td>
                     </tr>
                   );
                 })}

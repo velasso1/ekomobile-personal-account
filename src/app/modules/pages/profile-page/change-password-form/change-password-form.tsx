@@ -39,11 +39,11 @@ const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChang
     });
   };
 
-  useEffect(() => {
-    if (data) {
-      console.log(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(data);
+  //   }
+  // }, [data]);
 
   if (loading) {
     return <Loader />;

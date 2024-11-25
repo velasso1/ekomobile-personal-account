@@ -31,7 +31,7 @@ const TableServicesModal: FC<ITableServicesItem> = ({ tableItem }) => {
         </tr>
         <tr>
           <td>Сумма</td>
-          <td>{moneyFormatter(tableItem.sum)}</td>
+          <td>{moneyFormatter(tableItem.sum)} ₽</td>
         </tr>
         <tr>
           <td>Тип</td>
