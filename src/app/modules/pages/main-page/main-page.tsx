@@ -37,20 +37,13 @@ const MainPage: FC = () => {
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const [visibleTab, setVisibleTab] = useState<boolean>(true);
-  const [remainders, setRemainders] = useState<IResidueCombainer[]>();
   const { bgColor, textSize, textColor } = defaultStyles;
 
   useEffect(() => {
     dispatch(setChecking(false));
   }, []);
 
-  useEffect(() => {
-    if (newCurrentData) {
-      setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
-    }
-  }, [newCurrentData]);
-
-  if (!newCurrentData || !remainders) {
+  if (!newCurrentData) {
     return <Loader />;
   }
 
@@ -117,7 +110,7 @@ const MainPage: FC = () => {
             <h3 className="card-title">Остатки по пакетам</h3>
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
-            {remainders?.map((item, index) => {
+            {newCurrentData.me.account.billingNumber.remains.simple?.map((item, index) => {
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
 
               return (

@@ -1,11 +1,11 @@
 import { FC, useState, useEffect } from "react";
 
-import { useQuery } from "@apollo/client";
-import { GET_REMAINDERS } from "../../../api/apollo/queries/get-remainders";
+// import { useQuery } from "@apollo/client";
+// import { GET_REMAINDERS } from "../../../api/apollo/queries/get-remainders";
 
-import { IRemaindersResponse } from "../../../types/remainderpage-response-types";
-import { IRemainsFullItem } from "../../../types/new-current-data-types";
-import { IResidueCombainer } from "../../../utils/helpers/residue-combainer";
+// import { IRemaindersResponse } from "../../../types/remainderpage-response-types";
+// import { IRemainsFullItem } from "../../../types/new-current-data-types";
+// import { IResidueCombainer } from "../../../utils/helpers/residue-combainer";
 
 import { useAppSelector } from "../../../store";
 
@@ -16,24 +16,24 @@ import { Card } from "../../ui/card";
 
 import { defaultStyles } from "../../../utils/default-styles";
 import { CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
-import residueCombainer from "../../../utils/helpers/residue-combainer";
+// import residueCombainer from "../../../utils/helpers/residue-combainer";
 
 type TProgressBarColor = "primary" | "lightBlue" | "lightGrey";
 
 const RemainderPage: FC = () => {
   // const { data, loading, error } = useQuery<IRemaindersResponse>(GET_REMAINDERS);
-  const [remainders, setRemainders] = useState<IResidueCombainer[]>();
+  // const [remainders, setRemainders] = useState<IResidueCombainer[]>();
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
   const { bgColor, textColor, textSize } = defaultStyles;
 
-  useEffect(() => {
-    if (newCurrentData) {
-      setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
-    }
-  }, [newCurrentData]);
+  // useEffect(() => {
+  //   if (newCurrentData) {
+  //     setRemainders(residueCombainer(newCurrentData.me.account.billingNumber.remains.full));
+  //   }
+  // }, [newCurrentData]);
 
-  if (!newCurrentData || !remainders) {
+  if (!newCurrentData) {
     return <Loader />;
   }
 
@@ -54,7 +54,7 @@ const RemainderPage: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {remainders?.map((item, index) => {
+            {newCurrentData.me.account.billingNumber.remains.full?.map((item, index) => {
               const progressWidth: string = item.isUnlimited ? "100%" : (item.balance / item.size) * 100 + "%";
               const progressColor: TProgressBarColor[] = ["primary", "lightBlue", "lightGrey"];
               return (

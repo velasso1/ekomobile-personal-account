@@ -17,6 +17,14 @@ export interface IRemainsFullItem {
   isRoaming: boolean;
 }
 
+export interface IRemainsSimpleItem {
+  measure: string;
+  balance: number;
+  size: number;
+  isUnlimited: boolean;
+}
+
+
 interface IBillingNumber {
   msisdn: string;
   isActive: boolean;
@@ -31,6 +39,7 @@ interface IBillingNumber {
   };
   remains: {
     full: IRemainsFullItem[];
+    simple: IRemainsSimpleItem[];
   };
   recommendedPayment: {
     amount: number;
