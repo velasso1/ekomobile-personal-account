@@ -26,6 +26,8 @@ const ChangeMarkPopUp: FC<IChangeMarkPopupProps> = ({ popupData, setPopupData })
   const [newMark, setNewMark] = useState<string>("");
 
   const updateNumberMark = (): void => {
+    console.log(popupData.tragetMsisdn, newMark);
+
     if (newMark.length >= 1 && newMark.length <= 20) {
       setPopupData({ ...popupData, showPopup: false });
       changeMark({

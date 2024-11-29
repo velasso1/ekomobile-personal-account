@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useEffect } from "react";
 
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { GET_NUMBERS_GROUP } from "../../../api/apollo/queries/get-number-groups";
@@ -17,7 +17,6 @@ import HeaderSelectOption from "./header-select-option";
 import { defaultStyles } from "../../../utils/default-styles";
 import WarningBadge from "../badges/warning-badge";
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
-// import { dateFormatter } from "../../../utils/helpers/date-formatter";
 
 interface IHeaderSelectProps {
   label: string;
@@ -37,8 +36,6 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
 
   const { selectedNumber } = useAppSelector((state) => state.userSlice);
 
-  // const [accountMsisdn, setMsidn] = useState(formatPhoneNumber(selectedNumber) ?? "");
-
   useEffect(() => {
     if (selectedNumber) {
       getAnotherNumberData({
@@ -50,15 +47,7 @@ const HeaderSelect: FC<IHeaderSelectProps> = ({ label, addStyle, selectStyle }) 
         },
       });
     }
-  }, []);
-
-  useEffect(() => {
-    // dispatch(changeSelectedNumber(data.me.account.number.));
-  }, []);
-
-  // useEffect(() => {
-  //   setMsidn(formatPhoneNumber(selectedNumber));
-  // }, [selectedNumber]);
+  }, [selectedNumber]);
 
   useEffect(() => {
     if (anotherData) {

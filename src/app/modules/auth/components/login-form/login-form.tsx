@@ -33,7 +33,7 @@ const LoginForm: FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { isLoading, isError, accIsAuth, loginRequestSend } = useAppSelector((state) => state.routeSlice);
+  const { isLoading, isError } = useAppSelector((state) => state.routeSlice);
 
   const [hidePass, setHidePass] = useState<boolean>(true);
   const [emptyField, setEmptyFields] = useState<boolean>(false);

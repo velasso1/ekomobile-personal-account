@@ -94,7 +94,10 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                   </td>
                   <td>Отсутствует</td>
                   <td>
-                    <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                    <i
+                      className="ki-outline ki-notepad-edit cursor-pointer text-[16px] text-[#1B84FF]"
+                      onClick={() => setPopupData({ tragetMsisdn: +tableItem.msisdn, showPopup: true })}
+                    ></i>
                   </td>
                 </tr>
               )}
