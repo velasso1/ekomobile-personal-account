@@ -8,7 +8,7 @@ interface ICurrentNumber extends INumberInfo {
   services: IServicesItem[];
 }
 
-interface IRemainsFullItem {
+export interface IRemainsFullItem {
   measure: string;
   balance: number;
   size: number;
@@ -16,6 +16,14 @@ interface IRemainsFullItem {
   isLocal: boolean;
   isRoaming: boolean;
 }
+
+export interface IRemainsSimpleItem {
+  measure: string;
+  balance: number;
+  size: number;
+  isUnlimited: boolean;
+}
+
 
 interface IBillingNumber {
   msisdn: string;
@@ -31,6 +39,7 @@ interface IBillingNumber {
   };
   remains: {
     full: IRemainsFullItem[];
+    simple: IRemainsSimpleItem[];
   };
   recommendedPayment: {
     amount: number;

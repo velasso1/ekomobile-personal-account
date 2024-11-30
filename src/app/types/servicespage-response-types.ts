@@ -56,3 +56,13 @@ export interface IAvailableServicesResponse {
     };
   };
 }
+
+// Types for services modal
+
+export interface ITableServicesModalProps {
+  date: string;
+  sum: number;
+  paymentMethod: string;
+  number?: string;
+  methodType?: string;
+}

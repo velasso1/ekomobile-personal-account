@@ -10,11 +10,14 @@ export const moneyFormatter = (value: number): string => {
 
     if (remindValue.length === 2) {
       // if we have 2 values in array, connect and separate them with a comma;
-
       return formattedValue.join("") + "," + (remindValue[1].length === 1 ? remindValue[1] + 0 : remindValue[1]);
     }
-
     return formattedValue.join("") + ",00";
+  }
+
+  if (remindValue.length === 2) {
+    // if we have 2 values in array, connect and separate them with a comma;
+    return formattedValue.join("") + "," + (remindValue[1].length === 1 ? remindValue[1] + 0 : remindValue[1]);
   }
   // if value less then 999 and has no remainder, just return this value with ",00"
   return remindValue[0] + ",00";

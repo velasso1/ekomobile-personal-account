@@ -2,6 +2,7 @@ import { FC, useState } from "react";
 
 import { ITableNumbersProps } from "../../../types/table-types";
 
+import Loader from "../loader/loader";
 import ChangeMarkPopUp from "../popup/change-mark-popup";
 
 import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
@@ -61,7 +62,7 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                         </span>
                       </td>
                       <td>
-                        {item?.mark?.name ? (
+                        {item.mark.name ? (
                           <a className={`btn-link ${textColor.primary}`} href="#">
                             {item.mark.name}
                           </a>
@@ -93,7 +94,10 @@ const TableNumbers: FC<ITableNumbersProps> = ({ tableName, tableItem, pricePlan 
                   </td>
                   <td>Отсутствует</td>
                   <td>
-                    <i className="ki-outline ki-notepad-edit text-[16px] text-[#1B84FF]"></i>
+                    <i
+                      className="ki-outline ki-notepad-edit cursor-pointer text-[16px] text-[#1B84FF]"
+                      onClick={() => setPopupData({ tragetMsisdn: +tableItem.msisdn, showPopup: true })}
+                    ></i>
                   </td>
                 </tr>
               )}

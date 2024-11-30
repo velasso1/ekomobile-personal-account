@@ -95,6 +95,12 @@ export const GET_CURRENT_USER_DATA = gql`
               isLocal
               isRoaming
             }
+            simple {
+              size
+              measure
+              balance
+              isUnlimited
+            }
           }
           recommendedPayment {
             amount

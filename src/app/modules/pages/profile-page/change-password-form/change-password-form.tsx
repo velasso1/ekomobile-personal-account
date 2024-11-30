@@ -1,77 +1,102 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+
+import { useMutation } from "@apollo/client";
+import { SUBMIT_CHANGING_PASSWORD } from "../../../../api/apollo/mutations/change-password";
 
 import { Card } from "../../../ui/card";
 import TextField from "../../../ui/fields/text-field";
 import { Button } from "../../../ui/button";
+import Loader from "../../../ui/loader/loader";
+import { WarningBadge } from "../../../ui";
+import Warning from "../../../ui/warning/warning";
+
 import { IChangePasswordState } from "../../../../types/change-password-types";
 
 interface IChangePasswordFormProps {
   passState: IChangePasswordState;
   passChange: (IChangePasswordState) => void;
+  identifires: { correlationId: string; actionId: string; passwordChangeId: string };
 }
 
-const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChange }) => {
-  // query for mutation new password;
+const ChangePasswordForm: FC<IChangePasswordFormProps> = ({ passState, passChange, identifires }) => {
+  const [changePassword, { data, loading, error }] = useMutation(SUBMIT_CHANGING_PASSWORD);
+
+  const [passwordMatch, setPasswordMatch] = useState<boolean>(true);
 
   const validationNewPassword = (): string | boolean => {
     if (passState.newPassword !== passState.repeatNewPassword) {
-      console.log("пароли не совпадают");
-      return "Пароли не совпадают";
+      setPasswordMatch(false);
+      return;
     }
 
-    if (passState.currentPass !== "HERE NEEDS A CURRENT USER-PASSWORD") {
-      console.log("текущий пароль введен неверно");
-      return "текущий пароль введён неверно";
-    }
-
-    changePassword();
+    changePassword({
+      variables: {
+        correlationId: identifires.correlationId,
+        actionId: identifires.actionId,
+        passwordChangeId: identifires.passwordChangeId,
+        newPassword: passState.newPassword,
+      },
+    });
   };
 
-  const changePassword = () => {
-    console.log("pass was changed");
-  };
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(data);
+  //   }
+  // }, [data]);
+
+  if (loading) {
+    return <Loader />;
+  }
+
+  if (error) {
+    return <WarningBadge isError={true} message={error.message} />;
+  }
 
   return (
-    <div>
-      <TextField
-        id="change-info-pass"
-        type="password"
-        Label="Текущий пароль"
-        placeholder="Текущий пароль"
-        value={passState.currentPass}
-        onChangeCb={(e) => {
-          passChange({ ...passState, currentPass: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
+    <>
+      {data ? (
+        <p>Пароль успешно изменен</p>
+      ) : (
+        <div className="w-[290px]">
+          <TextField
+            id="change-info-new-pass"
+            type="password"
+            Label="Придумайте новый пароль"
+            placeholder="Введите новый пароль"
+            value={passState.newPassword}
+            onChangeCb={(e) => {
+              passChange({ ...passState, newPassword: e.target.value.trim() });
+            }}
+            addStyle="mb-[20px]"
+          />
 
-      <TextField
-        id="change-info-new-pass"
-        type="password"
-        Label="Новый пароль"
-        placeholder="Введите новый пароль"
-        value={passState.newPassword}
-        onChangeCb={(e) => {
-          passChange({ ...passState, newPassword: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
+          <TextField
+            id="change-info-repeat-new-pass"
+            type="password"
+            Label="Введите пароль еще раз"
+            placeholder="Повторите новый пароль"
+            value={passState.repeatNewPassword}
+            onChangeCb={(e) => {
+              passChange({ ...passState, repeatNewPassword: e.target.value.trim() });
+            }}
+            addStyle="mb-[20px]"
+          />
 
-      <TextField
-        id="change-info-repeat-new-pass"
-        type="password"
-        Label="Повторите новый пароль"
-        placeholder="Повторите новый пароль"
-        value={passState.repeatNewPassword}
-        onChangeCb={(e) => {
-          passChange({ ...passState, repeatNewPassword: e.target.value.trim() });
-        }}
-        addStyle="mb-[20px]"
-      />
-      <div className="w-[290px]">
-        <Button buttonType="default" title="Сменить" onClickCb={() => validationNewPassword()} />
-      </div>
-    </div>
+          {!passwordMatch && (
+            <div className="mb-[20px] flex w-[100%] items-center justify-center">
+              <Warning text="Пароли не совпадают" />
+            </div>
+          )}
+          <Button
+            disabled={!passState.newPassword || !passState.repeatNewPassword || loading}
+            buttonType="default"
+            title="Сменить"
+            onClickCb={() => validationNewPassword()}
+          />
+        </div>
+      )}
+    </>
   );
 };
 

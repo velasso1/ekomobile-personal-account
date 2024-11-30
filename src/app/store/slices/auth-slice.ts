@@ -1,6 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch } from "..";
 
+import { resetGosuslugiSliceState } from "./gosuslugi-slice";
+import { resetUserSliceState } from "./user-slice";
+
 import { TUserState } from "../../types/login-state-types";
 
 interface IAuthSliceState {
@@ -51,6 +54,10 @@ const authSlice = createSlice({
     setChecking(state, action: PayloadAction<boolean>) {
       state.checking = action.payload;
     },
+
+    resetAuthSliceState() {
+      return initialState;
+    },
   },
 });
 
@@ -68,8 +75,8 @@ export const signIn = (body: TUserState) => {
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
         body: new URLSearchParams({ username: body.username, password: body.password }).toString(),
-      }).then((resp) => {
-        dispatch(changeLoginRequest(resp.status === 200));
+      }).then(() => {
+        dispatch(setChecking(true));
       });
     } catch (error) {
       dispatch(requestError(true));
@@ -80,16 +87,24 @@ export const signIn = (body: TUserState) => {
 
 export const logOut = () => {
   return async (dispatch: AppDispatch): Promise<void> => {
-    localStorage.removeItem("UDATA");
-    dispatch(checkAccStatusOnSignIn());
     try {
       await fetch(`${import.meta.env.VITE_LOGOUT_REST_URL}`, {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
           "X-Auth-Client-Key": `${import.meta.env.VITE_TEMP_TOKEN}`,
         },
-      }).then((resp) => {});
+      }).then((data) => {
+        if (data.ok) {
+          window.location.reload();
+          localStorage.removeItem("UDATA");
+          dispatch(checkAccStatusOnSignIn());
+          dispatch(resetAuthSliceState());
+          dispatch(resetGosuslugiSliceState());
+          dispatch(resetUserSliceState());
+        }
+      });
     } catch (error) {
       console.error(error);
     }
@@ -103,5 +118,6 @@ export const {
   requestError,
   changeLoginRequest,
   setChecking,
+  resetAuthSliceState,
 } = authSlice.actions;
 export default authSlice.reducer;

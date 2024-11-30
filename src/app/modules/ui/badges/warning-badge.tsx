@@ -27,7 +27,7 @@ const WarningBadge: FC<IWarningBadge> = ({ title, message, buttonText, isError, 
               {isError ? "Ошибка" : title}
             </div>
             <div className={`warning-message ${textSize.default} font-medium ${textColor.darkGrey} xs:hidden md:block`}>
-              {isError ? "Произошла ошибка при загрузке данных" : message}
+              {!message ? "Произошла ошибка при загрузке данных" : message}
             </div>
           </div>
         </div>

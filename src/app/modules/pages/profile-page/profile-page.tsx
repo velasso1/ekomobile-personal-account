@@ -8,18 +8,19 @@ import { putUserInfo } from "../../../store/slices/user-slice";
 import { useQuery, useMutation } from "@apollo/client";
 import { GET_PROFILE_DATA } from "../../../api/apollo/queries/get-profile-data";
 import { UPDATE_ACCOUNT_INFO } from "../../../api/apollo/mutations/update-account-info";
+import { GET_CURRENT_USER_DATA } from "../../../api/apollo/queries/get-profile-data";
 
 import { IProfileInfo } from "../../../types/profile-info-types";
 import { IChangePasswordState } from "../../../types/change-password-types";
 
-import TextField from "../../ui/fields/text-field";
+import { Card } from "../../ui/card";
+import { WarningBadge } from "../../ui";
+import { Button } from "../../ui/button";
 import Loader from "../../ui/loader/loader";
 import Warning from "../../ui/warning/warning";
-import { Card } from "../../ui/card";
 import { PageTitle } from "../../ui/page-title";
-import { Button } from "../../ui/button";
-import { WarningBadge } from "../../ui";
-import ChangePasswordForm from "./change-password-form/change-password-form";
+import TextField from "../../ui/fields/text-field";
+// import ChangePasswordForm from "./change-password-form/change-password-form";
 import SecretKeyForm from "./change-password-form/secret-code-form";
 
 import { defaultStyles } from "../../../utils/default-styles";
@@ -31,17 +32,16 @@ const ProfilePage: FC = () => {
   const { textColor } = defaultStyles;
 
   const { data, loading, error } = useQuery(GET_PROFILE_DATA);
-  const [updateProfileData, { data: updateData, loading: updateLoading, error: updateError }] =
-    useMutation(UPDATE_ACCOUNT_INFO);
+  const [updateProfileData, { data: updateData, loading: updateLoading, error: updateError }] = useMutation(
+    UPDATE_ACCOUNT_INFO,
+    { refetchQueries: [GET_CURRENT_USER_DATA] }
+  );
 
   const [passwordChange, setPasswordChange] = useState<IChangePasswordState>({
-    currentPass: "",
     newPassword: "",
     repeatNewPassword: "",
     secretKey: "",
   });
-
-  // const [secretKey, setSecretKey] = useState<string>('');
 
   const [profileInfo, setProfileInfo] = useState<IProfileInfo>({
     fullName: "",

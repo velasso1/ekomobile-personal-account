@@ -9,8 +9,9 @@ export interface ITextFieldProps {
   addStyle?: string;
   width?: string;
   disabled?: boolean;
-  error?: string;
+  error?: boolean | string;
   required?: boolean;
+  customStyle? :string;
 }
 
 export interface INumberFieldProps {

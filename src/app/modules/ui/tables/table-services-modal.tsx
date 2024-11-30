@@ -1,31 +1,49 @@
 import { FC } from "react";
 
+import { useAppSelector } from "../../../store";
+
+import { ITableServicesModalProps } from "../../../types/servicespage-response-types";
+
 import { defaultStyles } from "../../../utils/default-styles";
 
-const TableServicesModal: FC = () => {
+import { moneyFormatter } from "../../../utils/helpers/money-formatter";
+import { dateFormatter } from "../../../utils/helpers/date-formatter";
+import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
+
+interface ITableServicesItem {
+  tableItem: ITableServicesModalProps;
+}
+
+const TableServicesModal: FC<ITableServicesItem> = ({ tableItem }) => {
   const { textSize, textColor } = defaultStyles;
+
+  const { selectedNumber } = useAppSelector((state) => state.userSlice);
+  const paymentDate = dateFormatter(tableItem.date);
+
   return (
     <table className={`table align-middle ${textSize.default} text-sm font-medium ${textColor.grey}`}>
       <tbody>
         <tr>
           <td>Дата и время</td>
-          <td>24.07.2024, 00:53</td>
+          <td>
+            {paymentDate.date}, {`${paymentDate.hours}:${paymentDate.minutes}`}
+          </td>
         </tr>
         <tr>
           <td>Сумма</td>
-          <td>0,80</td>
+          <td>{moneyFormatter(tableItem.sum)} ₽</td>
         </tr>
         <tr>
           <td>Тип</td>
-          <td>Платеж</td>
+          <td>{tableItem.methodType ? tableItem.methodType : "Платёж"}</td>
         </tr>
         <tr>
           <td>Способ</td>
-          <td>Перенос денежных средств между номерами</td>
+          <td>{tableItem.paymentMethod}</td>
         </tr>
         <tr>
           <td>Номер</td>
-          <td>96929420</td>
+          <td>{formatPhoneNumber(selectedNumber)}</td>
         </tr>
       </tbody>
     </table>

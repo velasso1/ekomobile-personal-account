@@ -43,8 +43,13 @@ const userSlice = createSlice({
     changeSelectOption(state, action: PayloadAction<"ENABLED" | "DISABLED">) {
       state.servicesChecked = action.payload;
     },
+
+    resetUserSliceState() {
+      return initialState;
+    },
   },
 });
 
-export const { putUserInfo, changeSelectedNumber, newDataReceived, changeSelectOption } = userSlice.actions;
+export const { putUserInfo, changeSelectedNumber, newDataReceived, changeSelectOption, resetUserSliceState } =
+  userSlice.actions;
 export default userSlice.reducer;

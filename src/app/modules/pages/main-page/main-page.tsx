@@ -1,14 +1,9 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useLayoutEffect, useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 
-// import { useQuery } from "@apollo/client";
-// import { CHECK_VERIFICATION } from "../../../api/apollo/queries/check-verification";
-
 import { useAppDispatch, useAppSelector } from "../../../store";
 import { setChecking } from "../../../store/slices/auth-slice";
-
-// import { IVerificationData } from "../../../types/mainpage-userinfo-types";
 
 import Loader from "../../ui/loader/loader";
 import { WarningBadge } from "../../ui";
@@ -21,33 +16,25 @@ import { formatPhoneNumber } from "../../../utils/helpers/phone-formatter";
 import { ExpensesNames, CircleProgressName } from "../../../utils/auxuliary-data/expenses-names";
 import { getProgressColor } from "../../../utils/auxuliary-data/progress-color";
 import { moneyFormatter } from "../../../utils/helpers/money-formatter";
+// import residueCombainer from "../../../utils/helpers/residue-combainer";
+// import { IResidueCombainer } from "../../../utils/helpers/residue-combainer";
 
 const MainPage: FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-
-  // const {
-  //   data: verificData,
-  //   loading: verificLoading,
-  //   error: verificError,
-  // } = useQuery<IVerificationData>(CHECK_VERIFICATION);
+  const [visibleTab, setVisibleTab] = useState<boolean>(true);
 
   const { newCurrentData } = useAppSelector((state) => state.userSlice);
 
-  const [visibleTab, setVisibleTab] = useState<boolean>(true);
   const { bgColor, textSize, textColor } = defaultStyles;
 
   useEffect(() => {
     dispatch(setChecking(false));
   }, []);
 
-  if (!newCurrentData) {
+  if (!newCurrentData || !newCurrentData.me.account.billingNumber) {
     return <Loader />;
   }
-
-  // if (verificError) {
-  //   return <WarningBadge isError={true} />;
-  // }
 
   return (
     <div className="main-page mb-[40px] pt-[8px]">
@@ -108,7 +95,7 @@ const MainPage: FC = () => {
             <h3 className="card-title">Остатки по пакетам</h3>
           </div>
           <div className="card-body flex flex-row justify-between xs:flex-col xs:items-center md:flex-row">
-            {newCurrentData.me.account.billingNumber.remains.full.map((item, index) => {
+            {newCurrentData.me.account.billingNumber.remains.simple?.map((item, index) => {
               const getCircleColor = ["primary", "lightBlue", "lightGrey"];
 
               return (

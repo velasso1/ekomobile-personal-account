@@ -58,8 +58,12 @@ const gosuslugiSlice = createSlice({
     updateClientId(state, action: PayloadAction<string>) {
       state.clientId = action.payload;
     },
+
+    resetGosuslugiSliceState() {
+      return initialState;
+    },
   },
 });
 
-export const { updatePassportRF, updateNumbers, updateClientId } = gosuslugiSlice.actions;
+export const { updatePassportRF, updateNumbers, updateClientId, resetGosuslugiSliceState } = gosuslugiSlice.actions;
 export default gosuslugiSlice.reducer;
