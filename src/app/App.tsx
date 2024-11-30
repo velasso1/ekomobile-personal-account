@@ -22,12 +22,8 @@ import PrivateRoute from "./utils/private-route/private-route.tsx";
 import { getConfig } from "./store/slices/config-slice.ts";
 
 const App: FC = () => {
-
-  const { loginRequestSend } = useAppSelector((state) => state.routeSlice);
-=======
-
+  const dispatch = useAppDispatch();
   const { checking, loginRequestSend } = useAppSelector((state) => state.routeSlice);
->>>>>>> origin-2/main
 
   const { data, loading, error, refetch } = useQuery<ICheckUserAuth>(CHECK_AUTH_USER);
 

@@ -54,6 +54,7 @@ const SideBar: FC<ISideBarProps> = ({ changeVis }) => {
           title="Выйти"
           onClickCb={() => {
             dispatch(logOut());
+            window.location.reload();
           }}
         />
       </div>

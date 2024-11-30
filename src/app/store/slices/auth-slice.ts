@@ -97,7 +97,6 @@ export const logOut = () => {
         },
       }).then((data) => {
         if (data.ok) {
-          window.location.reload();
           localStorage.removeItem("UDATA");
           dispatch(checkAccStatusOnSignIn());
           dispatch(resetAuthSliceState());
