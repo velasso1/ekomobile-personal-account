@@ -1,0 +1,31 @@
+.markdown-gosuslugi-about {
+  @apply text-[14px];
+
+  a {
+    @apply text-blue-600 underline;
+  }
+  /* так как это просто тэк strong внутри p выбираем через nth-child() чтобы сделать отступ */
+  p:nth-child(2) {
+    @apply mt-4;
+  }
+
+  ul {
+    @apply ml-3 list-outside list-disc;
+
+    li {
+      @apply mt-3;
+    }
+  }
+
+  h3 {
+    @apply mt-8 text-[18px] font-semibold;
+  }
+
+  p + ul + p {
+    @apply mt-0 text-[12px] text-[#A8B1C3];
+  }
+
+  h3 + ul + p {
+    @apply mt-7 text-[12px] text-[#A8B1C3];
+  }
+}
